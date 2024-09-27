@@ -14,7 +14,7 @@ export default function FormExtra(){
         </div>
 
         <div className="text-sm">
-            <a href = "#" className="font-medium text-black hover:text-gray-500">
+            <a href = "signup" className="font-medium text-black hover:text-gray-500">
              Forgot your password?
            </a>
         </div>
