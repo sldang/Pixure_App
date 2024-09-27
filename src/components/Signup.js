@@ -24,7 +24,7 @@ export default function Signup() {
     
     try{
       
-      const response = fetch("http//:localhost8000/api/User", {
+      const response = fetch("http://localhost:8000/api/User", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(
