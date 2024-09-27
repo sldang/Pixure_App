@@ -13,11 +13,11 @@ export default function FormExtra(){
           </label>
         </div>
 
-        <div className="text-sm">
-            <a href = "signup" className="font-medium text-black hover:text-gray-500">
+        {/* <div className="text-sm">
+            <a href = "#" className="font-medium text-black hover:text-gray-500">
              Forgot your password?
            </a>
-        </div>
+        </div> */}
       </div>
 
     )
