@@ -6,11 +6,11 @@ import Rightbar from '../components/HomeComponents/Rightbar'
 const Home = () => {
   return (
     <div className='flex'>
-      <Sidebar/>
-      <NewsFeed/>
-      <Rightbar />
-    </div>
-  )
+    <Sidebar/>
+    <NewsFeed/>
+    <Rightbar />
+  </div>
+);
 }
 
 export default Home
