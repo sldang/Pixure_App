@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
@@ -11,9 +12,11 @@ fields.forEach(field => fieldsState[field.id] = '');
 export default function Login() {
     const [loginState, setLoginState] = useState(fieldsState);
     const [errorMessage, setErrorMessage] = useState(""); // Add state for error messages
+    const navigate = useNavigate(); // Initialize navigate function
 
     const handleChange = (e) => {
         setLoginState({ ...loginState, [e.target.id]: e.target.value });
+        setErrorMessage(""); // Clear error message on input change
     };
 
     const handleSubmit = (e) => {
@@ -37,14 +40,14 @@ export default function Login() {
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 console.log('Login successful', data.user);
-                // Optionally redirect the user after successful login
-                // e.g., navigate to another page
+                navigate('/Home'); 
             } else {
-
+                // Set error message for failed login
+                setErrorMessage(data.message || 'Login failed. Please check your credentials.'); // Show message from API or a default message
             }
         } catch (error) {
             console.error("An error occurred during login", error);
-            
+            setErrorMessage('An error occurred. Please try again later.'); // Set error message for network errors
         }
     };
 
@@ -69,11 +72,10 @@ export default function Login() {
                 }
             </div>
 
-                {errorMessage && <p className="text-red-500">{errorMessage}</p>} {/* Display error message */}
+            {errorMessage && <p className="text-red-500">{errorMessage}</p>} {/* Display error message */}
 
-                <FormExtra />
-                <FormAction handleSubmit={handleSubmit} text="Login" />
-            </form>
-        );
-    }
-
+            <FormExtra />
+            <FormAction handleSubmit={handleSubmit} text="Login" />
+        </form>
+    );
+}
