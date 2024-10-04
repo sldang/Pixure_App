@@ -40,12 +40,11 @@ export default function Login() {
                 // Optionally redirect the user after successful login
                 // e.g., navigate to another page
             } else {
-                setErrorMessage(data.error || "Login failed. Please try again."); // Set error message from response
-            }
+                
 
         } catch (error) {
             console.error("An error occurred during login", error);
-            setErrorMessage("An unexpected error occurred. Please try again."); // General error message
+            
         }
     };
 
