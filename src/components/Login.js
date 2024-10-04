@@ -28,7 +28,7 @@ export default function Login() {
             const users = await response.json();
 
             const { email, password } = loginState; // Extract email and password from loginState
-            const user = users.find(user => user.email.toLowerCase() === email.toLowerCase());
+            const user = users.find(user => user.email=== email);
 
             // Check if user exists and if the password matches
             if (user && user.password === password) {
