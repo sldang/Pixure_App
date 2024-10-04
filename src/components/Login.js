@@ -41,7 +41,7 @@ export default function Login() {
                 // e.g., navigate to another page
             } else {
 
-
+            }
             } catch (error) {
                 console.error("An error occurred during login", error);
 
@@ -76,4 +76,4 @@ export default function Login() {
             </form>
         );
     }
-}
+
