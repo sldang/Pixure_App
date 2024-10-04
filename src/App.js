@@ -4,7 +4,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import SignupPage from './pages/Signup';
+import SignupPage from './pages/Home';
 import LoginPage from './pages/Login';
 
 function App() {
