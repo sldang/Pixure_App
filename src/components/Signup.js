@@ -24,7 +24,7 @@ export default function Signup() {
     
     try{
       
-      const response = fetch("http://localhost:8000/api/User", {
+      const response = fetch("https://cs4800-server.onrender.com", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(
