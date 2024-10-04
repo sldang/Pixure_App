@@ -22,7 +22,7 @@ export default function Login(){
 
     //Handle Login API Integration here
     const authenticateUser = () =>{
-
+        console.log("ohboy")
     }
 
     return(
