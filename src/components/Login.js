@@ -42,32 +42,32 @@ export default function Login() {
             } else {
 
             }
-            } catch (error) {
-                console.error("An error occurred during login", error);
+        } catch (error) {
+            console.error("An error occurred during login", error);
+            
+        }
+    };
 
-            }
-        };
-
-        return (
-            <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                <div className="-space-y-px">
-                    {
-                        fields.map(field =>
-                            <Input
-                                key={field.id}
-                                handleChange={handleChange}
-                                value={loginState[field.id]}
-                                labelText={field.labelText}
-                                labelFor={field.labelFor}
-                                id={field.id}
-                                name={field.name}
-                                type={field.type}
-                                isRequired={field.isRequired}
-                                placeholder={field.placeholder}
-                            />
-                        )
-                    }
-                </div>
+    return (
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <div className="-space-y-px">
+                {
+                    fields.map(field =>
+                        <Input
+                            key={field.id}
+                            handleChange={handleChange}
+                            value={loginState[field.id]}
+                            labelText={field.labelText}
+                            labelFor={field.labelFor}
+                            id={field.id}
+                            name={field.name}
+                            type={field.type}
+                            isRequired={field.isRequired}
+                            placeholder={field.placeholder}
+                        />
+                    )
+                }
+            </div>
 
                 {errorMessage && <p className="text-red-500">{errorMessage}</p>} {/* Display error message */}
 
