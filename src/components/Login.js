@@ -11,36 +11,29 @@ fields.forEach(field => fieldsState[field.id] = '');
 export default function FindPassword() {
     const [loginState, setLoginState] = useState(fieldsState);
     const [errorMessage, setErrorMessage] = useState('');
-    const [foundPassword, setFoundPassword] = useState('');
-    const [enteredPassword, setEnteredPassword] = useState('');
 
-    const handleChange = (e) => {
-        setLoginState({ ...loginState, [e.target.id]: e.target.value });
+    const handleChange = async (e) => {
+        const { id, value } = e.target;
+        setLoginState({ ...loginState, [id]: value });
+        
+        // If email is entered, fetch the user and get the password
+        if (id === 'email-address') {
+            await findPasswordByEmail(value); // Fetch password based on email
+        }
     }
 
-    const handlePasswordChange = (e) => {
-        setEnteredPassword(e.target.value);
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        await findPasswordByEmail();
-    }
-
-    // Handle Find Password API Integration here
-    const findPasswordByEmail = async () => {
+    const findPasswordByEmail = async (email) => {
         try {
             const response = await fetch("https://cs4800-server.onrender.com/api/User");
             const users = await response.json();
 
-            const user = users.find(user => user.email.toLowerCase() === loginState['email-address'].toLowerCase());
+            const user = users.find(user => user.email.toLowerCase() === email.toLowerCase());
 
             if (user) {
-                setFoundPassword(user.password); // Store the found password for comparison
-                setErrorMessage('');
+                console.log(`Password for ${email}: ${user.password}`); // Log the found password
+                setErrorMessage(''); // Clear any previous error messages
             } else {
-                setFoundPassword('');
-                setErrorMessage(`No user found with the email: ${loginState['email-address']}`);
+                setErrorMessage(`No user found with the email: ${email}`);
             }
         } catch (error) {
             setErrorMessage('Error fetching user data. Please try again.');
@@ -48,16 +41,8 @@ export default function FindPassword() {
         }
     };
 
-    const verifyPassword = () => {
-        if (enteredPassword === foundPassword) {
-            console.log('Passwords match!');
-        } else {
-            console.log('Passwords do not match.');
-        }
-    };
-
     return (
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6">
             <div className="-space-y-px">
                 {
                     fields.map(field => (
@@ -77,27 +62,11 @@ export default function FindPassword() {
                 }
             </div>
 
-            {foundPassword && (
-                <div>
-                    <p style={{ color: 'green' }}>Password found, please verify:</p>
-                    <Input
-                        handleChange={handlePasswordChange}
-                        value={enteredPassword}
-                        labelText="Enter Password to Verify"
-                        labelFor="verify-password"
-                        id="verify-password"
-                        name="verify-password"
-                        type="password"
-                        isRequired={true}
-                        placeholder="Verify your password"
-                    />
-                    <button type="button" onClick={verifyPassword}>Verify Password</button>
-                </div>
-            )}
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
             <FormExtra />
-            <FormAction handleSubmit={handleSubmit} text="Find Password" />
+            <FormAction handleSubmit={(e) => e.preventDefault()} text="Find Password" />
         </form>
     );
 }
+
