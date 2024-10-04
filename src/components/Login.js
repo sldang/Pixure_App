@@ -1,134 +1,58 @@
-// import { useState } from 'react';
-// import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
-// import { loginFields } from "../constants/formFields";
-// import FormAction from "./FormAction";
-// import FormExtra from "./FormExtra";
-// import Input from "./Input";
-
-// const fields = loginFields;
-// let fieldsState = {};
-// fields.forEach(field => fieldsState[field.id] = '');
-
-// export default function Login() {
-//     const [loginState, setLoginState] = useState(fieldsState);
-//     const [errorMessage, setErrorMessage] = useState(""); // Add state for error messages
-//     const navigate = useNavigate(); // Initialize navigate function
-
-//     const handleChange = (e) => {
-//         setLoginState({ ...loginState, [e.target.id]: e.target.value });
-//         setErrorMessage(""); // Clear error message on input change
-//     };
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         authenticateUser();
-//     };
-
-//     const authenticateUser = async () => {
-//         try {
-//             const response = await fetch("https://cs4800-server.onrender.com/api/login", {
-//                 method: "POST",
-//                 headers: { 'Content-Type': 'application/json' },
-//                 body: JSON.stringify({
-//                     email: loginState['email-address'], // Ensure this matches the id in your form
-//                     password: loginState['password']
-//                 })
-//             });
-
-//             const data = await response.json();
-
-//             if (response.ok) {
-//                 localStorage.setItem('token', data.token);
-//                 console.log('Login successful', data.user);
-//                 navigate('/Home'); 
-//             } else {
-//                 // Set error message for failed login
-//                 setErrorMessage(data.message || 'Login failed. Please check your credentials.'); // Show message from API or a default message
-//             }
-//         } catch (error) {
-//             console.error("An error occurred during login", error);
-//             setErrorMessage('An error occurred. Please try again later.'); // Set error message for network errors
-//         }
-//     };
-
-//     return (
-//         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-//             <div className="-space-y-px">
-//                 {
-//                     fields.map(field =>
-//                         <Input
-//                             key={field.id}
-//                             handleChange={handleChange}
-//                             value={loginState[field.id]}
-//                             labelText={field.labelText}
-//                             labelFor={field.labelFor}
-//                             id={field.id}
-//                             name={field.name}
-//                             type={field.type}
-//                             isRequired={field.isRequired}
-//                             placeholder={field.placeholder}
-//                         />
-//                     )
-//                 }
-//             </div>
-
-//             {errorMessage && <p className="text-red-500">{errorMessage}</p>} {/* Display error message */}
-
-//             <FormExtra />
-//             <FormAction handleSubmit={handleSubmit} text="Login" />
-//         </form>
-//     );
-// }
-
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
 
-// Initialize fields state
-const fieldsState = Object.fromEntries(loginFields.map(field => [field.id, '']));
+const fields = loginFields;
+let fieldsState = {};
+fields.forEach(field => fieldsState[field.id] = '');
 
-export default function Login() {
+export default function FindPassword() {
     const [loginState, setLoginState] = useState(fieldsState);
-    const [errorMessage, setErrorMessage] = useState(""); // State for error messages
-    const navigate = useNavigate(); // Initialize navigate function
+    const [errorMessage, setErrorMessage] = useState('');
+    const [foundPassword, setFoundPassword] = useState('');
+    const [enteredPassword, setEnteredPassword] = useState('');
 
     const handleChange = (e) => {
         setLoginState({ ...loginState, [e.target.id]: e.target.value });
-        setErrorMessage(""); // Clear error message on input change
-    };
+    }
 
-    const handleSubmit = (e) => {
+    const handlePasswordChange = (e) => {
+        setEnteredPassword(e.target.value);
+    }
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        authenticateUser();
-    };
+        await findPasswordByEmail();
+    }
 
-    const authenticateUser = async () => {
+    // Handle Find Password API Integration here
+    const findPasswordByEmail = async () => {
         try {
-            const response = await fetch("https://cs4800-server.onrender.com/api/login", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: loginState['email-address'], // Ensure this matches the id in your form
-                    password: loginState['password']
-                })
-            });
+            const response = await fetch("http://localhost:8000/api/User");
+            const users = await response.json();
 
-            const data = await response.json();
+            const user = users.find(user => user.email.toLowerCase() === loginState['email-address'].toLowerCase());
 
-            if (response.ok) {
-                localStorage.setItem('token', data.token);
-                console.log('Login successful', data.user);
-                navigate('/Home'); 
+            if (user) {
+                setFoundPassword(user.password); // Store the found password for comparison
+                setErrorMessage('');
             } else {
-                // Set error message for failed login
-                setErrorMessage(data.message || 'Login failed. Please check your credentials.'); // Show message from API or a default message
+                setFoundPassword('');
+                setErrorMessage(`No user found with the email: ${loginState['email-address']}`);
             }
         } catch (error) {
-            console.error("An error occurred during login", error);
-            setErrorMessage('An error occurred. Please try again later.'); // Set error message for network errors
+            setErrorMessage('Error fetching user data. Please try again.');
+            console.error("Fetch error:", error);
+        }
+    };
+
+    const verifyPassword = () => {
+        if (enteredPassword === foundPassword) {
+            console.log('Passwords match!');
+        } else {
+            console.log('Passwords do not match.');
         }
     };
 
@@ -136,7 +60,7 @@ export default function Login() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="-space-y-px">
                 {
-                    loginFields.map(field => (
+                    fields.map(field => (
                         <Input
                             key={field.id}
                             handleChange={handleChange}
@@ -153,10 +77,27 @@ export default function Login() {
                 }
             </div>
 
-            {errorMessage && <p className="text-red-500">{errorMessage}</p>} {/* Display error message */}
+            {foundPassword && (
+                <div>
+                    <p style={{ color: 'green' }}>Password found, please verify:</p>
+                    <Input
+                        handleChange={handlePasswordChange}
+                        value={enteredPassword}
+                        labelText="Enter Password to Verify"
+                        labelFor="verify-password"
+                        id="verify-password"
+                        name="verify-password"
+                        type="password"
+                        isRequired={true}
+                        placeholder="Verify your password"
+                    />
+                    <button type="button" onClick={verifyPassword}>Verify Password</button>
+                </div>
+            )}
+            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
             <FormExtra />
-            <FormAction handleSubmit={handleSubmit} text="Login" />
+            <FormAction handleSubmit={handleSubmit} text="Find Password" />
         </form>
     );
 }
