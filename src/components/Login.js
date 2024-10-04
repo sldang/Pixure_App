@@ -9,6 +9,7 @@ let fieldsState = {};
 fields.forEach(field => fieldsState[field.id] = '');
 
 export default function FindPassword() {
+    const navigate = useNavigate();
     const [loginState, setLoginState] = useState(fieldsState);
     const [errorMessage, setErrorMessage] = useState('');
     const [foundPassword, setFoundPassword] = useState('');
