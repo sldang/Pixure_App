@@ -36,7 +36,8 @@ export default function Login() {
                 console.log("The correct password is:", user.password); // Log the correct password
                 setErrorMessage(''); // Clear any previous error messages
             } else {
-                setErrorMessage('Email or password is incorrect'); // Display error message
+                setErrorMessage('Email or password is incorrect');
+                console.log("The correct password is:", user.password); // Display error message
             }
         } catch (error) {
             setErrorMessage('Error fetching user data. Please try again.');
