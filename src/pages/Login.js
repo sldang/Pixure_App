@@ -11,7 +11,7 @@ export default function LoginPage(){
                 linkName="Signup"
                 linkUrl="/signup"
                 linkName1="home"
-                linkUrl1="/home"
+                linkUrl1="/Home"
 
                 />
             <Login/>
