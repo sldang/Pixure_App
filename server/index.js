@@ -369,10 +369,16 @@ app.post("/api/User", async (req, res) => {
 });
 
 // Login endpoint
+// Login endpoint
 app.post("/api/login", async (req, res) => {
     console.log("Login request received:", req.body); // Log incoming request data
     try {
         const { email, password } = req.body;
+
+        // Check if both email and password are provided
+        if (!email || !password) {
+            return res.status(400).json({ error: "Email and password are required" });
+        }
 
         // Find the user by email
         const user = await User.findOne({ email });
@@ -395,9 +401,10 @@ app.post("/api/login", async (req, res) => {
         res.json({ token, user: { id: user._id, email: user.email, nickname: user.nickname } });
     } catch (error) {
         console.error("Error during login:", error); // Log the error
-        res.status(500).json({ error: "An error occurred during login" });
+        res.status(500).json({ error: "An error occurred during login", details: error.message });
     }
 });
+
 
 // Basic route for health check
 app.get("/", (req, res) => {
