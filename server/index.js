@@ -256,9 +256,9 @@ const express = require("express");
 const connectDB = require("./connectDB");
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
-const Post = require('./models/Post'); // Ensure you have these models in use
+const Post = require('./models/Post');
 const Community = require('./models/Community');
-const CommunityReport = require('./models/CommunityReport');
+const CommunityReport = require('./models/CommunityReport');    
 const CommunityPostComment = require('./models/CommunityPostComment');
 const FlagsProfile = require('./models/FlagsProfile');
 const CommunityPost = require('./models/CommunityPost');
@@ -272,47 +272,151 @@ const User = require('./models/User');
 const app = express();
 const PORT = process.env.PORT || 8000;
 
+// Connect to the database
 connectDB();
+
+// CORS setup
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com'
 }));
+
+// Middleware to parse URL-encoded and JSON bodies
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Example GET route with error logging
+// API endpoint to get all posts
 app.get("/api/Post", async (req, res) => {
     try {
         const data = await Post.find({});
         res.json(data);
     } catch (error) {
-        console.error(error); // Log the error
+        console.error("Error fetching posts:", error);
         res.status(500).json({ error: "An error occurred while fetching posts" });
     }
 });
 
-// Example GET route for Community
+// API endpoint to get all communities
 app.get("/api/Community", async (req, res) => {
     try {
         const data = await Community.find({});
         res.json(data);
     } catch (error) {
-        console.error(error);
+        console.error("Error fetching communities:", error);
         res.status(500).json({ error: "An error occurred while fetching communities" });
     }
 });
 
-// Example GET route for CommunityReport
+// API endpoint to get all community reports
 app.get("/api/CommunityReport", async (req, res) => {
     try {
         const data = await CommunityReport.find({});
         res.json(data);
     } catch (error) {
-        console.error(error);
+        console.error("Error fetching community reports:", error);
         res.status(500).json({ error: "An error occurred while fetching community reports" });
     }
 });
 
-// Example POST route for User creation
+// API endpoint to get all flags profiles
+app.get("/api/FlagsProfile", async (req, res) => {
+    try {
+        const data = await FlagsProfile.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching flags profiles:", error);
+        res.status(500).json({ error: "An error occurred while fetching flags profiles" });
+    }
+});
+
+// API endpoint to get all community post comments
+app.get("/api/CommunityPostComment", async (req, res) => {
+    try {
+        const data = await CommunityPostComment.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching community post comments:", error);
+        res.status(500).json({ error: "An error occurred while fetching community post comments" });
+    }
+});
+
+// API endpoint to get all community posts
+app.get("/api/CommunityPost", async (req, res) => {
+    try {
+        const data = await CommunityPost.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching community posts:", error);
+        res.status(500).json({ error: "An error occurred while fetching community posts" });
+    }
+});
+
+// API endpoint to get all local community accounts
+app.get("/api/LocalCommunityAccount", async (req, res) => {
+    try {
+        const data = await LocalCommunityAccount.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching local community accounts:", error);
+        res.status(500).json({ error: "An error occurred while fetching local community accounts" });
+    }
+});
+
+// API endpoint to get all post comments
+app.get("/api/PostComment", async (req, res) => {
+    try {
+        const data = await PostComment.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching post comments:", error);
+        res.status(500).json({ error: "An error occurred while fetching post comments" });
+    }
+});
+
+// API endpoint to get all post reports
+app.get("/api/PostReport", async (req, res) => {
+    try {
+        const data = await PostReport.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching post reports:", error);
+        res.status(500).json({ error: "An error occurred while fetching post reports" });
+    }
+});
+
+// API endpoint to get all search tags and flags
+app.get("/api/SearchTagsAndFlags", async (req, res) => {
+    try {
+        const data = await SearchTagsAndFlags.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching search tags and flags:", error);
+        res.status(500).json({ error: "An error occurred while fetching search tags and flags" });
+    }
+});
+
+// API endpoint to get all tags profiles
+app.get("/api/TagsProfile", async (req, res) => {
+    try {
+        const data = await TagsProfile.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching tags profiles:", error);
+        res.status(500).json({ error: "An error occurred while fetching tags profiles" });
+    }
+});
+
+// API endpoint to get all users
+app.get("/api/User", async (req, res) => {
+    try {
+        const data = await User.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ error: "An error occurred while fetching users" });
+    }
+});
+
+// API endpoint to create a new user
 app.post("/api/User", async (req, res) => {
     try {
         const {
@@ -327,12 +431,6 @@ app.post("/api/User", async (req, res) => {
             return res.status(400).json({ error: "Email and password are required" });
         }
 
-        // Check for existing user
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: "User already exists" });
-        }
-
         // Hash the password before saving
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -343,7 +441,7 @@ app.post("/api/User", async (req, res) => {
             nickname,
             email,
             zipcode,
-            password: hashedPassword,
+            password: hashedPassword, 
             friendsList,
             followList,
             karma,
@@ -363,12 +461,11 @@ app.post("/api/User", async (req, res) => {
         await newUser.save();
         res.status(201).json({ message: "User created successfully" });
     } catch (error) {
-        console.error(error); // Log the error
+        console.error("Error creating user:", error);
         res.status(500).json({ error: "An error occurred while creating the user" });
     }
 });
 
-// Login endpoint
 // Login endpoint
 app.post("/api/login", async (req, res) => {
     console.log("Login request received:", req.body); // Log incoming request data
@@ -401,21 +498,21 @@ app.post("/api/login", async (req, res) => {
         res.json({ token, user: { id: user._id, email: user.email, nickname: user.nickname } });
     } catch (error) {
         console.error("Error during login:", error); // Log the error
-        res.status(500).json({ error: "An error occurred during login", details: error.message });
+        res.status(500).json({ error: "An error occurred during login" });
     }
 });
 
-
-// Basic route for health check
+// Simple endpoint to check if server is running
 app.get("/", (req, res) => {
-    res.json("hello");
+    res.json("Hello, server is running!");
 });
 
-// Catch-all route for 404
+// Catch-all route for undefined endpoints
 app.get("*", (req, res) => {
     res.sendStatus(404);
 });
 
+// Start the server
 app.listen(PORT, () => {
     console.log('Server is running on port', PORT);
 });
