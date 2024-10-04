@@ -34,17 +34,13 @@ export default function Login() {
             const data = await response.json();
 
             if (response.ok) {
-                // Login success, handle JWT token storage
                 localStorage.setItem('token', data.token);
                 console.log('Login successful', data.user);
             } else {
-                // Handle login failure
-                setErrorMessage(data.error || "Login failed");
             }
 
         } catch (error) {
             console.error("An error occurred during login", error);
-            setErrorMessage("An unexpected error occurred. Please try again.");
         }
     };
 
