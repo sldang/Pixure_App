@@ -203,6 +203,9 @@ app.post("/api/login", async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // Check JWT_SECRET for debugging
+        console.log("JWT_SECRET:", process.env.JWT_SECRET); // Log for debugging (remove after)
+
         // Find the user by email
         const user = await User.findOne({ email });
         if (!user) {
