@@ -2,11 +2,11 @@ require('dotenv').config();
 const cors = require("cors");
 const express = require("express");
 const connectDB = require("./connectDB");
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const Post = require('./models/Post');
 const Community = require('./models/Community');
-const CommunityReport = require('./models/CommunityReport');
+const CommunityReport = require('./models/CommunityReport');    
 const CommunityPostComment = require('./models/CommunityPostComment');
 const FlagsProfile = require('./models/FlagsProfile');
 const CommunityPost = require('./models/CommunityPost');
@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 8000;
 
 connectDB();
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com'}));
+    origin: 'http://localhost:8000' || 'https://pixure-app.onrender.com'}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -173,7 +173,7 @@ app.post("/api/User", async (req, res) => {
             nickname,
             email,
             zipcode,
-            password: hashedPassword, // Save hashed password
+            password: hashedPassword, 
             friendsList,
             followList,
             karma,
