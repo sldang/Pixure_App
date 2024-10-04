@@ -2,6 +2,7 @@ require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const connectDB = require("./connectDB");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Post = require('./models/Post');
 const Community = require('./models/Community');
@@ -15,6 +16,7 @@ const PostReport = require('./models/PostReport');
 const SearchTagsAndFlags = require('./models/SearchTagsAndFlags');
 const TagsProfile = require('./models/TagsProfile');
 const User = require('./models/User');
+
 
 
 
