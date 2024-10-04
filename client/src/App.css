@@ -1,0 +1,41 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  margin-top: 70px;
+}
+.top-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.output {
+  padding: 20px;
+  text-align: center;
+  margin-top: 70px;
+}
+
+table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  width: 50%;
+  border: 2px solid #333; /* Thicker outer border */
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+  border: 2px solid #333; /* Thicker inner borders between cells */
+}
+
+th {
+  background-color: #3e3535;
+}
