@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
@@ -10,7 +9,6 @@ let fieldsState = {};
 fields.forEach(field => fieldsState[field.id] = '');
 
 export default function FindPassword() {
-    const navigate = useNavigate();
     const [loginState, setLoginState] = useState(fieldsState);
     const [errorMessage, setErrorMessage] = useState('');
     const [foundPassword, setFoundPassword] = useState('');
@@ -52,10 +50,9 @@ export default function FindPassword() {
 
     const verifyPassword = () => {
         if (enteredPassword === foundPassword) {
-            console.log('logging in');
-            navigate("/Home")
+            console.log('Passwords match!');
         } else {
-            console.log('Passwords is incorrect.');
+            console.log('Passwords do not match.');
         }
     };
 
@@ -82,6 +79,18 @@ export default function FindPassword() {
 
             {foundPassword && (
                 <div>
+                    <p style={{ color: 'green' }}>Password found, please verify:</p>
+                    <Input
+                        handleChange={handlePasswordChange}
+                        value={enteredPassword}
+                        labelText="Enter Password to Verify"
+                        labelFor="verify-password"
+                        id="verify-password"
+                        name="verify-password"
+                        type="password"
+                        isRequired={true}
+                        placeholder="Verify your password"
+                    />
                     <button type="button" onClick={verifyPassword}>Verify Password</button>
                 </div>
             )}
