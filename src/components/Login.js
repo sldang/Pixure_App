@@ -10,15 +10,16 @@ fields.forEach(field => fieldsState[field.id] = '');
 
 export default function Login() {
     const [loginState, setLoginState] = useState(fieldsState);
+    const [errorMessage, setErrorMessage] = useState(""); // Add state for error messages
 
     const handleChange = (e) => {
-        setLoginState({ ...loginState, [e.target.id]: e.target.value })
-    }
+        setLoginState({ ...loginState, [e.target.id]: e.target.value });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         authenticateUser();
-    }
+    };
 
     const authenticateUser = async () => {
         try {
@@ -26,7 +27,7 @@ export default function Login() {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    email: loginState['email-address'],
+                    email: loginState['email-address'], // Ensure this matches the id in your form
                     password: loginState['password']
                 })
             });
@@ -36,11 +37,15 @@ export default function Login() {
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 console.log('Login successful', data.user);
+                // Optionally redirect the user after successful login
+                // e.g., navigate to another page
             } else {
+                
             }
 
         } catch (error) {
             console.error("An error occurred during login", error);
+            
         }
     };
 
@@ -61,14 +66,14 @@ export default function Login() {
                             isRequired={field.isRequired}
                             placeholder={field.placeholder}
                         />
-
                     )
                 }
             </div>
 
+            {errorMessage && <p className="text-red-500">{errorMessage}</p>} {/* Display error message */}
+
             <FormExtra />
             <FormAction handleSubmit={handleSubmit} text="Login" />
-
         </form>
-    )
+    );
 }
