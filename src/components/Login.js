@@ -8,32 +8,34 @@ const fields = loginFields;
 let fieldsState = {};
 fields.forEach(field => fieldsState[field.id] = '');
 
-export default function FindPassword() {
+export default function Login() {
     const [loginState, setLoginState] = useState(fieldsState);
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleChange = async (e) => {
-        const { id, value } = e.target;
-        setLoginState({ ...loginState, [id]: value });
-        
-        // If email is entered, fetch the user and get the password
-        if (id === 'email-address') {
-            await findPasswordByEmail(value); // Fetch password based on email
-        }
+    const handleChange = (e) => {
+        setLoginState({ ...loginState, [e.target.id]: e.target.value });
     }
 
-    const findPasswordByEmail = async (email) => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await authenticateUser(); // Call authenticateUser on form submit
+    }
+
+    // Handle Login API Integration here
+    const authenticateUser = async () => {
         try {
             const response = await fetch("https://cs4800-server.onrender.com/api/User");
             const users = await response.json();
 
+            const { email, password } = loginState; // Extract email and password from loginState
             const user = users.find(user => user.email.toLowerCase() === email.toLowerCase());
 
-            if (user) {
-                console.log(`Password for ${email}: ${user.password}`); // Log the found password
+            // Check if user exists and if the password matches
+            if (user && user.password === password) {
+                console.log("YAY"); // Log YAY if the password matches
                 setErrorMessage(''); // Clear any previous error messages
             } else {
-                setErrorMessage(`No user found with the email: ${email}`);
+                setErrorMessage('Email or password is incorrect'); // Display error message
             }
         } catch (error) {
             setErrorMessage('Error fetching user data. Please try again.');
@@ -42,7 +44,7 @@ export default function FindPassword() {
     };
 
     return (
-        <form className="mt-8 space-y-6">
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="-space-y-px">
                 {
                     fields.map(field => (
@@ -65,8 +67,7 @@ export default function FindPassword() {
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
             <FormExtra />
-            <FormAction handleSubmit={(e) => e.preventDefault()} text="Find Password" />
+            <FormAction handleSubmit={handleSubmit} text="Login" />
         </form>
     );
 }
-
