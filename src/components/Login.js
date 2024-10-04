@@ -30,7 +30,7 @@ export default function FindPassword() {
     // Handle Find Password API Integration here
     const findPasswordByEmail = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/User");
+            const response = await fetch("https://cs4800-server.onrender.com/api/User");
             const users = await response.json();
 
             const user = users.find(user => user.email.toLowerCase() === loginState['email-address'].toLowerCase());
@@ -50,9 +50,10 @@ export default function FindPassword() {
 
     const verifyPassword = () => {
         if (enteredPassword === foundPassword) {
-            console.log('Passwords match!');
+            console.log('logging in');
+            navigate("/Home")
         } else {
-            console.log('Passwords do not match.');
+            console.log('Passwords is incorrect.');
         }
     };
 
@@ -79,18 +80,6 @@ export default function FindPassword() {
 
             {foundPassword && (
                 <div>
-                    <p style={{ color: 'green' }}>Password found, please verify:</p>
-                    <Input
-                        handleChange={handlePasswordChange}
-                        value={enteredPassword}
-                        labelText="Enter Password to Verify"
-                        labelFor="verify-password"
-                        id="verify-password"
-                        name="verify-password"
-                        type="password"
-                        isRequired={true}
-                        placeholder="Verify your password"
-                    />
                     <button type="button" onClick={verifyPassword}>Verify Password</button>
                 </div>
             )}
