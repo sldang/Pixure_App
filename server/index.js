@@ -2,6 +2,7 @@ require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const connectDB = require("./connectDB");
+const bcrypt = require("bcrypt");
 const Post = require('./models/Post');
 const Community = require('./models/Community');
 const CommunityReport = require('./models/CommunityReport');
@@ -148,34 +149,49 @@ app.get("/api/User", async (req, res) => {
 
 app.post("/api/User", async (req, res) => {
     try {
-        console.log(req.body);
+        const {
+            firstName, lastName, nickname, email, zipcode, password,
+            friendsList, followList, karma, communityIDs, posts, age,
+            searchTags, postAndFlagsTags, profilePic, parentAccount, 
+            parentAccountID, childAccount, childAccountID
+        } = req.body;
+
+        // Validate required fields
+        if (!email || !password) {
+            return res.status(400).json({ error: "Email and password are required" });
+        }
+
+        // Hash the password before saving
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create a new user object
         const newUser = new User({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            nickname: req.body.nickname,
-            email: req.body.email,
-            zipcode: req.body.zipcode,
-            password: req.body.password,
-            friendsList: req.body.freindsList,
-            followList: req.body.followList,
-            karma: req.body.karma,
-            communityIDs: req.body.communityIDs,
-            posts: req.body.posts,
-            age: req.body.age,
-            searchTags: req.body.searchTags,
-            postAndFlagsTags: req.body.postAndFlagsTags,
-            profilePic: req.body.profilePic,
-            parentAccount: req.body.parentAccount,
-            parentAccountID: req.body.parentAccountID,
-            childAccount: req.body.childAccount,
-            childAccountID: req.body.childAccountID,
+            firstName,
+            lastName,
+            nickname,
+            email,
+            zipcode,
+            password: hashedPassword, // Save hashed password
+            friendsList,
+            followList,
+            karma,
+            communityIDs,
+            posts,
+            age,
+            searchTags,
+            postAndFlagsTags,
+            profilePic,
+            parentAccount,
+            parentAccountID,
+            childAccount,
+            childAccountID
+        });
 
-
-        })
-        await User.create(newUser);
-        res.json("data submitted")
-    } catch {
-        res.status(500).json({ error: "An error occured while fetching books" });
+        // Save the new user to the database
+        await newUser.save();
+        res.status(201).json({ message: "User created successfully" });
+    } catch (error) {
+        res.status(500).json({ error: "An error occurred while creating the user" });
     }
 });
 
