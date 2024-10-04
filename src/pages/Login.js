@@ -1,6 +1,6 @@
 import Header from "../components/Header"
 import Login from "../components/Login"
-import Home from "/Home"
+import Home from "../Home"
 
 export default function LoginPage(){
     return(
