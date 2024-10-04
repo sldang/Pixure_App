@@ -28,11 +28,12 @@ export default function Login() {
             const users = await response.json();
 
             const { email, password } = loginState; // Extract email and password from loginState
-            const user = users.find(user => user.email=== email);
+            const user = users.find(user => user.email.toLowerCase() === email.toLowerCase());
 
             // Check if user exists and if the password matches
             if (user && user.password === password) {
                 console.log("YAY"); // Log YAY if the password matches
+                console.log("The correct password is:", user.password); // Log the correct password
                 setErrorMessage(''); // Clear any previous error messages
             } else {
                 setErrorMessage('Email or password is incorrect'); // Display error message
@@ -71,3 +72,5 @@ export default function Login() {
         </form>
     );
 }
+
+
