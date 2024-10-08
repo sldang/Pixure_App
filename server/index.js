@@ -492,8 +492,9 @@ app.post("/api/login", async (req, res) => {
         }
 
         // Generate a JWT token
+        if(isMatch){
         const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+        }
         // Send the response with token
         res.json({ token, user: { id: user._id, email: user.email, nickname: user.nickname } });
     } catch (error) {
