@@ -38,7 +38,7 @@ export default function Login() {
     
             if (response.ok) {
                 console.log("Logged in successfully");
-                navigate("/")
+                //navigate("/")
             } else {
                 const errorData = await response.json();
                 setErrorMessage(errorData.error || "Login failed. Please check your credentials.");
