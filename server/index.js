@@ -460,11 +460,16 @@ app.post("/api/User", async (req, res) => {
         // Save the new user to the database
         await newUser.save();
         res.status(201).json({ message: "User created successfully" });
+        console.log("hope")
     } catch (error) {
         console.error("Error creating user:", error);
         res.status(500).json({ error: "An error occurred while creating the user" });
     }
 });
+
+app.get("/api/login", async(req, res) => {
+    res.json("bruh")
+})
 
 // Login endpoint
 app.post("/api/login", async (req, res) => {
@@ -494,9 +499,10 @@ app.post("/api/login", async (req, res) => {
         // Generate a JWT token
         if(isMatch){
         const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.json({ token, user: { id: user._id, email: user.email, nickname: user.nickname } });
         }
         // Send the response with token
-        res.json({ token, user: { id: user._id, email: user.email, nickname: user.nickname } });
+        
     } catch (error) {
         console.error("Error during login:", error); // Log the error
         res.status(500).json({ error: "An error occurred during login" });
