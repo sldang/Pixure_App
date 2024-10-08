@@ -25,25 +25,22 @@ export default function Login() {
     // Handle Login API Integration here
     const authenticateUser = async () => {
         try {
-            const response = fetch("api/login", {
+            const response = await fetch("/api/login", { // Added 'await' here
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(
-                    {
-                        email: loginState['email-address'],
-                        password: loginState['password'],
-
-                    }
-                )
-
-            })
-            if(response.ok){
-                console.log("logged in")
-            }else{
-                console.log(loginState['email-address'])
-                console.log(loginState['password'])
+                body: JSON.stringify({
+                    email: loginState['email-address'],
+                    password: loginState['password'],
+                })
+            });
+    
+            if (response.ok) {
+                console.log("Logged in successfully");
+            } else {
+                const errorData = await response.json();
+                setErrorMessage(errorData.error || "Login failed. Please check your credentials.");
+                console.log("Login failed with error:", errorData.error);
             }
-
         } catch (error) {
             setErrorMessage('Error fetching user data. Please try again.');
             console.error("Fetch error:", error);
