@@ -40,7 +40,8 @@ export default function Login() {
             if(response.ok){
                 console.log("logged in")
             }else{
-                console.log("error")
+                console.log(loginState['email-address'])
+                console.log(loginState['password'])
             }
 
         } catch (error) {
