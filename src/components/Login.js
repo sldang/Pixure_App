@@ -4,32 +4,56 @@ import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
 
-const fields=loginFields;
+
+const fields = loginFields;
 let fieldsState = {};
-fields.forEach(field=>fieldsState[field.id]='');
+fields.forEach(field => fieldsState[field.id] = '');
 
-export default function Login(){
-    const [loginState,setLoginState]=useState(fieldsState);
+export default function Login() {
+    const [loginState, setLoginState] = useState(fieldsState);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const handleChange=(e)=>{
-        setLoginState({...loginState,[e.target.id]:e.target.value})
-    }
+    const handleChange = (e) => setLoginState({ ...loginState, [e.target.id]: e.target.value });
 
-    const handleSubmit=(e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        authenticateUser();
+        console.log(loginState['password'])
+        console.log(loginState['email-address'])
+        await authenticateUser(); // Call authenticateUser on form submit
     }
 
-    //Handle Login API Integration here
-    const authenticateUser = () =>{
-        console.log("ohboy")
-    }
 
-    return(
+
+    // Handle Login API Integration here
+    const authenticateUser = async () => {
+        try {
+            const response = await fetch("https://cs4800-server.onrender.com/api/login", { 
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: loginState['email-address'],
+                    password: loginState['password'],
+                })
+            });
+    
+            if (response.ok) {
+                console.log("Logged in successfully");
+            } else {
+                const errorData = await response.json();
+                setErrorMessage(errorData.error || "Login failed. Please check your credentials.");
+                console.log("Login failed with error:", errorData.error);
+            }
+        } catch (error) {
+            setErrorMessage('Error fetching user data. Please try again.');
+            console.error("Fetch error:", error);
+        }
+    };
+
+    return (
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-        <div className="-space-y-px">
-            {
-                fields.map(field=>
+            <div className="-space-y-px">
+                {
+                    fields.map(field => (
                         <Input
                             key={field.id}
                             handleChange={handleChange}
@@ -41,15 +65,17 @@ export default function Login(){
                             type={field.type}
                             isRequired={field.isRequired}
                             placeholder={field.placeholder}
-                    />
-                
-                )
-            }
-        </div>
+                        />
+                    ))
+                }
+            </div>
 
-        <FormExtra/>
-        <FormAction handleSubmit={handleSubmit} text="Login"/>
+            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
-      </form>
-    )
+            <FormExtra />
+            <FormAction handleSubmit={handleSubmit} text="Login" />
+        </form>
+    );
 }
+
+

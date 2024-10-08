@@ -54,13 +54,14 @@ export default function Signup() {
         
       })
 
-      if(response.ok){
-        
-      }else{
-        console.log("failed")
+      if (response.ok) {
+        console.log("Account created successfully!");
+      } else {
+        const errorData = await response.json(); // Try to parse the error response from the server
+        console.error("Account creation failed:", errorData.error || "Unknown error occurred");
       }
-    }catch (error){
-      console.log("error")
+    } catch (error) {
+      console.error("An error occurred during account creation:", error); // Provide more detailed error info
     }
   }
 
