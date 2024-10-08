@@ -17,6 +17,8 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(loginState['password'])
+        console.log(loginState['email-address'])
         await authenticateUser(); // Call authenticateUser on form submit
     }
 
