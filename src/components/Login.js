@@ -27,7 +27,8 @@ export default function Login() {
             const response = await fetch("https://cs4800-server.onrender.com/api/User");
             const users = await response.json();
 
-            const { email, password } = loginState; // Extract email and password from loginState
+            const email = loginState.email; // Extract email and password from loginState
+            const password = loginState.password;
             const user = users.find(user => user.email === email);
 
             // Check if user exists and if the password matches
