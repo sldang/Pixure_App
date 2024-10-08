@@ -3,7 +3,7 @@ import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
-import axios from "axios";
+
 
 const fields = loginFields;
 let fieldsState = {};
@@ -30,25 +30,8 @@ export default function Login() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(
                     {
-                        firstName: signupState['firstname'],
-                        lastName: signupState['lastname'],
-                        nickname: signupState['username'],
-                        email: signupState['email-address'],
-                        zipcode: signupState['zipcode'],
-                        password: signupState['password'],
-                        friendsList: 0,
-                        followList: 0,
-                        karma: 0,
-                        communityIDs: 0,
-                        posts: 0,
-                        age: 0,
-                        searchTags: 0,
-                        postAndFlagsTags: 0,
-                        profilePic: 0,
-                        parentAccount: 0,
-                        parentAccountID: 0,
-                        childAccount: 0,
-                        childAccountID: 0,
+                        email: loginState['email-address'],
+                        password: loginState['password'],
 
                     }
                 )
