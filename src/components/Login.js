@@ -3,6 +3,7 @@ import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
+import { useAuthContext } from '../hooks/useAuthContext';
 
 
 const fields = loginFields;
@@ -12,6 +13,7 @@ fields.forEach(field => fieldsState[field.id] = '');
 export default function Login() {
     const [loginState, setLoginState] = useState(fieldsState);
     const [errorMessage, setErrorMessage] = useState('');
+    const { dispatch } = useAuthContext()
 
     const handleChange = (e) => setLoginState({ ...loginState, [e.target.id]: e.target.value });
 
@@ -34,11 +36,13 @@ export default function Login() {
                     email: loginState['email-address'],
                     password: loginState['password'],
                 })
+                
             });
-    
+            const json = await response.json()
             if (response.ok) {
                 console.log("Logged in successfully");
-                //navigate("/")
+                localStorage.setItem('user', JSON.stringify(json) )
+                dispatch({type: 'LOGIN', payload: json})
             } else {
                 const errorData = await response.json();
                 setErrorMessage(errorData.error || "Login failed. Please check your credentials.");
