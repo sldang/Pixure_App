@@ -24,7 +24,7 @@ export default function Signup() {
     
     try{
       
-      const response = fetch("https://cs4800-server.onrender.com/api/User", {
+      const response = axios.get("https://cs4800-server.onrender.com/api/User", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(

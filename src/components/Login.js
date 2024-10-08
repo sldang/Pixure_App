@@ -21,24 +21,29 @@ export default function Login() {
         await authenticateUser(); // Call authenticateUser on form submit
     }
 
+
+    const handleClick = async (endpoint) => {
+        try {
+            const response = await axios.get(endpoint);
+            setOutput(response.data);
+            setError(null); // Clear any previous error
+        } catch (err) {
+            setError("Failed to fetch data.");
+            setOutput(null); // Clear previous output
+        }
+    };
+
     // Handle Login API Integration here
     const authenticateUser = async () => {
         try {
-            const response = await fetch("https://cs4800-server.onrender.com/api/User");
+            const response = await axios.get("https://cs4800-server.onrender.com/api/User");
             const users = await response.json();
 
-            const email = loginState.email; // Extract email and password from loginState
-            const password = loginState.password;
+            const email = response.email; // Extract email and password from loginState
+            const password = response.password;
             const user = users.find(user => user.email === email);
 
-            // Check if user exists and if the password matches
-            if (user && user.password === password) {
-                console.log("YAY"); // Log YAY if the password matches
-                console.log("The correct password is:", user.password); // Log the correct password
-                setErrorMessage(''); // Clear any previous error messages
-            } else {
-                setErrorMessage('Email or password is incorrect');
-                console.log("The correct password is:", user.password); // Display error message
+            
             }
         } catch (error) {
             setErrorMessage('Error fetching user data. Please try again.');
