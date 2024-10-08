@@ -2,6 +2,7 @@ import React from 'react'
 import Sidebar from '../components/HomeComponents/Sidebar'
 import NewsFeed from '../components/HomeComponents/NewsFeed'
 import Rightbar from '../components/HomeComponents/Rightbar'
+import Header from "../components/Header";
 
 const Home = () => {
   return (
