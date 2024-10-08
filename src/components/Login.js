@@ -37,7 +37,11 @@ export default function Login() {
                 )
 
             })
-
+            if(response.ok){
+                console.log("logged in")
+            }else{
+                console.log("error")
+            }
 
         } catch (error) {
             setErrorMessage('Error fetching user data. Please try again.');
