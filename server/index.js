@@ -272,7 +272,6 @@ const User = require('./models/User');
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-
 // Connect to the database
 connectDB();
 
@@ -406,16 +405,16 @@ app.get("/api/TagsProfile", async (req, res) => {
     }
 });
 
-// // API endpoint to get all users
-// app.get("/api/User", async (req, res) => {
-//     try {
-//         const data = await User.find({});
-//         res.json(data);
-//     } catch (error) {
-//         console.error("Error fetching users:", error);
-//         res.status(500).json({ error: "An error occurred while fetching users" });
-//     }
-// });
+// API endpoint to get all users
+app.get("/api/User", async (req, res) => {
+    try {
+        const data = await User.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ error: "An error occurred while fetching users" });
+    }
+});
 
 // API endpoint to create a new user
 app.post("/api/User", async (req, res) => {
