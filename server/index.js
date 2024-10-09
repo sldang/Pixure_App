@@ -14,6 +14,10 @@ const PostReport = require('./models/PostReport');
 const SearchTagsAndFlags = require('./models/SearchTagsAndFlags');
 const TagsProfile = require('./models/TagsProfile');
 const User = require('./models/User');
+const Conversation = require('./models/Conversation')
+const Message = require('./models/Message');
+const conversationRoute = require('./routes/conversations');
+const messageRoute = require('./routes/messages');
 
 
 
@@ -179,7 +183,8 @@ app.post("/api/User", async (req, res) => {
     }
 });
 
-
+app.use("/api/conversations", conversationRoute);
+app.use("/api/messages", messageRoute);
 
 
 
@@ -193,5 +198,5 @@ app.get("*", (req, res) => {
 })
 
 app.listen(PORT, () => {
-    console.log('server is running');
+    console.log('SERVER IS RUNNING');
 })

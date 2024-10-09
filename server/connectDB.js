@@ -12,7 +12,7 @@ const connectDB = async () => {
             });
         console.log(`Database Connected ${conn.connection.host}`);
     } catch (error) {
-        console(error);
+        console.log(error);
         process.exit(1);
     }
 
