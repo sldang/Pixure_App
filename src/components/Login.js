@@ -3,7 +3,7 @@ import { loginFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
-import { useAuthContext } from './useAuthContext';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 
 const fields = loginFields;
