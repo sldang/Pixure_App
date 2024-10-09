@@ -10,9 +10,11 @@ export default function LoginPage(){
                 paragraph="Don't have an account yet? "
                 linkName="Home"
                 linkUrl="/"
-
                 />
-            <Login/>
+            <Login
+            linkName1 = "Signup"
+            linkUrl1 = "/signup"
+            />
         </>
     )
 }
