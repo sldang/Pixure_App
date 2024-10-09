@@ -8,7 +8,7 @@ export default function LoginPage(){
              <Header
                 heading="Login to your account"
                 paragraph="Don't have an account yet? "
-                linkName="Signup"
+                linkName="Home"
                 linkUrl="/"
 
                 />
