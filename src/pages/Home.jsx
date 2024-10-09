@@ -11,8 +11,6 @@ const Home = () => {
     <NewsFeed/>
     <Rightbar />
     <Header
-              heading="Signup to create an account"
-              paragraph="Already have an account? "
               linkName="Login"
               linkUrl="/Login"
             />
