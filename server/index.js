@@ -188,8 +188,7 @@ app.post("/api/User", async (req, res) => {
         }
 
         // Hash the password before saving
-        //const hashedPassword = await bcrypt.hash(password, 10);
-        const hashedPassword = password;
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create a new user object
         const newUser = new User({
@@ -247,8 +246,7 @@ app.post("/api/login", async (req, res) => {
         }
 
         // Compare the password
-        //const isMatch = await bcrypt.compare(password, user.password);
-        const isMatch = password === user.password;
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             console.log("Invalid credentials");
             return res.status(400).json({ error: "Invalid credentials" });
