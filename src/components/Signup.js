@@ -24,7 +24,7 @@ export default function Signup() {
     
     try{
       
-      const response = fetch("https://cs4800-server.onrender.com/api/User", {
+      const response = await fetch("http://localhost:8000/api/User", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(
@@ -54,13 +54,14 @@ export default function Signup() {
         
       })
 
-      if(response.ok){
-        
-      }else{
-        console.log("failed")
+      if (response.ok) {
+        console.log("Account created successfully!");
+      } else {
+        const errorData = await response.json(); // Try to parse the error response from the server
+        console.error("Account creation failed:", errorData.error || "Unknown error occurred");
       }
-    }catch (error){
-      console.log("error")
+    } catch (error) {
+      console.error("An error occurred during account creation:", error); // Provide more detailed error info
     }
   }
 
