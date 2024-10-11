@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaHome, FaSearch, FaCompass, FaEnvelope, FaBell, FaUser, FaUsers, FaSignOutAlt } from 'react-icons/fa'; // import icons from react-icons to use in navbar
 import { useNavigate } from 'react-router-dom'; // import useNavigate from react-router-dom for navigation
 
 const Sidebar = () => {
