@@ -190,7 +190,7 @@ app.post("/api/User", async (req, res) => {
 
         // Hash the password before saving
         const hashedPassword = await bcryptjs.hash(password, 10);
-        const hashedPassword = password;
+        //const hashedPassword = password;
 
         // Create a new user object
         const newUser = new User({
