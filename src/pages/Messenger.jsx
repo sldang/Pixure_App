@@ -22,7 +22,7 @@ export default function Messenger() {
     const scrollRef = useRef();
     
     useEffect(() => {
-        socket.current = io("ws://cs4800-server.onrender.com");
+        socket.current = io("https://cs4800-server.onrender.com");
         socket.current.on("getMessage", data => {
             setArrivalMessage({
                 sender: data.senderId,
