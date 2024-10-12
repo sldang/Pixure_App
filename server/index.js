@@ -22,11 +22,11 @@ const Message = require('./models/Message');
 const conversationRoute = require('./routes/conversations');
 const messageRoute = require('./routes/messages');
 const usersRoute = require('./routes/users');
-
-
-
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
+app.use(express.json());  
+const postRoute = require('./routes/posts'); 
+app.use('/api/posts', postRoute);
 
 // Connect to the database
 connectDB();
@@ -281,5 +281,5 @@ app.get("*", (req, res) => {
 
 // Start the server
 app.listen(PORT, () => {
-    console.log('SERVER IS RUNNING');
-})
+    console.log(`Server running on port ${PORT}`);
+});
