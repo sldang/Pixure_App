@@ -28,7 +28,7 @@ export default function Messenger() {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: localStorage.getItem("email"),
+                email: localStorage.getItem("user.email"),
                 followEmail: chatMenuInput
             })
         })
