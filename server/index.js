@@ -1,4 +1,5 @@
 
+
 require('dotenv').config();
 const cors = require("cors");
 const express = require("express");
@@ -33,7 +34,7 @@ connectDB();
 
 // CORS setup
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000'
+    origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com'
 }));
 
 // Middleware to parse URL-encoded and JSON bodies
@@ -247,6 +248,7 @@ app.post("/api/login", async (req, res) => {
 
         // Compare the password
         const isMatch = await bcryptjs.compare(password, user.password);
+
         if (!isMatch) {
             console.log("Invalid credentials");
             return res.status(400).json({ error: "Invalid credentials" });
