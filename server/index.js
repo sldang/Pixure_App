@@ -1,5 +1,4 @@
 
-
 require('dotenv').config();
 const cors = require("cors");
 const express = require("express");
@@ -248,7 +247,6 @@ app.post("/api/login", async (req, res) => {
 
         // Compare the password
         const isMatch = await bcryptjs.compare(password, user.password);
-
         if (!isMatch) {
             console.log("Invalid credentials");
             return res.status(400).json({ error: "Invalid credentials" });
