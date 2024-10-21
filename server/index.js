@@ -4,7 +4,7 @@ const cors = require("cors");
 const express = require("express");
 const connectDB = require("./connectDB");
 const jwt = require('jsonwebtoken');
-const bcrypt = require("bcryptjs");
+const bcryptjs = require("bcryptjs");
 const Post = require('./models/Post');
 const Community = require('./models/Community');
 const CommunityReport = require('./models/CommunityReport');    
@@ -188,7 +188,7 @@ app.post("/api/User", async (req, res) => {
         }
 
         // Hash the password before saving
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcryptjs.hash(password, 10);
 
         // Create a new user object
         const newUser = new User({
@@ -246,7 +246,7 @@ app.post("/api/login", async (req, res) => {
         }
 
         // Compare the password
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcryptjs.compare(password, user.password);
         if (!isMatch) {
             console.log("Invalid credentials");
             return res.status(400).json({ error: "Invalid credentials" });
