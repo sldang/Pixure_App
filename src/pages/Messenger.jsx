@@ -21,6 +21,9 @@ export default function Messenger() {
     const socket = useRef();
     const { user } = useContext(AuthContext);
     const scrollRef = useRef();
+    const storedUser = localStorage.getItem('user');
+    const userObject = JSON.parse(storedUser); 
+    const userEmail = userObject ? userObject.email : null;
 
     const makeFriend = async (e) => {
         e.preventDefault();
@@ -28,7 +31,7 @@ export default function Messenger() {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: localStorage.getItem("user.email"),
+                email: userEmail,
                 followEmail: chatMenuInput
             })
         })
