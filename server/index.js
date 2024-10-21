@@ -273,6 +273,8 @@ app.post("/api/follow", async (req, res) => {
     console.log("follow sent");
     try {
         const { email, followEmail } = req.body; // Assuming you're passing the email to be followed
+        console.log(email);
+        console.log(followEmail)
         const follower = await User.findOne({ email });
 
         if (!follower) {

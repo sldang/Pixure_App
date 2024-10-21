@@ -28,8 +28,8 @@ export default function Messenger() {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: chatMenuInput,
-                followEmail: localStorage.getItem("email")
+                email: localStorage.getItem("email"),
+                followEmail: chatMenuInput
             })
         })
     }
