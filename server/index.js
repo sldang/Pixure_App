@@ -34,7 +34,10 @@ connectDB();
 
 // CORS setup
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com'
+    origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+    credentials: true // Enable sending cookies with requests if needed
 }));
 
 // Middleware to parse URL-encoded and JSON bodies
