@@ -139,21 +139,20 @@ export default function Messenger() {
                             <button type="submit">Follow</button>
                         </form>
                         {conversations.map((c) => (
-                            <div onClick={() => setCurrentChat(c)}>
+                            <div key={c.id} onClick={() => setCurrentChat(c)}>
                                 <Conversation conversation={c} currentUser={user} />
                             </div>
                         ))}
                     </div>
                 </div>
-            </div>
-            <div className="chatBox">
-                <div className="chatBoxWrapper">
-                    {
-                        currentChat ? (
+    
+                <div className="chatBox">
+                    <div className="chatBoxWrapper">
+                        {currentChat ? (
                             <>
                                 <div className="chatBoxTop">
-                                    {messages.map(m => (
-                                        <div ref={scrollRef}>
+                                    {messages.map((m, index) => (
+                                        <div key={index} ref={scrollRef}>
                                             <Message message={m} own={m.sender === user.user.id} />
                                         </div>
                                     ))}
@@ -165,24 +164,27 @@ export default function Messenger() {
                                         onChange={(e) => setNewMessage(e.target.value)}
                                         value={newMessage}
                                     ></textarea>
-                                    <button className="chatSubmitButton" onClick={handleSubmit}>Send</button>
+                                    <button className="chatSubmitButton" onClick={handleSubmit}>
+                                        Send
+                                    </button>
                                 </div>
                             </>
                         ) : (
                             <span className="noConversationText">Open a conversation to start a chat.</span>
                         )}
+                    </div>
                 </div>
-            </div>
-            <div className="chatOnline">
-                <div className="chatOnlineWrapper">
-                    <ChatOnline
-                        onlineUsers={onlineUsers}
-                        currentId={user.user.id}
-                        setCurrentChat={setCurrentChat}
-                    />
+    
+                <div className="chatOnline">
+                    <div className="chatOnlineWrapper">
+                        <ChatOnline
+                            onlineUsers={onlineUsers}
+                            currentId={user.user.id}
+                            setCurrentChat={setCurrentChat}
+                        />
+                    </div>
                 </div>
-            </div>
-        </div >
-    </>
-  )
+            </div> {/* Closing tag for the outermost 'messenger' container */}
+        </>
+    );
 }
