@@ -225,7 +225,7 @@ app.post("/api/User", async (req, res) => {
 });
 
 app.get("/api/login", async(req, res) => {
-    res.json("bruh")
+    res.json("test")
 })
 
 // Login endpoint
@@ -263,6 +263,33 @@ app.post("/api/login", async (req, res) => {
     } catch (error) {
         console.error("Error during login:", error); // Log the error
         res.status(500).json({ error: "An error occurred during login" });
+    }
+});
+
+app.post("/api/follow", async (req, res) => {
+    console.log("follow sent");
+    try {
+        const { email, followEmail } = req.body; // Assuming you're passing the email to be followed
+        const follower = await User.findOne({ email });
+
+        if (!follower) {
+            console.log("Invalid credentials");
+            return res.status(404).json({ message: "User not found" });
+        } else {
+            // Check if the followEmail is already in the followList to avoid duplicates
+            if (!follower.followList.includes(followEmail)) {
+                follower.followList.push(followEmail);
+                await follower.save();
+                console.log("Email added to follow list");
+                return res.status(200).json({ message: "Followed successfully" });
+            } else {
+                console.log("Already following this user");
+                return res.status(400).json({ message: "Already following this user" });
+            }
+        }
+    } catch (error) {
+        console.error("Error while following:", error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 });
 
