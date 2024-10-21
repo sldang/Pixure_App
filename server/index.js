@@ -23,11 +23,11 @@ const Message = require('./models/Message');
 const conversationRoute = require('./routes/conversations');
 const messageRoute = require('./routes/messages');
 const usersRoute = require('./routes/users');
-
-
-
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
+app.use(express.json());  
+const postRoute = require('./routes/posts'); 
+app.use('/api/posts', postRoute);
 
 // Connect to the database
 connectDB();
@@ -190,7 +190,6 @@ app.post("/api/User", async (req, res) => {
 
         // Hash the password before saving
         const hashedPassword = await bcryptjs.hash(password, 10);
-        //const hashedPassword = password;
 
         // Create a new user object
         const newUser = new User({
@@ -249,7 +248,7 @@ app.post("/api/login", async (req, res) => {
 
         // Compare the password
         const isMatch = await bcryptjs.compare(password, user.password);
-        //const isMatch = password === user.password;
+
         if (!isMatch) {
             console.log("Invalid credentials");
             return res.status(400).json({ error: "Invalid credentials" });
@@ -284,5 +283,5 @@ app.get("*", (req, res) => {
 
 // Start the server
 app.listen(PORT, () => {
-    console.log('SERVER IS RUNNING');
-})
+    console.log(`Server running on port ${PORT}`);
+});
