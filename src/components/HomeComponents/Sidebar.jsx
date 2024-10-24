@@ -5,9 +5,9 @@ import { useLogout } from '../../hooks/useLogout';
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const { logout } = useLogout()
+const { logout } = useLogout();
 
-  // redirect to the login page
+   //redirect to the login page
   const handleLogout = () => {
     logout()
     navigate('/login');

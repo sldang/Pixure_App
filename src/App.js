@@ -8,7 +8,8 @@ import {
 import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
-import MessengerPage from './pages/Messenger'
+import MessengerPage from './pages/Messenger';
+import ProfilePage from './pages/ProfilePage'
 import { useContext } from 'react';
 import { AuthContext } from './contexts/AuthContext';
 
@@ -27,6 +28,8 @@ function App() {
             <Route path="/Home" element={user ? <HomePage/> : <SignupPage/>} />
             <Route path="/Login" element={user ? <Navigate to={"/Messenger"}/> : <LoginPage/>} />
             <Route path="/Messenger" element={<MessengerPage/>} />
+            <Route path="/Profile" element={<ProfilePage/>} />
+            <Route path="/Homing" element={<HomePage/>} />
         </Routes>
       </BrowserRouter>
     </div>
