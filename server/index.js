@@ -4,6 +4,7 @@ const cors = require("cors");
 const express = require("express");
 const connectDB = require("./connectDB");
 const jwt = require('jsonwebtoken');
+
 const bcryptjs = require("bcryptjs");
 const Post = require('./models/Post');
 const Community = require('./models/Community');
