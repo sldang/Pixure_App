@@ -11,7 +11,7 @@ const Home = () => {
     <NewsFeed/>
     <Rightbar />
     <Header
-              linkName="Login"
+              linkName="Messenger"
               linkUrl="/Login"
             />
   </div>

@@ -27,11 +27,11 @@ const userSchema = new Schema({
         required: false,
     },
     friendsList: {
-        type: String,
+        type: Array,
         required: false,
     },
     followList: {
-        type: String,
+        type: Array,
         required: false,
     },
     karma: {
