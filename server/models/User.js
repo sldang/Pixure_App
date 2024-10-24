@@ -26,7 +26,7 @@ const userSchema = new Schema({
         type: String,
         required: false,
     },
-    friendsList: {
+    followerList: {
         type: Array,
         required: false,
     },
