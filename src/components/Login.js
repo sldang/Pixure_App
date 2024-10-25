@@ -5,7 +5,6 @@ import FormExtra from "./FormExtra";
 import Input from "./Input";
 import { useAuthContext } from '../hooks/useAuthContext';
 
-
 const fields = loginFields;
 let fieldsState = {};
 fields.forEach(field => fieldsState[field.id] = '');
@@ -13,41 +12,40 @@ fields.forEach(field => fieldsState[field.id] = '');
 export default function Login() {
     const [loginState, setLoginState] = useState(fieldsState);
     const [errorMessage, setErrorMessage] = useState('');
-    const { dispatch } = useAuthContext()
+    const { dispatch } = useAuthContext();
+    const [useFakeLogin, setUseFakeLogin] = useState(false);  // Toggle for fake login
 
     const handleChange = (e) => setLoginState({ ...loginState, [e.target.id]: e.target.value });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(loginState['password'])
-        console.log(loginState['email-address'])
-        await authenticateUser(); // Call authenticateUser on form submit
-    }
+        console.log("Email:", loginState['email-address']);
+        console.log("Password:", loginState['password']);
+        if (useFakeLogin) {
+            await fakeAuthenticateUser();
+        } else {
+            await authenticateUser(); // Call real API authenticateUser
+        }
+    };
 
-
-
-    // Handle Login API Integration here
+    // Real API login
     const authenticateUser = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/login", { 
+            const response = await fetch("https://cs4800-server.onrender.com/api/login", { 
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: loginState['email-address'],
                     password: loginState['password'],
                 })
-                
             });
-            const json = await response.json()
+            const json = await response.json();
             if (response.ok) {
                 console.log("Logged in successfully");
                 localStorage.setItem('user', JSON.stringify(json));
-                console.log("User saved to localStorage:", JSON.parse(localStorage.getItem('user')));
-                dispatch({type: 'LOGIN', payload: json})
+                dispatch({type: 'LOGIN', payload: json});
             } else {
-                const errorData = await response.json();
-                setErrorMessage(errorData.error || "Login failed. Please check your credentials.");
-                console.log("Login failed with error:", errorData.error);
+                setErrorMessage(json.error || "Login failed. Please check your credentials.");
             }
         } catch (error) {
             setErrorMessage('Error fetching user data. Please try again.');
@@ -55,33 +53,76 @@ export default function Login() {
         }
     };
 
+    // Fake login
+    const fakeAuthenticateUser = async () => {
+        const fakeCredentials = {
+            email: 'test@test.com',
+            password: 'password123',
+        };
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                if (
+                    loginState['email-address'] === fakeCredentials.email &&
+                    loginState['password'] === fakeCredentials.password
+                ) {
+                    const fakeUserData = {
+                        email: fakeCredentials.email,
+                        token: 'fake-jwt-token',
+                        name: 'John Doe',
+                    };
+                    console.log("Logged in successfully (fake)");
+
+                    // Save fake user data to localStorage
+                    localStorage.setItem('user', JSON.stringify(fakeUserData));
+                    dispatch({ type: 'LOGIN', payload: fakeUserData });
+
+                    resolve(true);
+                } else {
+                    setErrorMessage("Invalid email or password.");
+                    console.log("Login failed: Invalid email or password (fake).");
+                    resolve(false);
+                }
+            }, 1000); // Simulate network delay
+        });
+    };
+
     return (
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="-space-y-px">
-                {
-                    fields.map(field => (
-                        <Input
-                            key={field.id}
-                            handleChange={handleChange}
-                            value={loginState[field.id]}
-                            labelText={field.labelText}
-                            labelFor={field.labelFor}
-                            id={field.id}
-                            name={field.name}
-                            type={field.type}
-                            isRequired={field.isRequired}
-                            placeholder={field.placeholder}
-                        />
-                    ))
-                }
+                {fields.map(field => (
+                    <Input
+                        key={field.id}
+                        handleChange={handleChange}
+                        value={loginState[field.id]}
+                        labelText={field.labelText}
+                        labelFor={field.labelFor}
+                        id={field.id}
+                        name={field.name}
+                        type={field.type}
+                        isRequired={field.isRequired}
+                        placeholder={field.placeholder}
+                    />
+                ))}
             </div>
 
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+
+            {/* Toggle between real and fake login */}
+            <div className="flex items-center">
+                <input
+                    type="checkbox"
+                    id="fakeLogin"
+                    checked={useFakeLogin}
+                    onChange={(e) => setUseFakeLogin(e.target.checked)}
+                />
+                <label htmlFor="fakeLogin" className="ml-2">
+                    Use Fake Login
+                </label>
+            </div>
 
             <FormExtra />
             <FormAction handleSubmit={handleSubmit} text="Login" />
         </form>
     );
 }
-
-

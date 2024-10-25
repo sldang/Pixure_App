@@ -5,7 +5,6 @@ const Profile = () => {
   const [following, setFollowing] = useState([]);
 
   useEffect(() => {
-    // Simulated fake data for followers and following
     const fakeFollowers = [
       { name: 'John Doe' },
       { name: 'Jane Smith' },
@@ -18,8 +17,8 @@ const Profile = () => {
       { name: 'Serena Williams' }
     ];
 
-    setFollowers(fakeFollowers); // Set fake followers
-    setFollowing(fakeFollowing); // Set fake following
+    setFollowers(fakeFollowers);
+    setFollowing(fakeFollowing);
   }, []);
 
   return (

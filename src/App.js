@@ -8,7 +8,10 @@ import {
 import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
-import MessengerPage from './pages/Messenger'
+import MessengerPage from './pages/Messenger';
+import ExplorePage from './pages/Explore';
+import CommunitiesPage from './pages/Communities';
+import Sidebar from './components/HomeComponents/Sidebar';  
 import { useContext } from 'react';
 import { AuthContext } from './contexts/AuthContext';
 
@@ -16,23 +19,23 @@ function App() {
   const { user } = useContext(AuthContext);
 
   return (
-    //className="min-h-full h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
-    //className="max-w-md w-full space-y-8"
-    <div>
-    <div>
-     <BrowserRouter>
-        <Routes>
+    <div className="App">
+      <BrowserRouter>
+        {user && <Sidebar />}  {/* Sidebar will be visible if user is authenticated */}
+        <div className="content">  {/* Adjust layout to leave space for Sidebar */}
+          <Routes>
             <Route path="/" element={user ? <HomePage/> : <LoginPage/>} />
-            <Route path="/signup" element={user ? <Navigate to={"/Messenger"}/> : <SignupPage/>} />
-            <Route path="/Home" element={user ? <HomePage/> : <SignupPage/>} />
-            <Route path="/Login" element={user ? <Navigate to={"/Messenger"}/> : <LoginPage/>} />
-            <Route path="/Messenger" element={<MessengerPage/>} />
-        </Routes>
+            <Route path="/signup" element={user ? <Navigate to="/Messenger"/> : <SignupPage/>} />
+            <Route path="/home" element={user ? <HomePage/> : <Navigate to="/login"/>} />
+            <Route path="/login" element={user ? <Navigate to="/Messenger"/> : <LoginPage/>} />
+            <Route path="/messenger" element={<MessengerPage/>} />
+            <Route path="/explore" element={user ? <ExplorePage/> : <Navigate to="/login"/>} />
+            <Route path="/communities" element={user ? <CommunitiesPage/> : <Navigate to="/login"/>} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </div>
-  </div>
   );
 }
 
 export default App;
-
