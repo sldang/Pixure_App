@@ -21,8 +21,8 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        {user && <Sidebar />}  {/* Sidebar will be visible if user is authenticated */}
-        <div className="content">  {/* Adjust layout to leave space for Sidebar */}
+        {user && <Sidebar />}  {/* sidebar will be visible if user is authenticated */}
+        <div className="content">  {/* adjust layout to leave space for sidebar */}
           <Routes>
             <Route path="/" element={user ? <HomePage/> : <LoginPage/>} />
             <Route path="/signup" element={user ? <Navigate to="/Messenger"/> : <SignupPage/>} />
