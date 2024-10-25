@@ -13,7 +13,7 @@ export default function Login() {
     const [loginState, setLoginState] = useState(fieldsState);
     const [errorMessage, setErrorMessage] = useState('');
     const { dispatch } = useAuthContext();
-    const [useFakeLogin, setUseFakeLogin] = useState(false);  // Toggle for fake login
+    const [useFakeLogin, setUseFakeLogin] = useState(false);  // toggle for fake login
 
     const handleChange = (e) => setLoginState({ ...loginState, [e.target.id]: e.target.value });
 
@@ -24,11 +24,11 @@ export default function Login() {
         if (useFakeLogin) {
             await fakeAuthenticateUser();
         } else {
-            await authenticateUser(); // Call real API authenticateUser
+            await authenticateUser(); // call real api authenticateUser
         }
     };
 
-    // Real API login
+    // real login
     const authenticateUser = async () => {
         try {
             const response = await fetch("https://cs4800-server.onrender.com/api/login", { 
@@ -53,7 +53,7 @@ export default function Login() {
         }
     };
 
-    // Fake login
+    // fake login
     const fakeAuthenticateUser = async () => {
         const fakeCredentials = {
             email: 'test@test.com',
@@ -73,7 +73,7 @@ export default function Login() {
                     };
                     console.log("Logged in successfully (fake)");
 
-                    // Save fake user data to localStorage
+                    // save fake user data to localStorage
                     localStorage.setItem('user', JSON.stringify(fakeUserData));
                     dispatch({ type: 'LOGIN', payload: fakeUserData });
 
@@ -83,7 +83,7 @@ export default function Login() {
                     console.log("Login failed: Invalid email or password (fake).");
                     resolve(false);
                 }
-            }, 1000); // Simulate network delay
+            }, 1000); // simulate network delay
         });
     };
 
@@ -108,7 +108,7 @@ export default function Login() {
 
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
-            {/* Toggle between real and fake login */}
+            {/* toggle between real and fake login */}
             <div className="flex items-center">
                 <input
                     type="checkbox"
