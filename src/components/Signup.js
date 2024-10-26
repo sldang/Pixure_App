@@ -24,7 +24,7 @@ export default function Signup() {
     
     try{
       
-      const response = await fetch("http://localhost:8000/api/User", {
+      const response = await fetch("https://cs4800-server.onrender.com/api/User", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(
@@ -35,8 +35,8 @@ export default function Signup() {
             email: signupState['email-address'],
             zipcode: signupState['zipcode'],
             password: signupState['password'],
-            friendsList: 0,
-            followList: 0,
+            friendsList: [],
+            followList: [],
             karma: 0,
             communityIDs: 0,
             posts: 0,

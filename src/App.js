@@ -9,9 +9,11 @@ import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
 import MessengerPage from './pages/Messenger';
+
 import ExplorePage from './pages/Explore';
 import CommunitiesPage from './pages/Communities';
 import Sidebar from './components/HomeComponents/Sidebar';  
+
 import { useContext } from 'react';
 import { AuthContext } from './contexts/AuthContext';
 
@@ -25,6 +27,7 @@ function App() {
         <div className="content">  {/* adjust layout to leave space for sidebar */}
           <Routes>
             <Route path="/" element={user ? <HomePage/> : <LoginPage/>} />
+
             <Route path="/signup" element={user ? <Navigate to="/Messenger"/> : <SignupPage/>} />
             <Route path="/home" element={user ? <HomePage/> : <Navigate to="/login"/>} />
             <Route path="/login" element={user ? <Navigate to="/Messenger"/> : <LoginPage/>} />
@@ -33,6 +36,7 @@ function App() {
             <Route path="/communities" element={user ? <CommunitiesPage/> : <Navigate to="/login"/>} />
           </Routes>
         </div>
+
       </BrowserRouter>
     </div>
   );
