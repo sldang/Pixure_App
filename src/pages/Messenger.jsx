@@ -26,7 +26,7 @@ export default function Messenger() {
 
     const makeChat = async (e) => {
         e.preventDefault();
-        const response = await fetch("https://cs4800-server.onrender.com/api/Conversation", {
+        const response = await fetch("https://cs4800-server.onrender.com/api/conversations", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

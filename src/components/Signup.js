@@ -35,7 +35,7 @@ export default function Signup() {
             email: signupState['email-address'],
             zipcode: signupState['zipcode'],
             password: signupState['password'],
-            friendsList: [],
+            followerList: [],
             followList: [],
             karma: 0,
             communityIDs: 0,

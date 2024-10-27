@@ -4,15 +4,26 @@ const router = express.Router();
 
 // new conv
 router.post("/", async (req, res) => {
-    const newConversation = new Conversation({
-        members: [req.body.senderId, req.body.receiverId],
-    });
+    const { userEmail, otherEmail } = req.body;
+    console.log(userEmail + otherEmail)
+    const user = await User.findOne({ userEmail })
+    const recipient = await User.findOne({ otherEmail })
+    if (!user || !recipient) {
+        console.log("Invalid credentials");
+        return res.status(404).json({ message: "User not found" });
+    } else {
 
-    try {
-        const savedConversation = await newConversation.save();
-        res.status(200).json(savedConversation);
-    } catch(err){
-        res.status(500).json(err);
+        const senderId = user._id
+        const recipientId = recipient._id
+        const newConversation = new Conversation({
+            members: [senderId, recipientId],
+        });
+        try {
+            const savedConversation = await newConversation.save();
+            res.status(200).json(savedConversation);
+        } catch (err) {
+            res.status(500).json(err);
+        }
     }
 });
 
@@ -23,7 +34,7 @@ router.get("/:userId", async (req, res) => {
             members: { $in: [req.params.userId] },
         });
         res.status(200).json(conversation);
-    } catch(err){
+    } catch (err) {
         res.status(500).json(err);
     }
 });

@@ -127,6 +127,13 @@ const Sidebar = () => {
                   value={chatMenuInput}
                   onChange={(e) => setChatMenuInput(e.target.value)}
                 /> */}
+                <input
+                  type="text"
+                  className="w-full mt-2 px-4 py-2 border rounded-md"
+                  placeholder="Search users..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
                 <button type="submit">Follow</button>
                 <div className="mt-2">
                   {filteredUsers.map((user, index) => (
