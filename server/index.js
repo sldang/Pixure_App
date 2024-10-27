@@ -220,7 +220,6 @@ app.post("/api/User", async (req, res) => {
         // Save the new user to the database
         await newUser.save();
         res.status(201).json({ message: "User created successfully" });
-        console.log("hope")
     } catch (error) {
         console.error("Error creating user:", error);
         res.status(500).json({ error: "An error occurred while creating the user" });
@@ -299,6 +298,28 @@ app.post("/api/follow", async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 });
+
+app.post("api/Conversation", async (req, res) => {
+    console.log("conversation initiated")
+    try{
+        const { userId, otherId } = req.body;
+        console.log(userId + otherId)
+        const user = await User.findOne({ userId })
+        const recipient = await User.findOne({ otherId })
+        if(!user || !recipient){
+            console.log("Invalid credentials");
+            return res.status(404).json({ message: "User not found" });
+        } else {
+            if(!recipient.Conversation.includes(user) && !recipient.Conversation.includes(recipient)){
+                const newConvo = new Conversation({ user, recipient})
+                await newConvo.save()
+                console.log("convo created succesfully");
+            }else{
+                console.log("convo failed")
+            }
+        }
+    }
+})
 
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);

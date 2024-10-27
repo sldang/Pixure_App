@@ -11,7 +11,7 @@ const Rightbar = () => {
 
   return (
     <div className="max-w-md mx-auto p-4">
-      <h2 className="text-lg font-bold mb-4">Followers</h2>
+      <h2 className="text-lg font-bold mb-4">Following</h2>
       {users.map((user, index) => (
         <div key={index} className="flex items-center justify-between py-2 border-b border-gray-200">
           <div className="flex items-center space-x-3">
