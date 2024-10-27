@@ -3,6 +3,13 @@ const Conversation = require('../models/Conversation');
 const router = express.Router();
 
 // new conv
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+    credentials: true // Enable sending cookies with requests if needed
+}));
+
 router.post("/", async (req, res) => {
     const { userEmail, otherEmail } = req.body;
     console.log(userEmail + otherEmail)
