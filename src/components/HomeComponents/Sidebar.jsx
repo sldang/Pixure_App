@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/useLogout';
 import socket from '../../socket';
 
+
 const Sidebar = () => {
   const navigate = useNavigate();
   const { logout } = useLogout();
@@ -13,6 +14,8 @@ const Sidebar = () => {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [isNotificationsVisible, setIsNotificationsVisible] = useState(false); // toggle notifications visibility
   const [profileImage, setProfileImage] = useState(null); // user profile image state
+  const parsedData = JSON.parse(localStorage.getItem('user'));
+  const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
 
   // example notifications
   const [notifications] = useState([
@@ -20,6 +23,18 @@ const Sidebar = () => {
     { user: 'Jane Smith', content: 'commented: "Nice post!"', time: '2d ago' },
     { user: 'John Doe', content: 'followed you', time: '3d ago' },
   ]);
+
+  const makeFriend = async (e) => {
+    e.preventDefault();
+    const response = await fetch("https://cs4800-server.onrender.com/api/follow", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: userEmail,
+        followEmail: chatMenuInput
+      })
+    })
+  }
 
   useEffect(() => {
     const fetchProfileImage = async () => {
@@ -107,12 +122,12 @@ const Sidebar = () => {
             {isSearchVisible && (
               <div>
                 <input
-                  type="text"
-                  className="w-full mt-2 px-4 py-2 border rounded-md"
-                  placeholder="Search users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search for friends"
+                  className="chatMenuInput"
+                  value={chatMenuInput}
+                  onChange={(e) => setChatMenuInput(e.target.value)}
                 />
+                <button type="submit">Follow</button>
                 <div className="mt-2">
                   {filteredUsers.map((user, index) => (
                     <div key={index} className="py-1">{user}</div>

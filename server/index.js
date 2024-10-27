@@ -299,19 +299,38 @@ app.post("/api/follow", async (req, res) => {
     }
 });
 
+app.get('/api/following', async (req, res) => {
+    const { email } = req.query;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Assuming followList contains emails of the followers
+        const followers = await User.find({ email: { $in: user.followList } }, 'email'); 
+        res.json(followers);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching followers' });
+    }
+});
+
 app.post("api/Conversation", async (req, res) => {
     console.log("conversation initiated")
     try{
-        const { userId, otherId } = req.body;
-        console.log(userId + otherId)
-        const user = await User.findOne({ userId })
-        const recipient = await User.findOne({ otherId })
+        const { userEmail, otherEmail } = req.body;
+        console.log(userEmail + otherEmail)
+        const user = await User.findOne({ userEmail })
+        const recipient = await User.findOne({ otherEmail })
         if(!user || !recipient){
             console.log("Invalid credentials");
             return res.status(404).json({ message: "User not found" });
         } else {
-            if(!recipient.Conversation.includes(user) && !recipient.Conversation.includes(recipient)){
-                const newConvo = new Conversation({ user, recipient})
+            if(true){
+                const userId = user._id
+                const recipientId = recipient._id
+                const newConvo = new Conversation({ userId, recipientId})
                 await newConvo.save()
                 console.log("convo created succesfully");
             }else{

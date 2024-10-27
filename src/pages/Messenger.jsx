@@ -24,9 +24,9 @@ export default function Messenger() {
     const parsedData = JSON.parse(localStorage.getItem('user'));
     const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
 
-    const makeFriend = async (e) => {
+    const makeChat = async (e) => {
         e.preventDefault();
-        const response = await fetch("https://cs4800-server.onrender.com/api/follow", {
+        const response = await fetch("https://cs4800-server.onrender.com/api/Conversation", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -132,9 +132,9 @@ export default function Messenger() {
             <div className="messenger">
                 <div className="chatMenu">
                     <div className="chatMenuWrapper">
-                        <form onSubmit={makeFriend}>
+                        <form onSubmit={makeChat}>
                             <input
-                                placeholder="Search for friends"
+                                placeholder="Converse with friend"
                                 className="chatMenuInput"
                                 value={chatMenuInput}
                                 onChange={(e) => setChatMenuInput(e.target.value)}
