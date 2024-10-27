@@ -3,7 +3,7 @@ const Conversation = require('../models/Conversation');
 const router = express.Router();
 
 // new conv
-app.use(cors({
+router.use(cors({
     origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
