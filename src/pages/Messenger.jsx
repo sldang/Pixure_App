@@ -187,7 +187,10 @@ export default function Messenger() {
                         />
                     </div>
                 </div>
-            </div> {/* Closing tag for the outermost 'messenger' container */}
-        </>
-    );
+
+            </div>
+        </div>
+    </>
+  )
 }
+

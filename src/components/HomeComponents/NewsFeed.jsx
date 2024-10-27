@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import UploadPost from './UploadPost';
 import Post from './Post';
+import PersonalProfile from './PersonalProfile';
 
 const NewsFeed = () => {
+
   const [posts, setPosts] = useState([]); 
   const [postContent, setPostContent] = useState(''); 
 
@@ -50,19 +52,23 @@ const NewsFeed = () => {
       } catch (error) {
         console.error('Error:', error);
       }
+
     }
   };
 
   return (
-    <div style={{ flex: 3 }} className='pl-10 pt-5'>
-      <UploadPost 
-        postContent={postContent} 
-        setPostContent={setPostContent} 
-        handleUpload={handleUpload} 
-      />
-      {posts.map((post, index) => (
-        <Post key={index} user={post.user} time={post.time} content={post.content} />
-      ))}
+    <div className="flex justify-center w-full h-screen items-start pt-10">
+      <div className="w-full max-w-[600px] ml-10"> 
+        <PersonalProfile />
+        <UploadPost
+          postContent={postContent}
+          setPostContent={setPostContent}
+          handleUpload={handleUpload}
+        />
+        {posts.map((post, index) => (
+          <Post key={index} user={post.user} time={post.time} content={post.content} />
+        ))}
+      </div>
     </div>
   );
 };
