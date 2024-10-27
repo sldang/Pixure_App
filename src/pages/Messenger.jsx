@@ -139,7 +139,7 @@ export default function Messenger() {
                                 value={chatMenuInput}
                                 onChange={(e) => setChatMenuInput(e.target.value)}
                             />
-                            <button type="submit">Follow</button>
+                            <button type="submit">Make Conversation with this fellow</button>
                         </form>
                         {conversations.map((c) => (
                             <div key={c.id} onClick={() => setCurrentChat(c)}>
