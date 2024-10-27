@@ -1,6 +1,7 @@
 const express = require("express");
 const Conversation = require('../models/Conversation');
 const router = express.Router();
+const cors = require("cors");
 
 // new conv
 router.use(cors({
