@@ -6,11 +6,11 @@ const UploadPost = ({ postContent, setPostContent, handleUpload }) => {
             <div className='wrapper p-[10px]'>
                 <div className='top flex items-center'>
                     <input
-                      type="text"
-                      placeholder='Post?'
-                      className='w-[80%] focus:outline-none'
-                      value={postContent}
-                      onChange={(e) => setPostContent(e.target.value)} // Update input state
+                        type="text"
+                        placeholder='Post?'
+                        className='w-[80%] focus:outline-none'
+                        value={postContent}
+                        onChange={(e) => setPostContent(e.target.value)} // Update input state
                     />
                 </div>
                 <hr className='m-[20px]' />
