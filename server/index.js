@@ -337,6 +337,8 @@ app.post("api/Conversation", async (req, res) => {
                 console.log("convo failed")
             }
         }
+    } catch (error){
+        res.status(500).json({message: 'error fetching converse'});
     }
 })
 

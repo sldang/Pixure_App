@@ -24,17 +24,17 @@ const Sidebar = () => {
     { user: 'John Doe', content: 'followed you', time: '3d ago' },
   ]);
 
-  const makeFriend = async (e) => {
-    e.preventDefault();
-    const response = await fetch("https://cs4800-server.onrender.com/api/follow", {
-      method: "POST",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: userEmail,
-        followEmail: chatMenuInput
-      })
-    })
-  }
+  // const makeFriend = async (e) => {
+  //   e.preventDefault();
+  //   const response = await fetch("https://cs4800-server.onrender.com/api/follow", {
+  //     method: "POST",
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({
+  //       email: userEmail,
+  //       followEmail: chatMenuInput
+  //     })
+  //   })
+  // }
 
   useEffect(() => {
     const fetchProfileImage = async () => {
@@ -121,12 +121,12 @@ const Sidebar = () => {
             />
             {isSearchVisible && (
               <div>
-                <input
+                {/* <input
                   placeholder="Search for friends"
                   className="chatMenuInput"
                   value={chatMenuInput}
                   onChange={(e) => setChatMenuInput(e.target.value)}
-                />
+                /> */}
                 <button type="submit">Follow</button>
                 <div className="mt-2">
                   {filteredUsers.map((user, index) => (
