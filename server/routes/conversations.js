@@ -15,8 +15,8 @@ router.use(cors({
 router.post("/", async (req, res) => {
     const { userEmail, otherEmail } = req.body;
      
-    const user = await User.findOne({ userEmail })
-    const recipient = await User.findOne({ otherEmail })
+    const user = await User.findOne({ email: userEmail })
+    const recipient = await User.findOne({ email: otherEmail })
     console.log("User Email:", user.email);
     console.log("Other Email:", recipient.email);
     if (!user || !recipient) {
