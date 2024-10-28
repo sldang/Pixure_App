@@ -1,5 +1,6 @@
 const express = require("express");
 const Conversation = require('../models/Conversation');
+const User = require('../models/User');
 const router = express.Router();
 const cors = require("cors");
 
