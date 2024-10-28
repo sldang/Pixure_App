@@ -39,7 +39,7 @@ const Rightbar = ({ user }) => {
     const fetchFollowers = async () => {
       try {
         const promises = user.followList.map((email) =>
-          axios.post('https://cs4800-server.onrender.com/api/getUserByEmail', { email })
+          axios.get(`https://cs4800-server.onrender.com/api/getUserByEmail?email=${email}`)
         );
         const results = await Promise.all(promises);
         const followersData = results.map((res) => res.data);

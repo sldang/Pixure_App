@@ -268,17 +268,6 @@ app.post("/api/login", async (req, res) => {
     }
 });
 
-// In your user routes file
-app.post('/getUserByEmail', async (req, res) => {
-    const { email } = req.body;
-    try {
-        const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: 'User not found' });
-        res.status(200).json({ username: user.nickname });
-    } catch (err) {
-        res.status(500).json(err);
-    }
-});
 
 app.post("/api/follow", async (req, res) => {
     console.log("follow sent");
@@ -310,23 +299,18 @@ app.post("/api/follow", async (req, res) => {
         return res.status(500).json({ message: "Internal server error" });
     }
 });
-
-app.get('/api/following', async (req, res) => {
-    const { email } = req.query;
-
+// In your user routes file
+app.get('/getUserByEmail', async (req, res) => {
+    const email = req.query.email;
     try {
         const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Assuming followList contains emails of the followers
-        const followers = await User.find({ email: { $in: user.followList } }, 'email');
-        res.json(followers);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching followers' });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.status(200).json({ username: user.nickname });
+    } catch (err) {
+        res.status(500).json(err);
     }
 });
+
 
 // app.post("api/Conversation", async (req, res) => {
 //     console.log("conversation initiated")
