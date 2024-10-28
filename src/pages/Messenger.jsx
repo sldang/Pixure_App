@@ -141,11 +141,11 @@ export default function Messenger() {
                             />
                             <button type="submit">Follow</button>
                         </form>
-                        {/* {conversations.map((c) => (
+                        {conversations.map((c) => (
                             <div key={c.id} onClick={() => setCurrentChat(c)}>
                                 <Conversation conversation={c} currentUser={user} />
                             </div>
-                        ))} */}
+                        ))}
                     </div>
                 </div>
     
