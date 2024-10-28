@@ -33,7 +33,7 @@ export default function Messenger() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 email: userEmail,
-                followEmail: chatMenuInput
+                otherEmail: chatMenuInput
             })
         })
     }
