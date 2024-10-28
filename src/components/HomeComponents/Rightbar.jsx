@@ -41,6 +41,7 @@ const Rightbar = () => {
     useEffect(() => {
         const fetchFollowList = async () => {
             if (!userEmail) return;
+            console.log(userEmail)
 
             try {
                 // Get the followList from the backend if it isn't available in local storage
