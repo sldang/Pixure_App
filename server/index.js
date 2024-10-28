@@ -285,7 +285,7 @@ app.post("/api/follow", async (req, res) => {
             // Check if the followEmail is already in the followList to avoid duplicates
             if (!follower.followList.includes(followEmail)) {
                 follower.followList.push(followEmail);
-                followed.followedList.push(email);
+                followed.followerList.push(email);
                 await follower.save();
                 console.log("Email added to follow list");
                 return res.status(200).json({ message: "Followed successfully" });
