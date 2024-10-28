@@ -26,6 +26,7 @@ const Sidebar = () => {
 
   const makeFriend = async (e) => {
     e.preventDefault();
+    console.log("makefriend")
     const response = await fetch("https://cs4800-server.onrender.com/api/follow", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
