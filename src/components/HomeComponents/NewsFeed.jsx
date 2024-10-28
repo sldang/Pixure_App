@@ -23,18 +23,35 @@ const NewsFeed = () => {
   }, []);
 
   const handleUpload = async () => {
-    try {
-      const response = await fetch('api/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: postContent, time: 'Just now' }),
-      });
-      if (!response.ok) throw new Error('Failed to upload post');
-      const newPost = await response.json();
-      setPosts((prev) => [...prev, newPost]);
-      setPostContent('');
-    } catch (error) {
-      console.error('Error:', error);
+    if (postContent) {
+      const newPost = { content: postContent, time: 'Just now' };
+  
+      try {
+        const response = await fetch('/api/posts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newPost),
+        });
+  
+        if (!response.ok) {
+          console.error('Failed to save post');
+          return;
+        }
+  
+        const savedPost = await response.json().catch(() => {
+          console.warn('Response is not valid JSON'); // Handle invalid JSON
+          return null;
+        });
+  
+        if (savedPost) {
+          setPosts([...posts, savedPost]);
+          setPostContent('');
+        }
+      } catch (error) {
+        console.error('Error uploading post:', error);
+      }
     }
   };
 

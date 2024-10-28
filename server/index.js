@@ -379,3 +379,17 @@ io.on('connection', (socket) => {
   });
 });
 
+
+
+  app.post('/api/posts', async (req, res) => {
+    try {
+      const newPost = new Post(req.body); // Create a new post from request body
+      const savedPost = await newPost.save(); // Save the post to the database
+      console.log('Post saved:', savedPost); // Log the saved post
+  
+      res.status(201).json(savedPost); // Send back the saved post as a JSON response
+    } catch (error) {
+      console.error('Error saving post:', error); // Log any error
+      res.status(500).json({ error: 'Failed to save post' }); // Send an error response
+    }
+  });
