@@ -34,18 +34,22 @@ import axios from 'axios';
 
 const Rightbar = () => {
     const [followers, setFollowers] = useState([]);
+    const parsedData = JSON.parse(localStorage.getItem('user'));
+    const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
 
     useEffect(() => {
         const fetchFollowers = async () => {
-            // Retrieve user data from local storage
-            const user = JSON.parse(localStorage.getItem('user'));
             // Check if user and followList exist
             if (!user || !user.followList || user.followList.length === 0) return;
 
             try {
-                const promises = user.followList.map((email) =>
-                    axios.get(`https://cs4800-server.onrender.com/api/getUserByEmail?email=${email}`)
-                );
+              const response = await fetch("https://cs4800-server.onrender.com/api/getUserByEmail", { 
+                method: "GET",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: userEmail,
+                })
+            });
                 const results = await Promise.all(promises);
                 const followersData = results.map((res) => res.data);
                 setFollowers(followersData);
