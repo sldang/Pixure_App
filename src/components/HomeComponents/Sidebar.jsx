@@ -25,8 +25,8 @@ const Sidebar = () => {
   ]);
 
   const makeFriend = async (e) => {
-    e.preventDefault();
     console.log("makefriend")
+    e.preventDefault();
     const response = await fetch("https://cs4800-server.onrender.com/api/follow", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
@@ -35,6 +35,13 @@ const Sidebar = () => {
         followEmail: searchQuery
       })
     })
+    // Check response status and handle it as necessary
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Followed successfully:', data);
+    } else {
+      console.error('Failed to follow:', response.statusText);
+    }
   }
 
   useEffect(() => {
@@ -137,7 +144,7 @@ const Sidebar = () => {
                 />
                 <button
                   className="text-blue-500 text-sm font-semibold"
-                  onClick={() => makeFriend}
+                  onClick={(e) => makeFriend(e)}
                 >
                   Follow
                 </button>
