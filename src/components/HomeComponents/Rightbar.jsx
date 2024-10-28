@@ -38,8 +38,8 @@ const Rightbar = () => {
 
     useEffect(() => {
         const fetchFollowers = async () => {
-            // Check if userEmail exists
-            if (!userEmail) return;
+          console.log(userEmail);
+          if (!userEmail) return;
 
             // Get user's followList
             const userFollowList = parsedData.user.followList || [];
