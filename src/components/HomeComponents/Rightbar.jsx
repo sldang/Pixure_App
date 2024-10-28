@@ -32,11 +32,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Rightbar = ({ user }) => {
+const Rightbar = () => {
     const [followers, setFollowers] = useState([]);
 
     useEffect(() => {
         const fetchFollowers = async () => {
+            // Retrieve user data from local storage
+            const user = JSON.parse(localStorage.getItem('user'));
             // Check if user and followList exist
             if (!user || !user.followList || user.followList.length === 0) return;
 
@@ -53,7 +55,7 @@ const Rightbar = ({ user }) => {
         };
 
         fetchFollowers();
-    }, [user]);
+    }, []);
 
     return (
         <div className="max-w-md mx-auto p-4">
@@ -75,4 +77,5 @@ const Rightbar = ({ user }) => {
 };
 
 export default Rightbar;
+
 
