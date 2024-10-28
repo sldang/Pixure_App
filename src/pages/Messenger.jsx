@@ -32,7 +32,7 @@ export default function Messenger() {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: userEmail,
+                userEmail: userEmail,
                 otherEmail: chatMenuInput
             })
         })
