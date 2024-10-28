@@ -319,12 +319,8 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 require('dotenv').config();
-const express = require('express');
 const http = require('http'); // Import HTTP module
 const { Server } = require('socket.io'); // Import Socket.IO
-const cors = require('cors');
-const connectDB = require('./connectDB'); 
-const postRoute = require('./routes/posts'); 
 
 const server = http.createServer(app); // Create HTTP server
 
