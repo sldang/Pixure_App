@@ -300,7 +300,7 @@ app.post("/api/follow", async (req, res) => {
     }
 });
 // In your user routes file
-router.get('/getUserByEmail', async (req, res) => {
+app.get('/getUserByEmail', async (req, res) => {
   const email = req.query.email;
   try {
     const user = await User.findOne({ email });
