@@ -1,6 +1,7 @@
 const express = require("express");
 const Message = require('../models/Message');
 const router = express.Router();
+const cors = require("cors");
 
 //add messages
 router.use(cors({
