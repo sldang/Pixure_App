@@ -300,7 +300,7 @@ app.post("/api/follow", async (req, res) => {
     }
 });
 // In your user routes file
-app.get('/getUserByEmail', async (req, res) => {
+app.get('/api/getUserByEmail', async (req, res) => {
     const email = req.query.email;
     try {
         const user = await User.findOne({ email });
@@ -311,7 +311,7 @@ app.get('/getUserByEmail', async (req, res) => {
     }
 });
 
-app.get('/getUserFollowers', async (req,res) => {
+app.get('/api/getUserFollowers', async (req,res) => {
     const email = req.query;
     try{
         const user = await User.findOne({email})
