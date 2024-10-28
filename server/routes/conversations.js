@@ -14,9 +14,11 @@ router.use(cors({
 
 router.post("/", async (req, res) => {
     const { userEmail, otherEmail } = req.body;
-    console.log("Other Email:", otherEmail); 
+     
     const user = await User.findOne({ userEmail })
     const recipient = await User.findOne({ otherEmail })
+    console.log("User Email:", user.email);
+    console.log("Other Email:", recipient.email);
     if (!user || !recipient) {
         console.log("Invalid credentials");
         return res.status(404).json({ message: "User not found" });
