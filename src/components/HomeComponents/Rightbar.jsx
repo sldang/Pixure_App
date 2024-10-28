@@ -30,7 +30,6 @@
 // export default Rightbar
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 
 const Rightbar = () => {
     const [followers, setFollowers] = useState([]);
@@ -39,19 +38,28 @@ const Rightbar = () => {
 
     useEffect(() => {
         const fetchFollowers = async () => {
-            // Check if user and followList exist
-            if (!user || !user.followList || user.followList.length === 0) return;
+            // Check if userEmail exists
+            if (!userEmail) return;
+
+            // Get user's followList
+            const userFollowList = parsedData.user.followList || [];
+
+            // Check if followList exists and is not empty
+            if (userFollowList.length === 0) return;
 
             try {
-              const response = await fetch("https://cs4800-server.onrender.com/api/getUserByEmail", { 
-                method: "GET",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: userEmail,
-                })
-            });
-                const results = await Promise.all(promises);
-                const followersData = results.map((res) => res.data);
+                // Create an array of fetch promises for each email
+                const promises = userFollowList.map((email) =>
+                    fetch(`https://cs4800-server.onrender.com/api/getUserByEmail?email=${email}`)
+                );
+
+                // Wait for all fetch requests to resolve
+                const responses = await Promise.all(promises);
+
+                // Convert the responses to JSON
+                const followersData = await Promise.all(responses.map(res => res.json()));
+
+                // Set the followers data in state
                 setFollowers(followersData);
             } catch (error) {
                 console.error('Error fetching followers:', error);
@@ -59,7 +67,7 @@ const Rightbar = () => {
         };
 
         fetchFollowers();
-    }, []);
+    }, [parsedData]); // Added parsedData as a dependency
 
     return (
         <div className="max-w-md mx-auto p-4">
@@ -81,5 +89,3 @@ const Rightbar = () => {
 };
 
 export default Rightbar;
-
-
