@@ -91,7 +91,7 @@ const Rightbar = () => {
                             <p className="font-bold text-sm">{follower.username}</p>
                         </div>
                     </div>
-                    <button className="text-blue-500 text-sm font-semibold">Message</button>
+                    <button className="text-blue-500 text-sm font-semibold"> Message</button>
                 </div>
             ))}
             {followers.length === 0 && <p>No followers found.</p>}
