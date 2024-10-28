@@ -14,7 +14,6 @@ const Sidebar = () => {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [isNotificationsVisible, setIsNotificationsVisible] = useState(false); // toggle notifications visibility
   const [profileImage, setProfileImage] = useState(null); // user profile image state
-  const [chatMenuInput, setChatMenuInput] = useState("");
   const parsedData = JSON.parse(localStorage.getItem('user'));
   const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
 
@@ -32,7 +31,7 @@ const Sidebar = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: userEmail,
-        followEmail: chatMenuInput
+        followEmail: searchQuery
       })
     })
   }
@@ -115,20 +114,6 @@ const Sidebar = () => {
               label="Home"
               onClick={() => navigate('/home')}
             />
-            {/* <SidebarItem
-              icon={<FaSearch />}
-              label="Search"
-              onClick={() => setIsSearchVisible(!isSearchVisible)}
-            />
-            {isSearchVisible && (
-              <div>
-                <input
-                  type="text"
-                  className="w-full mt-2 px-4 py-2 border rounded-md"
-                  placeholder="Search users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                /> */}
             <SidebarItem
               icon={<FaSearch />}
               label="Search"
@@ -136,13 +121,25 @@ const Sidebar = () => {
             />
             {isSearchVisible && (
               <div>
-                <input
+                {/* <input
                   placeholder="Search for friends"
-                  className="chatMenuInput w-full mt-2 px-4 py-2 border rounded-md"
+                  className="chatMenuInput"
                   value={chatMenuInput}
                   onChange={(e) => setChatMenuInput(e.target.value)}
+                /> */}
+                <input
+                  type="text"
+                  className="w-full mt-2 px-4 py-2 border rounded-md"
+                  placeholder="Search users..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button type="submit">Follow</button>
+                <button
+                  className="text-blue-500 text-sm font-semibold"
+                  onClick={() => makeFriend()}
+                >
+                  Follow
+                </button>
                 <div className="mt-2">
                   {filteredUsers.map((user, index) => (
                     <div key={index} className="py-1">{user}</div>
