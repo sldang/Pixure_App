@@ -4,17 +4,11 @@ const User = require('../models/User');
 const router = express.Router();
 const cors = require("cors");
 
-// new conv
-router.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
-    credentials: true // Enable sending cookies with requests if needed
-}));
 
 router.post("/", async (req, res) => {
     const { userEmail, otherEmail } = req.body;
-     
+    console.log("User Email:", userEmail);
+    console.log("Other Email:", otherEmail);
     const user = await User.findOne({ email: userEmail })
     const recipient = await User.findOne({ email: otherEmail })
     console.log("User Email:", user.email);
