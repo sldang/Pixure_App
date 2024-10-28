@@ -379,13 +379,3 @@ io.on('connection', (socket) => {
   });
 });
 
-// Health check route
-app.get('/', (req, res) => res.json('Server is running!'));
-
-// Catch-all 404 handler
-app.use((req, res) => res.status(404).json({ error: 'Not found' }));
-
-// Start server
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});

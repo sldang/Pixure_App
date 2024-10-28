@@ -24,7 +24,7 @@ const NewsFeed = () => {
 
   const handleUpload = async () => {
     try {
-      const response = await fetch('https://pixure-app.onrender.com/api/posts', {
+      const response = await fetch('api/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: postContent, time: 'Just now' }),
@@ -39,21 +39,21 @@ const NewsFeed = () => {
   };
 
   return (
-    <div>
-      <input
-        value={postContent}
-        onChange={(e) => setPostContent(e.target.value)}
-        placeholder="What's on your mind?"
-      />
-      <button onClick={handleUpload}>Post</button>
-      {posts.map((post) => (
-        <div key={post._id}>
-          <p>{post.content}</p>
-          <span>{post.time}</span>
-        </div>
-      ))}
+    <div className="flex justify-center w-full h-screen items-start pt-10">
+      <div className="w-full max-w-[600px] ml-10"> 
+        <PersonalProfile />
+        <UploadPost
+          postContent={postContent}
+          setPostContent={setPostContent}
+          handleUpload={handleUpload}
+        />
+        {posts.map((post, index) => (
+          <Post key={index} user={post.user} time={post.time} content={post.content} />
+        ))}
+      </div>
     </div>
   );
 };
+
 
 export default NewsFeed;
