@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const bcryptjs = require("bcryptjs");
 const Post = require('./models/Post');
 const Community = require('./models/Community');
-const CommunityReport = require('./models/CommunityReport');
+const CommunityReport = require('./models/CommunityReport');    
 const CommunityPostComment = require('./models/CommunityPostComment');
 const FlagsProfile = require('./models/FlagsProfile');
 const CommunityPost = require('./models/CommunityPost');
@@ -25,8 +25,8 @@ const messageRoute = require('./routes/messages');
 const usersRoute = require('./routes/users');
 const app = express();
 const PORT = process.env.PORT || 5000;
-app.use(express.json());
-const postRoute = require('./routes/posts');
+app.use(express.json());  
+const postRoute = require('./routes/posts'); 
 app.use('/api/posts', postRoute);
 
 // Connect to the database
@@ -182,7 +182,7 @@ app.post("/api/User", async (req, res) => {
         const {
             firstName, lastName, nickname, email, zipcode, password,
             friendsList, followList, karma, communityIDs, posts, age,
-            searchTags, postAndFlagsTags, profilePic, parentAccount,
+            searchTags, postAndFlagsTags, profilePic, parentAccount, 
             parentAccountID, childAccount, childAccountID
         } = req.body;
 
@@ -201,7 +201,7 @@ app.post("/api/User", async (req, res) => {
             nickname,
             email,
             zipcode,
-            password: hashedPassword,
+            password: hashedPassword, 
             followerList,
             followList,
             karma,
@@ -226,7 +226,7 @@ app.post("/api/User", async (req, res) => {
     }
 });
 
-app.get("/api/login", async (req, res) => {
+app.get("/api/login", async(req, res) => {
     res.json("test")
 })
 
@@ -256,12 +256,12 @@ app.post("/api/login", async (req, res) => {
         }
 
         // Generate a JWT token
-        if (isMatch) {
+        if(isMatch){
             const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
             res.json({ token, user: { id: user._id, email: user.email, nickname: user.nickname } });
         }
         // Send the response with token
-
+        
     } catch (error) {
         console.error("Error during login:", error); // Log the error
         res.status(500).json({ error: "An error occurred during login" });
@@ -276,7 +276,7 @@ app.post("/api/follow", async (req, res) => {
         console.log(email);
         console.log(followEmail)
         const follower = await User.findOne({ email });
-        const followed = await User.findOne({ followEmail })
+        const followed = await User.findOne({followEmail})
 
         if (!follower) {
             console.log("Invalid credentials");
@@ -300,15 +300,15 @@ app.post("/api/follow", async (req, res) => {
     }
 });
 // In your user routes file
-app.get('/getUserByEmail', async (req, res) => {
-    const {email} = req.body
-    try {
-        const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: 'User not found' });
-        res.status(200).json({ username: user.nickname });
-    } catch (err) {
-        res.status(500).json(err);
-    }
+router.get('/getUserByEmail', async (req, res) => {
+  const email = req.query.email;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.status(200).json({ username: user.nickname });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 
