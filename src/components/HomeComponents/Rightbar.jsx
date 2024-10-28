@@ -33,33 +33,43 @@ import React, { useEffect, useState } from 'react';
 
 const Rightbar = () => {
     const [followers, setFollowers] = useState([]);
+    const [followList, setFollowList] = useState([]);
+
     const parsedData = JSON.parse(localStorage.getItem('user'));
     const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
 
     useEffect(() => {
-        const fetchFollowers = async () => {
-          console.log(userEmail);
-          if (!userEmail) return;
-
-            // Get user's followList
-            const userFollowList = parsedData.user.followList || [];
-
-            // Check if followList exists and is not empty
-            if (userFollowList.length === 0) return;
+        const fetchFollowList = async () => {
+            if (!userEmail) return;
 
             try {
-                // Create an array of fetch promises for each email
-                const promises = userFollowList.map((email) =>
+                // Get the followList from the backend if it isn't available in local storage
+                const response = await fetch(`https://cs4800-server.onrender.com/api/getFollowList?email=${userEmail}`);
+                const data = await response.json();
+                setFollowList(data.followList || []);
+            } catch (error) {
+                console.error('Error fetching follow list:', error);
+            }
+        };
+
+        if (!parsedData.user.followList) {
+            fetchFollowList();
+        } else {
+            setFollowList(parsedData.user.followList);
+        }
+    }, [userEmail]);
+
+    useEffect(() => {
+        const fetchFollowers = async () => {
+            if (followList.length === 0) return;
+
+            try {
+                const promises = followList.map((email) =>
                     fetch(`https://cs4800-server.onrender.com/api/getUserByEmail?email=${email}`)
                 );
 
-                // Wait for all fetch requests to resolve
                 const responses = await Promise.all(promises);
-
-                // Convert the responses to JSON
                 const followersData = await Promise.all(responses.map(res => res.json()));
-
-                // Set the followers data in state
                 setFollowers(followersData);
             } catch (error) {
                 console.error('Error fetching followers:', error);
@@ -67,7 +77,7 @@ const Rightbar = () => {
         };
 
         fetchFollowers();
-    }, [parsedData]); // Added parsedData as a dependency
+    }, [followList]);
 
     return (
         <div className="max-w-md mx-auto p-4">
@@ -83,7 +93,7 @@ const Rightbar = () => {
                     <button className="text-blue-500 text-sm font-semibold">Message</button>
                 </div>
             ))}
-            {followers.length === 0 && <p>No followers found.</p>} {/* Optional message when there are no followers */}
+            {followers.length === 0 && <p>No followers found.</p>}
         </div>
     );
 };
