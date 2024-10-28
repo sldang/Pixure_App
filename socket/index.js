@@ -1,48 +1,48 @@
 const io = require("socket.io")(8900, {
     cors: {
-        origin: "https://pixure-app.onrender.com",
-        methods: ["GET", "POST"]
+        origin:"https://pixure-app.onrender.com"
     }
 });
 
 let users = [];
 
+// function to map userId to socketId
 const addUser = (userId, socketId) => {
     !users.some((user) => user.userId === userId) &&
         users.push({ userId, socketId });
-};
+}
 
+// function to remove a user upon disconnecting from socket server
 const removeUser = (socketId) => {
-    users = users.filter((user) => user.socketId !== socketId);
-};
+    users = users.filter((user) => user.socketId !== socketId)
+}
 
-const getUser = (userId) => users.find((user) => user.userId === userId);
+// find user to send message to 
+const getUser = (userId) => {
+    return users.find((user) => user.userId === userId);
+}
 
-// Listen for connections
+// 
 io.on("connection", (socket) => {
+    // user connects
     console.log("a user connected.");
 
-    // Add user
+    // take userId and socketId from user
     socket.on("addUser", (userId) => {
         addUser(userId, socket.id);
         io.emit("getUsers", users);
     });
 
-    // Handle sending messages
+    // send and get message
     socket.on("sendMessage", ({ senderId, receiverId, text }) => {
         const user = getUser(receiverId);
-        if (user) {
-            io.to(user.socketId).emit("getMessage", { senderId, text });
-        }
+        io.to(user.socketId).emit("getMessage", {
+            senderId, 
+            text
+        });
     });
 
-    // Handle new post uploads
-    socket.on("newPost", (post) => {
-        console.log("New post received:", post);
-        io.emit("postAdded", post);  // Broadcast new post to all users
-    });
-
-    // Handle disconnections
+    // user disconnects
     socket.on("disconnect", () => {
         console.log("a user disconnected!");
         removeUser(socket.id);
