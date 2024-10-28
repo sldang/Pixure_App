@@ -312,7 +312,7 @@ app.get('/api/getUserByEmail', async (req, res) => {
 });
 
 app.get('/api/getUserFollowers', async (req,res) => {
-    const email = req.query;
+    const {email} = req.query;
     try{
         const user = await User.findOne({email})
         if (!user) return res.status(404).json({ message: 'User not found' })
