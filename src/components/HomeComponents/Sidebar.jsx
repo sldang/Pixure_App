@@ -85,7 +85,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     logout();
 
-    navigate('/login');
+    navigate('/');
   };
 
   // toggle notifications visibility
