@@ -141,7 +141,7 @@ const Sidebar = () => {
                   Follow
                 </button>
                 <div className="mt-2">
-                  {filteredUsers.map((user, index) => (
+                  {filteredUsers.map((c) => (
                     <div key={index} className="py-1">{user}</div>
                   ))}
                 </div>
