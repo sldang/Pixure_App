@@ -136,7 +136,7 @@ const Sidebar = () => {
                 />
                 <button
                   className="text-blue-500 text-sm font-semibold"
-                  onClick={() => makeFriend()}
+                  onClick={() => makeFriend}
                 >
                   Follow
                 </button>
