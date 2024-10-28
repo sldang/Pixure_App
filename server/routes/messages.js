@@ -3,6 +3,13 @@ const Message = require('../models/Message');
 const router = express.Router();
 
 //add messages
+router.use(cors({
+    origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
+    credentials: true // Enable sending cookies with requests if needed
+}));
+
 router.post("/", async (req, res) => {
     const newMessage = new Message(req.body);
 
