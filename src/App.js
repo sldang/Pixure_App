@@ -22,7 +22,7 @@ function App() {
     <div>
      <BrowserRouter>
         <Routes>
-            <Route path="/" element={user ? <HomePage/> : <LoginPage/>} />
+            <Route path="/" element={ <HomePage/> }/>
             <Route path="/signup" element={user ? <Navigate to={"/Messenger"}/> : <SignupPage/>} />
             <Route path="/Home" element={user ? <HomePage/> : <SignupPage/>} />
             <Route path="/Login" element={user ? <Navigate to={"/Messenger"}/> : <LoginPage/>} />

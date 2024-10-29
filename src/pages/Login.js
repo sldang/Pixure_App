@@ -9,7 +9,7 @@ export default function LoginPage(){
                 heading="Login to your account"
                 paragraph="Don't have an account yet? "
                 linkName="Sign Up"
-                linkUrl="/signup"
+                linkUrl="/"
 
                 />
             <Login/>
