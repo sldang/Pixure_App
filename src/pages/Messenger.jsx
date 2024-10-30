@@ -39,7 +39,7 @@ export default function Messenger() {
     }
 
     useEffect(() => {
-        socket.current = io("socket-pixure-app.onrender.com", { transports: ['websocket'] });
+        socket.current = io("https://socket-pixure-app.onrender.com", { transports: ['websocket'] });
         socket.current.on("getMessage", data => {
             setArrivalMessage({
                 sender: data.senderId,
