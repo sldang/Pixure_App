@@ -33,7 +33,7 @@ connectDB();
 
 // CORS setup
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com',
+    origin: process.env.FRONTEND_URL || 'https://pixure-app-3h6l.onrender.com/home',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
     credentials: true // Enable sending cookies with requests if needed
@@ -320,17 +320,8 @@ app.listen(PORT, () => {
 });
 require('dotenv').config();
 const http = require('http'); // Import HTTP module
-const { Server } = require('socket.io'); // Import Socket.IO
 
 const server = http.createServer(app); // Create HTTP server
-
-// Initialize Socket.IO with CORS configuration
-const io = new Server(server, {
-  cors: {
-    origin: 'https://pixure-app.onrender.com',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  },
-});
 
 // Middleware setup
 app.use(cors());
@@ -343,53 +334,4 @@ connectDB();
 // Register post routes
 app.use('/api/posts', postRoute);
 
-// Socket.IO logic
-let users = [];
-
-const addUser = (userId, socketId) => {
-  !users.some((user) => user.userId === userId) &&
-    users.push({ userId, socketId });
-};
-
-const removeUser = (socketId) => {
-  users = users.filter((user) => user.socketId !== socketId);
-};
-
 const getUser = (userId) => users.find((user) => user.userId === userId);
-
-io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
-
-  socket.on('addUser', (userId) => {
-    addUser(userId, socket.id);
-    io.emit('getUsers', users);
-  });
-
-  socket.on('sendMessage', ({ senderId, receiverId, text }) => {
-    const user = getUser(receiverId);
-    if (user) {
-      io.to(user.socketId).emit('getMessage', { senderId, text });
-    }
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-    removeUser(socket.id);
-    io.emit('getUsers', users);
-  });
-});
-
-
-
-  app.post('/api/posts', async (req, res) => {
-    try {
-      const newPost = new Post(req.body); 
-      const savedPost = await newPost.save();
-      console.log('Post saved:', savedPost); 
-  
-      res.status(201).json(savedPost); 
-    } catch (error) {
-      console.error('Error saving post:', error); 
-      res.status(500).json({ error: 'Failed to save post' }); 
-    }
-  });

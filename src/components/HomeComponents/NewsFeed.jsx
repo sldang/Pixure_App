@@ -11,7 +11,7 @@ const NewsFeed = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('https://pixure-app.onrender.com/api/posts');
+        const response = await fetch('https://pixure-app-3h6l.onrender.com/api/posts');
         if (!response.ok) throw new Error('Failed to fetch posts');
         const data = await response.json();
         setPosts(data);
@@ -27,7 +27,7 @@ const NewsFeed = () => {
       const newPost = { content: postContent, time: 'Just now' };
   
       try {
-        const response = await fetch('/api/posts', {
+        const response = await fetch('https://pixure-app-3h6l.onrender.com/api/posts', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
