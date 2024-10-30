@@ -41,18 +41,6 @@ app.use(cors({
 
 // Middleware to parse URL-encoded and JSON bodies
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-// API endpoint to get all posts
-app.get("/api/Post", async (req, res) => {
-    try {
-        const data = await Post.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching posts:", error);
-        res.status(500).json({ error: "An error occurred while fetching posts" });
-    }
-});
 
 // API endpoint to get all communities
 app.get("/api/Community", async (req, res) => {
@@ -355,16 +343,5 @@ require('dotenv').config();
 const http = require('http'); // Import HTTP module
 
 const server = http.createServer(app); // Create HTTP server
-
-// Middleware setup
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Database connection
-connectDB();
-
-// Register post routes
-app.use('/api/posts', postRoute);
 
 const getUser = (userId) => users.find((user) => user.userId === userId);
