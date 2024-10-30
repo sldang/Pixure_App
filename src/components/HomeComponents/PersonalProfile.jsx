@@ -1,6 +1,14 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const PersonalProfile = () => {
+
+  const navigate = useNavigate();
+
+  const handleEditClick = () => {
+    navigate('/editprofile');
+  };
+
   return (
     <div className="max-w-lg mx-auto p-4">
     <div className="flex items-center space-x-4">
@@ -15,9 +23,10 @@ const PersonalProfile = () => {
 
       {/* Profile Info */}
       <div className="flex-1">
-        <div className="flex items-center space-x-2 mb-2">
-          <h2 className="text-2xl font-bold">John Doe</h2>
-          <button className="bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800">Messages</button>
+        <div className="flex items-center space-x-4 mb-2">
+          <h2 className="text-2xl font-bold whitespace-nowrap">John Doe</h2>
+          <button className="bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800" onClick={handleEditClick}>Edit Profile</button>
+          <button className="bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800">Edit Description</button>
         </div>
         <div className="flex space-x-4 mb-4">
           <p><strong>0</strong> posts</p>
