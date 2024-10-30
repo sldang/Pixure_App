@@ -10,10 +10,6 @@ const Home = () => {
     <Sidebar/>
     <NewsFeed/>
     <Rightbar />
-    <Header
-              linkName="Login"
-              linkUrl="/Login"
-            />
   </div>
 );
 }
