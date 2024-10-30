@@ -108,6 +108,12 @@ app.get("/api/LocalCommunityAccount", async (req, res) => {
     }
 });
 
+app.options('*', cors({
+    origin: 'https://pixure-app-3h6l.onrender.com',
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 // API endpoint to get all post comments
 app.get("/api/PostComment", async (req, res) => {
     try {
