@@ -25,10 +25,19 @@ const NewsFeed = () => {
     if (postContent) {
       const newPost = { postId: Date.now().toString(), content: postContent, time: 'Just now' };
       try {
-        const response = await axios.post('/api/posts', newPost);
+        const response = await axios.post('/api/posts', newPost, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        });
+      if (response.status == 200) {
         setPosts((prevPosts) => [...prevPosts, response.data]);
         setPostContent('');
-      } catch (error) {
+     } else{
+        console.error('Failed to save post');
+     }  
+     } catch (error) {
         console.error('Error uploading post:', error);
       }
     }
