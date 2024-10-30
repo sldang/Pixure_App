@@ -1,7 +1,7 @@
 const express = require('express');
 const Post = require('../models/Post');
 const router = express.Router();
-
+const cors = require('cors');
 router.options('/', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://pixure-app-3h6l.onrender.com');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
