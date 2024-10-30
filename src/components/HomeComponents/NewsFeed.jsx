@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import UploadPost from './UploadPost';
 import Post from './Post';
 import PersonalProfile from './PersonalProfile';
+import axios from 'axios';
 
+axios.defaults.baseURL = 'https://pixure-server.onrender.com'; 
 const NewsFeed = () => {
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState('');
@@ -11,44 +13,21 @@ const NewsFeed = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('https://pixure-app-3h6l.onrender.com/api/posts');
-        if (!response.ok) throw new Error('Failed to fetch posts');
-        const data = await response.json();
-        setPosts(data);
+        const response = await axios.get('/api/posts');
+        setPosts(response.data);
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching posts:', error);
       }
     };
     fetchPosts();
   }, []);
-
   const handleUpload = async () => {
     if (postContent) {
-      const newPost = { content: postContent, time: 'Just now' };
-  
+      const newPost = { postId: Date.now().toString(), content: postContent, time: 'Just now' };
       try {
-        const response = await fetch('https://pixure-app-3h6l.onrender.com/api/posts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newPost),
-        });
-  
-        if (!response.ok) {
-          console.error('Failed to save post');
-          return;
-        }
-  
-        const savedPost = await response.json().catch(() => {
-          console.warn('Response is not valid JSON'); // Handle invalid JSON
-          return null;
-        });
-  
-        if (savedPost) {
-          setPosts([...posts, savedPost]);
-          setPostContent('');
-        }
+        const response = await axios.post('/api/posts', newPost);
+        setPosts((prevPosts) => [...prevPosts, response.data]);
+        setPostContent('');
       } catch (error) {
         console.error('Error uploading post:', error);
       }
@@ -57,7 +36,7 @@ const NewsFeed = () => {
 
   return (
     <div className="flex justify-center w-full h-screen items-start pt-10">
-      <div className="w-full max-w-[600px] ml-10"> 
+      <div className="w-full max-w-[600px] ml-10">
         <PersonalProfile />
         <UploadPost
           postContent={postContent}
@@ -71,6 +50,5 @@ const NewsFeed = () => {
     </div>
   );
 };
-
 
 export default NewsFeed;
