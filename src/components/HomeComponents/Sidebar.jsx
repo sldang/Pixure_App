@@ -190,14 +190,14 @@ const Sidebar = () => {
         </div>
 
         {/* user section */}
-        <div className="p-4 flex items-center justify-between w-full cursor-pointer" onClick={handleProfileClick}>
+        <div className="p-4 flex items-center justify-between w-full cursor-pointer" >
           <div className="flex items-center space-x-2">
             <img
               src={profileImage || defaultProfileImage}
               alt="Profile"
               className="w-10 h-10 rounded-full object-cover"
             />
-            <span className="text-sm text-black font-medium">@username</span>
+            <span className="text-sm text-black font-medium" onClick={handleProfileClick}>@username</span>
           </div>
           <FaSignOutAlt
             className="text-xl text-black cursor-pointer hover:text-red-500 transition-colors duration-300"
