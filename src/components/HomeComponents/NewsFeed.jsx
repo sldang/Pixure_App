@@ -24,7 +24,8 @@ const NewsFeed = () => {
 
   const handleUpload = async () => {
     if (postContent) {
-      const newPost = { content: postContent, time: 'Just now' };
+      const postId = Date.now().toString(); 
+      const newPost = { postId, content: postContent, time: 'Just now' };
   
       try {
         const response = await fetch('https://pixure-app-3h6l.onrender.com/api/posts', {
