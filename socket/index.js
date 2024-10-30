@@ -41,7 +41,11 @@ io.on("connection", (socket) => {
             text
         });
     });
-
+  // Real-time new post event
+  socket.on('newPost', (post) => {
+    console.log('New post received:', post);
+    io.emit('postAdded', post); // Emit to all users
+  });
     // user disconnects
     socket.on("disconnect", () => {
         console.log("a user disconnected!");
@@ -49,3 +53,4 @@ io.on("connection", (socket) => {
         io.emit("getUsers", users);
     });
 });
+console.log('Socket.IO server running on port 8900');

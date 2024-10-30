@@ -16,6 +16,7 @@ import Sidebar from './components/HomeComponents/Sidebar';
 
 import { useContext } from 'react';
 import { AuthContext } from './contexts/AuthContext';
+import EditProfile from './components/EditProfile';
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -26,7 +27,7 @@ function App() {
         {user && <Sidebar />}  {/* sidebar will be visible if user is authenticated */}
         <div className="content">  {/* adjust layout to leave space for sidebar */}
           <Routes>
-            <Route path="/" element={user ? <HomePage/> : <LoginPage/>} />
+          <Route path="/" element={user ? <HomePage/> : <LoginPage/>} />
 
             <Route path="/signup" element={user ? <Navigate to="/Messenger"/> : <SignupPage/>} />
             <Route path="/home" element={user ? <HomePage/> : <Navigate to="/login"/>} />
@@ -34,6 +35,7 @@ function App() {
             <Route path="/messenger" element={<MessengerPage/>} />
             <Route path="/explore" element={user ? <ExplorePage/> : <Navigate to="/login"/>} />
             <Route path="/communities" element={user ? <CommunitiesPage/> : <Navigate to="/login"/>} />
+            <Route path="/editprofile" element={<EditProfile/>} />
           </Routes>
         </div>
 

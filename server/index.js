@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 const cors = require("cors");
 const express = require("express");
@@ -42,18 +41,6 @@ app.use(cors({
 
 // Middleware to parse URL-encoded and JSON bodies
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-// API endpoint to get all posts
-app.get("/api/Post", async (req, res) => {
-    try {
-        const data = await Post.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching posts:", error);
-        res.status(500).json({ error: "An error occurred while fetching posts" });
-    }
-});
 
 // API endpoint to get all communities
 app.get("/api/Community", async (req, res) => {
@@ -120,6 +107,12 @@ app.get("/api/LocalCommunityAccount", async (req, res) => {
         res.status(500).json({ error: "An error occurred while fetching local community accounts" });
     }
 });
+
+app.options('*', cors({
+    origin: 'https://pixure-app-3h6l.onrender.com',
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // API endpoint to get all post comments
 app.get("/api/PostComment", async (req, res) => {
@@ -349,5 +342,12 @@ app.get("*", (req, res) => {
 
 // Start the server
 app.listen(PORT, () => {
+   
     console.log(`Server running on port ${PORT}`);
 });
+require('dotenv').config();
+const http = require('http'); // Import HTTP module
+
+const server = http.createServer(app); // Create HTTP server
+
+const getUser = (userId) => users.find((user) => user.userId === userId);
