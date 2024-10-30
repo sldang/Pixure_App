@@ -20,7 +20,7 @@ const Rightbar = () => {
               <p className="font-bold text-sm">{user.username} </p>
             </div>
           </div>
-          <button className="text-blue-500 text-sm font-semibold"> Message</button>
+          <button className="text-blue-500 text-sm font-semibold pl-4"> Message</button>
         </div>
       ))}
     </div>
