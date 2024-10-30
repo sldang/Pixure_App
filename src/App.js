@@ -22,6 +22,7 @@ function App() {
   const { user } = useContext(AuthContext);
 
   return (
+
     <div className="App">
       <BrowserRouter>
         {user && <Sidebar />}  {/* sidebar will be visible if user is authenticated */}
@@ -38,6 +39,7 @@ function App() {
             <Route path="/editprofile" element={<EditProfile/>} />
           </Routes>
         </div>
+
 
       </BrowserRouter>
     </div>
