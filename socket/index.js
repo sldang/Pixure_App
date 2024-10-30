@@ -1,6 +1,6 @@
 const io = require("socket.io")(8900, {
     cors: {
-        origin:"https://pixure-app.onrender.com"
+        origin:"https://pixure-app-3h6l.onrender.com"
     }
 });
 

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/useLogout';
 import socket from '../../socket';
 
+
 const Sidebar = () => {
   const navigate = useNavigate();
   const { logout } = useLogout();
@@ -13,6 +14,8 @@ const Sidebar = () => {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [isNotificationsVisible, setIsNotificationsVisible] = useState(false); // toggle notifications visibility
   const [profileImage, setProfileImage] = useState(null); // user profile image state
+  const parsedData = JSON.parse(localStorage.getItem('user'));
+  const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
 
   // example notifications
   const [notifications] = useState([
@@ -20,6 +23,26 @@ const Sidebar = () => {
     { user: 'Jane Smith', content: 'commented: "Nice post!"', time: '2d ago' },
     { user: 'John Doe', content: 'followed you', time: '3d ago' },
   ]);
+
+  const makeFriend = async (e) => {
+    console.log("makefriend")
+    e.preventDefault();
+    const response = await fetch("https://pixure-server.onrender.com/api/follow", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: userEmail,
+        followEmail: searchQuery
+      })
+    })
+    // Check response status and handle it as necessary
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Followed successfully:', data);
+    } else {
+      console.error('Failed to follow:', response.statusText);
+    }
+  }
 
   useEffect(() => {
     const fetchProfileImage = async () => {
@@ -70,7 +93,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     logout();
 
-    navigate('/login');
+    navigate('/');
   };
 
   // toggle notifications visibility
@@ -106,6 +129,12 @@ const Sidebar = () => {
             />
             {isSearchVisible && (
               <div>
+                {/* <input
+                  placeholder="Search for friends"
+                  className="chatMenuInput"
+                  value={chatMenuInput}
+                  onChange={(e) => setChatMenuInput(e.target.value)}
+                /> */}
                 <input
                   type="text"
                   className="w-full mt-2 px-4 py-2 border rounded-md"
@@ -113,6 +142,12 @@ const Sidebar = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
+                <button
+                  className="text-blue-500 text-sm font-semibold"
+                  onClick={(e) => makeFriend(e)}
+                >
+                  Follow
+                </button>
                 <div className="mt-2">
                   {filteredUsers.map((user, index) => (
                     <div key={index} className="py-1">{user}</div>
@@ -155,14 +190,14 @@ const Sidebar = () => {
         </div>
 
         {/* user section */}
-        <div className="p-4 flex items-center justify-between w-full cursor-pointer" onClick={handleProfileClick}>
+        <div className="p-4 flex items-center justify-between w-full cursor-pointer" >
           <div className="flex items-center space-x-2">
             <img
               src={profileImage || defaultProfileImage}
               alt="Profile"
               className="w-10 h-10 rounded-full object-cover"
             />
-            <span className="text-sm text-black font-medium">@username</span>
+            <span className="text-sm text-black font-medium" onClick={handleProfileClick}>@username</span>
           </div>
           <FaSignOutAlt
             className="text-xl text-black cursor-pointer hover:text-red-500 transition-colors duration-300"

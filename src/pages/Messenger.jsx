@@ -8,7 +8,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { io } from "socket.io-client";
 
-axios.defaults.baseURL = 'https://cs4800-server.onrender.com';
+axios.defaults.baseURL = 'https://pixure-server.onrender.com';
 
 export default function Messenger() {
     const [conversations, setConversations] = useState([]);
@@ -24,20 +24,22 @@ export default function Messenger() {
     const parsedData = JSON.parse(localStorage.getItem('user'));
     const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
 
-    const makeFriend = async (e) => {
+    const makeChat = async (e) => {
         e.preventDefault();
-        const response = await fetch("https://cs4800-server.onrender.com/api/follow", {
+        console.log(userEmail)
+        console.log(chatMenuInput)
+        const response = await fetch("https://pixure-server.onrender.com/api/conversations", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: userEmail,
-                followEmail: chatMenuInput
+                userEmail: userEmail,
+                otherEmail: chatMenuInput
             })
         })
     }
 
     useEffect(() => {
-        socket.current = io("pixure-app-socket.onrender.com", { transports: ['websocket'] });
+        socket.current = io("https://socket-pixure-app.onrender.com", { transports: ['websocket'] });
         socket.current.on("getMessage", data => {
             setArrivalMessage({
                 sender: data.senderId,
@@ -132,14 +134,14 @@ export default function Messenger() {
             <div className="messenger">
                 <div className="chatMenu">
                     <div className="chatMenuWrapper">
-                        <form onSubmit={makeFriend}>
+                        <form onSubmit={makeChat}>
                             <input
-                                placeholder="Search for friends"
+                                placeholder="Converse with friend"
                                 className="chatMenuInput"
                                 value={chatMenuInput}
                                 onChange={(e) => setChatMenuInput(e.target.value)}
                             />
-                            <button type="submit">Follow</button>
+                            <button type="submit">Make Conversation with this fellow</button>
                         </form>
                         {conversations.map((c) => (
                             <div key={c.id} onClick={() => setCurrentChat(c)}>
