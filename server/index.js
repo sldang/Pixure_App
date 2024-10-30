@@ -34,7 +34,7 @@ connectDB();
 
 // CORS setup
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://pixure-app.onrender.com',
+    origin: process.env.FRONTEND_URL || 'https://pixure-app-3h6l.onrender.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
     credentials: true // Enable sending cookies with requests if needed
