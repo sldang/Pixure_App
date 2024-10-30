@@ -2,8 +2,12 @@ const mongoose = require('mongoose');
 
 const PostSchema = new mongoose.Schema(
   {
-    postId: String,
-    content: { type: String, required: true },
+    postId:
+    {
+      type: String
+    },
+
+    content: { type: String},
   },
   { timestamps: true }
 );

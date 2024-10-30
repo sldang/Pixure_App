@@ -3,6 +3,8 @@ import UploadPost from './UploadPost';
 import Post from './Post';
 import PersonalProfile from './PersonalProfile';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+
 
 axios.defaults.baseURL = 'https://pixure-server.onrender.com'; 
 const NewsFeed = () => {
@@ -23,26 +25,35 @@ const NewsFeed = () => {
   }, []);
   const handleUpload = async () => {
     if (postContent) {
-      const newPost = { postId: Date.now().toString(), content: postContent, time: 'Just now' };
+      const newPost = { 
+        postId: uuidv4(), // Generate a unique ID
+        content: postContent, 
+        time: 'Just now' 
+      };
+  
       try {
-        const response = await axios.post('/api/posts', newPost, {
+        const response = await fetch('https://pixure-server.onrender.com/api/posts', {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          withCredentials: true,
+          body: JSON.stringify(newPost),
         });
-      if (response.status == 200) {
-        setPosts((prevPosts) => [...prevPosts, response.data]);
-        setPostContent('');
-     } else{
-        console.error('Failed to save post');
-     }  
-     } catch (error) {
+  
+        if (response.ok) {
+          const savedPost = await response.json();
+          console.log('Post saved:', savedPost);
+  
+          setPosts([...posts, savedPost]);
+          setPostContent('');
+        } else {
+          console.error('Failed to save post:', response.statusText);
+        }
+      } catch (error) {
         console.error('Error uploading post:', error);
       }
     }
   };
-
   return (
     <div className="flex justify-center w-full h-screen items-start pt-10">
       <div className="w-full max-w-[600px] ml-10">
