@@ -8,7 +8,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { io } from "socket.io-client";
 
-axios.defaults.baseURL = 'https://cs4800-server.onrender.com';
+axios.defaults.baseURL = 'https://pixure-server.onrender.com';
 
 export default function Messenger() {
     const [conversations, setConversations] = useState([]);
@@ -28,7 +28,7 @@ export default function Messenger() {
         e.preventDefault();
         console.log(userEmail)
         console.log(chatMenuInput)
-        const response = await fetch("https://cs4800-server.onrender.com/api/conversations", {
+        const response = await fetch("https://pixure-server.onrender.com/api/conversations", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

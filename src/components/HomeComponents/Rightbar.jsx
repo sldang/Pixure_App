@@ -45,7 +45,7 @@ const Rightbar = () => {
 
             try {
                 // Get the followList from the backend if it isn't available in local storage
-                const response = await fetch(`https://cs4800-server.onrender.com/api/getUserFollowers?email=${userEmail}`);
+                const response = await fetch(`https://pixure-server.onrender.com/api/getUserFollowers?email=${userEmail}`);
                 const data = await response.json();
                 setFollowList(data.followList || []);
             } catch (error) {
@@ -66,7 +66,7 @@ const Rightbar = () => {
 
             try {
                 const promises = followList.map((email) =>
-                    fetch(`https://cs4800-server.onrender.com/api/getUserByEmail?email=${email}`)
+                    fetch(`https://pixure-server.onrender.com/api/getUserByEmail?email=${email}`)
                 );
 
                 const responses = await Promise.all(promises);
