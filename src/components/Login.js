@@ -31,7 +31,7 @@ export default function Login() {
     // real login
     const authenticateUser = async () => {
         try {
-            const response = await fetch("https://pixure-server.onrender.com/api/login", { 
+            const response = await fetch(`${process.env.SERVER_URL}/api/login`, { 
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
