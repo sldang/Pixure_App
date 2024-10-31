@@ -1,3 +1,4 @@
+require('dotenv').config();
 import "./Messenger.css"
 import Sidebar from '../components/HomeComponents/Sidebar'
 import Conversation from '../components/MessengerComponents/Conversation'

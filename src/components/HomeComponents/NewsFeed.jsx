@@ -1,3 +1,4 @@
+require('dotenv').config();
 import React, { useState, useEffect } from 'react';
 import UploadPost from './UploadPost';
 import Post from './Post';
