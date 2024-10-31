@@ -6,7 +6,7 @@ const cors = require('cors');
 // CORS middleware setup
 router.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'https://pixure-app-3h6l.onrender.com',
+    origin: process.env.FRONTEND_URL ,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -15,7 +15,7 @@ router.use(
 
 // Handle preflight requests (OPTIONS)
 router.options('*', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://pixure-app-3h6l.onrender.com');
+  res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL);
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');

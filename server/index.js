@@ -33,7 +33,7 @@ connectDB();
 
 // CORS setup
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://pixure-app-3h6l.onrender.com',
+    origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
     credentials: true // Enable sending cookies with requests if needed
@@ -109,7 +109,7 @@ app.get("/api/LocalCommunityAccount", async (req, res) => {
 });
 
 app.options('*', cors({
-    origin: 'https://pixure-app-3h6l.onrender.com',
+    origin: process.env.FRONTEND_URL,
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
