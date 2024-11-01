@@ -136,6 +136,16 @@ app.get("/api/PostReport", async (req, res) => {
     }
 });
 
+app.get("/api/Post", async (req, res) => {
+    try {
+        const data = await Post.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching community reports:", error);
+        res.status(500).json({ error: "An error occurred while fetching community reports" });
+    }
+})
+
 // API endpoint to get all search tags and flags
 app.get("/api/SearchTagsAndFlags", async (req, res) => {
     try {
