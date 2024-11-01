@@ -1,4 +1,3 @@
-require('dotenv').config();
 import React, { useEffect, useState } from 'react';
 
 const Rightbar = () => {

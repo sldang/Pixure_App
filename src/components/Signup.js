@@ -1,4 +1,3 @@
-require('dotenv').config();
 import { useState } from 'react';
 import { signupFields } from "../constants/formFields"
 import FormAction from "./FormAction";
