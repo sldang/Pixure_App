@@ -15,7 +15,7 @@ const Rightbar = () => {
 
             try {
                 // Get the followList from the backend if it isn't available in local storage
-                const response = await fetch(`${process.env.SERVER_URL}/api/getUserFollowers?email=${userEmail}`);
+                const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/getUserFollowers?email=${userEmail}`);
                 const data = await response.json();
                 setFollowList(data.followList || []);
             } catch (error) {
@@ -36,7 +36,7 @@ const Rightbar = () => {
 
             try {
                 const promises = followList.map((email) =>
-                    fetch(`${process.env.SERVER_URL}/api/getUserByEmail?email=${email}`)
+                    fetch(`${process.env.REACT_APP_SERVER_URL}/api/getUserByEmail?email=${email}`)
                 );
 
                 const responses = await Promise.all(promises);

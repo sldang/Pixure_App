@@ -7,7 +7,7 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
 
-axios.defaults.baseURL = process.env.SERVER_URL; 
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL; 
 const NewsFeed = () => {
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState('');
@@ -33,7 +33,7 @@ const NewsFeed = () => {
       };
   
       try {
-        const response = await fetch(`${process.env.SERVER_URL}/api/posts`, {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -9,7 +9,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { io } from "socket.io-client";
 
-axios.defaults.baseURL = process.env.SERVER_URL;
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
 export default function Messenger() {
     const [conversations, setConversations] = useState([]);
@@ -29,7 +29,7 @@ export default function Messenger() {
         e.preventDefault();
         console.log(userEmail)
         console.log(chatMenuInput)
-        const response = await fetch(`${process.env.SERVER_URL}/api/conversations`, {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/conversations`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

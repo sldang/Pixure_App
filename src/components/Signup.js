@@ -25,7 +25,7 @@ export default function Signup() {
     
     try{
       
-      const response = await fetch(`${process.env.SERVER_URL}/api/User`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/User`, {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(

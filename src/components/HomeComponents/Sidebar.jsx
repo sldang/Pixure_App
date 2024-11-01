@@ -27,7 +27,7 @@ const Sidebar = () => {
   const makeFriend = async (e) => {
     console.log("makefriend")
     e.preventDefault();
-    const response = await fetch(`${process.env.SERVER_URL}/api/follow`, {
+    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/follow`, {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
