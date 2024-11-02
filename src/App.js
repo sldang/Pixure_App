@@ -36,6 +36,7 @@ function App() {
             <Route path="/explore" element={user ? <ExplorePage/> : <Navigate to="/login"/>} />
             <Route path="/communities" element={user ? <CommunitiesPage/> : <Navigate to="/login"/>} />
             <Route path="/editprofile" element={<EditProfile/>} />
+            <Route path="/profile" element={<HomePage/>} />                                    
           </Routes>
         </div>
 
