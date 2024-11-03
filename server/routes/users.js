@@ -41,7 +41,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Get a user profile with follower and following counts
-router.get("/", async (req, res) => {
+router.get("/profile", async (req, res) => {
   const userId = req.query.userId;
   const username = req.query.username;
   
