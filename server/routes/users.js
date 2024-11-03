@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const router = require("express").Router();
 const bcryptjs = require("bcryptjs");
-
+const jwt = require("jsonwebtoken");
 //update user
 router.put("/:id", async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdmin) {
