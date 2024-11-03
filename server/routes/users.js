@@ -40,21 +40,37 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-//get a user
+// Get a user profile with follower and following counts
 router.get("/", async (req, res) => {
   const userId = req.query.userId;
   const username = req.query.username;
+  
   try {
+    // Find user by ID or username
     const user = userId
       ? await User.findById(userId)
       : await User.findOne({ username: username });
+    
+    if (!user) {
+      return res.status(404).json("User not found");
+    }
+
+    // Destructure and exclude sensitive fields
     const { password, updatedAt, ...other } = user._doc;
-    res.status(200).json(other);
+
+    // Add follower and following counts to the response
+    const profileData = {
+      ...other,
+      followersCount: user.followers.length,
+      followingCount: user.followings.length,
+    };
+
+    res.status(200).json(profileData);
   } catch (err) {
-    res.status(500).json(err);
+    console.error("Error fetching user profile:", err);
+    res.status(500).json("An error occurred while fetching user profile");
   }
 });
-
 //get friends
 router.get("/friends/:userId", async (req, res) => {
   try {
