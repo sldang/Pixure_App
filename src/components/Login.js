@@ -30,6 +30,7 @@ export default function Login() {
 
     // real login
     const authenticateUser = async () => {
+        console.log(process.env.REACT_APP_SERVER_URL);
         try {
             const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/login`, { 
                 method: "POST",
