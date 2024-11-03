@@ -22,6 +22,7 @@ const Message = require('./models/Message');
 const conversationRoute = require('./routes/conversations');
 const messageRoute = require('./routes/messages');
 const usersRoute = require('./routes/users');
+const userPostRoute = require('./routes/posts');
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
@@ -33,7 +34,7 @@ connectDB();
 
 // CORS setup
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://pixure-app-3h6l.onrender.com',
+    origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
     credentials: true // Enable sending cookies with requests if needed
@@ -109,7 +110,7 @@ app.get("/api/LocalCommunityAccount", async (req, res) => {
 });
 
 app.options('*', cors({
-    origin: 'https://pixure-app-3h6l.onrender.com',
+    origin: process.env.FRONTEND_URL,
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
@@ -135,6 +136,16 @@ app.get("/api/PostReport", async (req, res) => {
         res.status(500).json({ error: "An error occurred while fetching post reports" });
     }
 });
+
+app.get("/api/Post", async (req, res) => {
+    try {
+        const data = await Post.find({});
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching community reports:", error);
+        res.status(500).json({ error: "An error occurred while fetching community reports" });
+    }
+})
 
 // API endpoint to get all search tags and flags
 app.get("/api/SearchTagsAndFlags", async (req, res) => {
@@ -328,7 +339,8 @@ app.get('/api/getUserFollowers', async (req,res) => {
 
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
-app.use("/api/users", usersRoute)
+app.use("/api/users", usersRoute);
+app.use("/api/post", userPostRoute);
 
 // Simple endpoint to check if server is running
 app.get("/", (req, res) => {

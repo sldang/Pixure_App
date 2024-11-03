@@ -6,7 +6,7 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
 
-axios.defaults.baseURL = 'https://pixure-server.onrender.com'; 
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL; 
 const NewsFeed = () => {
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState('');
@@ -32,7 +32,7 @@ const NewsFeed = () => {
       };
   
       try {
-        const response = await fetch('https://pixure-server.onrender.com/api/posts', {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

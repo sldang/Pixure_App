@@ -5,7 +5,7 @@ const cors = require("cors");
 
 //add messages
 router.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://pixure-app-3h6l.onrender.com',
+    origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow these HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
     credentials: true // Enable sending cookies with requests if needed
