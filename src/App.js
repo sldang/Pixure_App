@@ -9,6 +9,7 @@ import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
 import MessengerPage from './pages/Messenger';
+import FriendPage from './components/FriendPost';
 
 import ExplorePage from './pages/Explore';
 import CommunitiesPage from './pages/Communities';
@@ -27,10 +28,10 @@ function App() {
         {user && <Sidebar />}  {/* sidebar will be visible if user is authenticated */}
         <div className="content">  {/* adjust layout to leave space for sidebar */}
           <Routes>
-          <Route path="/" element={user ? <HomePage/> : <LoginPage/>} />
+          <Route path="/" element={user ? <FriendPage/> : <LoginPage/>} />
 
             <Route path="/signup" element={user ? <Navigate to="/Messenger"/> : <SignupPage/>} />
-            <Route path="/home" element={user ? <HomePage/> : <Navigate to="/login"/>} />
+            <Route path="/home" element={user ? <FriendPage/> : <Navigate to="/login"/>} />
             <Route path="/login" element={user ? <Navigate to="/Messenger"/> : <LoginPage/>} />
             <Route path="/messenger" element={<MessengerPage/>} />
             <Route path="/explore" element={user ? <ExplorePage/> : <Navigate to="/login"/>} />
