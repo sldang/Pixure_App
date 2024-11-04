@@ -45,12 +45,18 @@ export default function Login() {
     
             if (response.ok) {
                 console.log("Logged in successfully");
-                
-                // Store userId and name (from either nickname or fullName)
-                localStorage.setItem("user", JSON.stringify({ userId: json.userId, name: json.name })); 
+    
+                // Store userId and name (using the expected properties)
+                const userData = {
+                    userId: json.userId,   // Ensure userId is correct
+                    name: json.name || "", // Ensure name is a valid string
+                };
+    
+                // Save to localStorage
+                localStorage.setItem("user", JSON.stringify(userData));
                 
                 // Dispatch login action with userId and name
-                dispatch({ type: 'LOGIN', payload: { userId: json.userId, name: json.name } });
+                dispatch({ type: 'LOGIN', payload: userData });
             } else {
                 console.error(json.error || "Login failed");
                 setErrorMessage(json.error || "Login failed. Please check your credentials.");
@@ -60,7 +66,6 @@ export default function Login() {
             console.error("Fetch error:", error);
         }
     };
-
     // fake login
     const fakeAuthenticateUser = async () => {
         const fakeCredentials = {
