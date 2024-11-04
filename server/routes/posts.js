@@ -23,10 +23,22 @@ router.options('*', (req, res) => {
   res.sendStatus(204); // No content
 });
 
-// Add new post
+/// Add new post
 router.post('/', async (req, res) => {
+  // Check if userId is present and valid
+  if (!req.body.userId) {
+    return res.status(400).json({ error: "userId is required" });
+  }
+
+  let userId;
+  try {
+    userId = mongoose.Types.ObjectId(req.body.userId); // Convert userId to ObjectId if needed
+  } catch (error) {
+    return res.status(400).json({ error: "Invalid userId format" });
+  }
+
   const newPost = new Post({
-    userId: mongoose.Types.ObjectId(req.body.userId), // Convert userId to ObjectId if needed
+    userId: userId,
     desc: req.body.desc,
     img: req.body.img,
     likes: req.body.likes || [],
@@ -37,7 +49,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(savedPost);
   } catch (error) {
     console.error('Error saving post:', error);
-    res.status(500).json(error);
+    res.status(500).json({ error: "Error saving post" });
   }
 });
 // update a post
