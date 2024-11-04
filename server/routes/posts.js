@@ -23,11 +23,10 @@ router.options('*', (req, res) => {
   res.sendStatus(204); // No content
 });
 
-// Add new post with userId from request body
+// Add new post
 router.post('/', async (req, res) => {
-  // Use the userId from the request body directly
   const newPost = new Post({
-    userId: req.body.userId,   // Assuming userId is sent from the frontend
+    userId: mongoose.Types.ObjectId(req.body.userId), // Convert userId to ObjectId if needed
     desc: req.body.desc,
     img: req.body.img,
     likes: req.body.likes || [],
