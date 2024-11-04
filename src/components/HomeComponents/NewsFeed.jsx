@@ -24,22 +24,26 @@ const NewsFeed = () => {
     fetchPosts();
   }, []);
   const handleUpload = async () => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    const userId = user.userId;
-    
+    const user = JSON.parse(localStorage.getItem('user')); // Retrieve user data from localStorage
+    const userId = user ? user.userId : null;  // Access userId
+  
+    if (!userId) {
+      console.error("User ID is missing from localStorage");
+      return; // Exit the function if userId is missing
+    }
+  
     if (postContent) {
       const newPost = { 
-        userId: userId, // Link post to this user
+        userId: userId, // Include userId in the post data
         desc: postContent,
-        img: "",                    // Optional: specify an image URL if applicable
+        img: "", // Optional image URL if applicable
         likes: [],
       };
   
       try {
-        const response = await axios.post('/api/posts', newPost);
+        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/api/posts`, newPost);
         const savedPost = response.data;
         console.log('Post saved:', savedPost);
-  
         setPosts([...posts, savedPost]);
         setPostContent('');
       } catch (error) {

@@ -45,9 +45,14 @@ export default function Login() {
     
             if (response.ok) {
                 console.log("Logged in successfully");
-                localStorage.setItem('user', JSON.stringify(json));
-                dispatch({type: 'LOGIN', payload: json});
+                
+                // Store userId and name (from either nickname or fullName)
+                localStorage.setItem("user", JSON.stringify({ userId: json.userId, name: json.name })); 
+                
+                // Dispatch login action with userId and name
+                dispatch({ type: 'LOGIN', payload: { userId: json.userId, name: json.name } });
             } else {
+                console.error(json.error || "Login failed");
                 setErrorMessage(json.error || "Login failed. Please check your credentials.");
             }
         } catch (error) {

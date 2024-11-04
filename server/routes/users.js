@@ -145,4 +145,31 @@ router.put("/:id/unfollow", async (req, res) => {
   }
 });
 
+//user login
+router.post("/login", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const validPassword = await bcrypt.compare(req.body.password, user.password);
+    if (!validPassword) return res.status(400).json({ error: "Invalid credentials" });
+
+    // Generate JWT token (if using JWT authentication)
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    // Choose a name to send in the response
+    const fullName = `${user.firstName} ${user.lastName}`; // Concatenate if you want full name
+    const responseName = user.nickname || fullName; // Use nickname if available, otherwise use full name
+
+    // Send response with token, _id, and name
+    res.status(200).json({ 
+      token,  // Only include if using JWT
+      userId: user._id,  // Use userId to be consistent with frontend
+      name: responseName // Use nickname or full name based on your display preferences
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
