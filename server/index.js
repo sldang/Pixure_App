@@ -22,7 +22,6 @@ const Message = require('./models/Message');
 const conversationRoute = require('./routes/conversations');
 const messageRoute = require('./routes/messages');
 const usersRoute = require('./routes/users');
-const userPostRoute = require('./routes/posts');
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
@@ -340,7 +339,6 @@ app.get('/api/getUserFollowers', async (req,res) => {
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
 app.use("/api/users", usersRoute);
-app.use("/api/post", userPostRoute);
 
 // Simple endpoint to check if server is running
 app.get("/", (req, res) => {

@@ -3,7 +3,7 @@ const Post = require('../models/Post');
 const User = require('../models/User');
 const router = express.Router();
 const cors = require('cors');
-
+const verifyToken = require('../middleware/verifyToken'); // Import the middleware
 // CORS middleware setup
 router.use(
   cors({
@@ -23,18 +23,23 @@ router.options('*', (req, res) => {
   res.sendStatus(204); // No content
 });
 
-// Add new post
-router.post('/', async (req, res) => {
-  const newPost = new Post(req.body);
+// Add new post with userId from token
+router.post('/', verifyToken, async (req, res) => {
+  const newPost = new Post({
+    userId: req.userId,   // Use userId from the verifyToken middleware
+    desc: req.body.desc,
+    img: req.body.img,
+    likes: req.body.likes || [],
+  });
+
   try {
     const savedPost = await newPost.save();
-    res.status(201).json(savedPost); // Send JSON response with 201 status
+    res.status(201).json(savedPost);
   } catch (error) {
-    console.error('Error saving post:', err);
-    res.status(500).json(err);
+    console.error('Error saving post:', error);
+    res.status(500).json(error);
   }
 });
-
 // update a post
 router.put('/:id', async (req, res) => {
   try {
@@ -112,15 +117,25 @@ router.get('/timeline/:userId', async (req, res) => {
   }
 })
 
-// Get all posts of a user
-router.get('/profile/:username', async (req, res) => {
+// Get all posts of user with userid
+router.get('/profile/:userId', async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username });
-    const posts = await Post.find({ userId: user._id });
+    const posts = await Post.find({ userId: req.params.userId }).populate('userId', 'username profilePicture'); // Only pull specific fields
     res.status(200).json(posts);
   } catch (err) {
-    console.error('Error fetching user posts: ', err);
+    console.error('Error fetching user posts:', err);
     res.status(500).json(err);
+  }
+});
+
+router.post('/', async (req, res) => {
+  const newPost = new Post(req.body);
+  try {
+    const savedPost = await newPost.save();
+    res.status(201).json(savedPost);
+  } catch (error) {
+    console.error('Error saving post:', error); // Detailed logging
+    res.status(500).json({ message: 'Internal Server Error', error });
   }
 });
 

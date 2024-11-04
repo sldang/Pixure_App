@@ -30,7 +30,6 @@ export default function Login() {
 
     // real login
     const authenticateUser = async () => {
-        console.log(process.env.REACT_APP_SERVER_URL);
         try {
             const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/login`, { 
                 method: "POST",
@@ -40,11 +39,19 @@ export default function Login() {
                     password: loginState['password'],
                 })
             });
+    
             const json = await response.json();
+    
             if (response.ok) {
                 console.log("Logged in successfully");
-                localStorage.setItem('user', JSON.stringify(json));
-                dispatch({type: 'LOGIN', payload: json});
+    
+                // Store the JWT token in localStorage
+                localStorage.setItem("token", json.token);
+    
+                // Optionally store user data separately if needed
+                localStorage.setItem("user", JSON.stringify({ userId: json.userId, name: json.name }));
+    
+                dispatch({ type: 'LOGIN', payload: { userId: json.userId, name: json.name } });
             } else {
                 setErrorMessage(json.error || "Login failed. Please check your credentials.");
             }
