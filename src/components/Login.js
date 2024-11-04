@@ -46,10 +46,10 @@ export default function Login() {
             if (response.ok) {
                 console.log("Logged in successfully");
     
-                // Store userId and name (using the expected properties)
+                // Store _id as userId and name (assuming _id is returned by the backend)
                 const userData = {
-                    userId: json.userId,   // Ensure userId is correct
-                    name: json.name || "", // Ensure name is a valid string
+                    userId: json._id,   // Use _id as userId
+                    name: json.name || "", // Use name or default to an empty string
                 };
     
                 // Save to localStorage
