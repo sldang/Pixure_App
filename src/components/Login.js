@@ -8,7 +8,7 @@ import { useAuthContext } from '../hooks/useAuthContext';
 const fields = loginFields;
 let fieldsState = {};
 fields.forEach(field => fieldsState[field.id] = '');
-
+      console.log(process.env.REACT_APP_SERVER_URL);
 export default function Login() {
     const [loginState, setLoginState] = useState(fieldsState);
     const [errorMessage, setErrorMessage] = useState('');
@@ -29,6 +29,7 @@ export default function Login() {
     };
 
     // real login
+    console.log(process.env.REACT_APP_SERVER_URL);
     const authenticateUser = async () => {
         try {
             const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/login`, { 
@@ -44,14 +45,8 @@ export default function Login() {
     
             if (response.ok) {
                 console.log("Logged in successfully");
-    
-                // Store the JWT token in localStorage
-                localStorage.setItem("token", json.token);
-    
-                // Optionally store user data separately if needed
-                localStorage.setItem("user", JSON.stringify({ userId: json.userId, name: json.name }));
-    
-                dispatch({ type: 'LOGIN', payload: { userId: json.userId, name: json.name } });
+                localStorage.setItem('user', JSON.stringify(json));
+                dispatch({type: 'LOGIN', payload: json});
             } else {
                 setErrorMessage(json.error || "Login failed. Please check your credentials.");
             }

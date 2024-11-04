@@ -24,33 +24,29 @@ const NewsFeed = () => {
     fetchPosts();
   }, []);
   const handleUpload = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const userId = user.userId;
+    
     if (postContent) {
-        const token = localStorage.getItem("token"); // Retrieve the JWT token from localStorage
-
-        const newPost = { 
-            desc: postContent,  // Only include `desc`, `img`, and `likes`, not `userId`
-            img: "",            // Optional: specify an image URL if applicable
-            likes: [],
-        };
-
-        try {
-            const response = await axios.post('/api/posts', newPost, {
-                headers: {
-                    "Authorization": `Bearer ${token}`,  // Include the token in the Authorization header
-                    "Content-Type": "application/json",
-                },
-            });
-
-            const savedPost = response.data;
-            console.log('Post saved:', savedPost);
-
-            setPosts([...posts, savedPost]);
-            setPostContent('');
-        } catch (error) {
-            console.error('Error uploading post:', error);
-        }
+      const newPost = { 
+        userId: userId, // Link post to this user
+        desc: postContent,
+        img: "",                    // Optional: specify an image URL if applicable
+        likes: [],
+      };
+  
+      try {
+        const response = await axios.post('/api/posts', newPost);
+        const savedPost = response.data;
+        console.log('Post saved:', savedPost);
+  
+        setPosts([...posts, savedPost]);
+        setPostContent('');
+      } catch (error) {
+        console.error('Error uploading post:', error);
+      }
     }
-};
+  };
   return (
     <div className="flex justify-center w-full h-screen items-start pt-10">
       <div className="w-full max-w-[600px] ml-10">

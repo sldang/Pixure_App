@@ -23,10 +23,11 @@ router.options('*', (req, res) => {
   res.sendStatus(204); // No content
 });
 
-// Add new post with userId from token
-router.post('/', verifyToken, async (req, res) => {
+// Add new post with userId from request body
+router.post('/', async (req, res) => {
+  // Use the userId from the request body directly
   const newPost = new Post({
-    userId: req.userId,   // Use userId from the verifyToken middleware
+    userId: req.body.userId,   // Assuming userId is sent from the frontend
     desc: req.body.desc,
     img: req.body.img,
     likes: req.body.likes || [],
