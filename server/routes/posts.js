@@ -23,35 +23,35 @@ router.options('*', (req, res) => {
   res.sendStatus(204); // No content
 });
 
-/// Add new post
+// Add new post
 router.post('/', async (req, res) => {
   console.log("Received data:", req.body);
 
   const userId = req.body.userId;
 
-  // Check if userId is present and is a valid ObjectId format
-  //if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    //console.log("Invalid userId format:", userId);
-    //return res.status(400).json({ error: "Invalid userId format" });
- // }
-
   const newPost = new Post({
-    userId: userId, // Now we know it's valid
+    userId: userId, // Attach the userId to the post
     desc: req.body.desc,
     img: req.body.img || "", // Default to empty string if not provided
     likes: req.body.likes || [], // Default to empty array if not provided
   });
 
   try {
+    // Save the new post
     const savedPost = await newPost.save();
-    console.log("Post saved:", savedPost);
-    res.status(201).json(savedPost);
+
+    // Populate the userId field to include user information like nickname or full name
+    const populatedPost = await savedPost.populate('userId', 'nickname firstName lastName').execPopulate();
+
+    console.log("Post saved with populated user:", populatedPost);
+    
+    // Send the populated post back in the response
+    res.status(201).json(populatedPost);
   } catch (error) {
     console.error('Error saving post:', error);
     res.status(500).json({ error: "Error saving post" });
   }
 });
-
 // update a post
 router.put('/:id', async (req, res) => {
   try {
@@ -139,18 +139,5 @@ router.get('/profile/:userId', async (req, res) => {
     res.status(500).json(err);
   }
 });
-
-/*
-router.post('/', async (req, res) => {
-  const newPost = new Post(req.body);
-  try {
-    const savedPost = await newPost.save();
-    res.status(201).json(savedPost);
-  } catch (error) {
-    console.error('Error saving post:', error); // Detailed logging
-    res.status(500).json({ message: 'Internal Server Error', error });
-  }
-});
-*/
 
 module.exports = router;
