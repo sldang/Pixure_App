@@ -25,7 +25,7 @@ const NewsFeed = () => {
     fetchPosts();
   }, []);
   const handleUpload = async () => {
-    const { user } = useAuthContext;
+    const { user } = useAuthContext();
     //const user = JSON.parse(localStorage.getItem('user')); // Retrieve user data from localStorage
     const userId = user ? user.id : null;  // Access userId
   
