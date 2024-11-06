@@ -30,13 +30,13 @@ router.post('/', async (req, res) => {
   const userId = req.body.userId;
 
   // Check if userId is present and is a valid ObjectId format
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    console.log("Invalid userId format:", userId);
-    return res.status(400).json({ error: "Invalid userId format" });
-  }
+  //if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    //console.log("Invalid userId format:", userId);
+    //return res.status(400).json({ error: "Invalid userId format" });
+ // }
 
   const newPost = new Post({
-    userId: mongoose.Types.ObjectId(userId), // Now we know it's valid
+    userId: userId, // Now we know it's valid
     desc: req.body.desc,
     img: req.body.img || "", // Default to empty string if not provided
     likes: req.body.likes || [], // Default to empty array if not provided
