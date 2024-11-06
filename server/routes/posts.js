@@ -40,16 +40,17 @@ router.post('/', async (req, res) => {
     // Save the new post
     const savedPost = await newPost.save();
 
-    // Try populating the userId field to include only the nickname
-    const populatedPost = await savedPost.populate('userId', 'nickname');
-    
-    if (!populatedPost.userId || !populatedPost.userId.nickname) {
-      console.error("Nickname could not be populated or does not exist");
-      return res.status(500).json({ error: "Nickname could not be populated" });
+    // Populate userId with nickname, firstName, and lastName
+    const populatedPost = await savedPost.populate('userId', 'nickname firstName lastName');
+
+    // Check for nickname or fallback to firstName/lastName if nickname is unavailable
+    if (!populatedPost.userId) {
+      console.error("User information could not be populated.");
+      return res.status(500).json({ error: "User information could not be populated" });
     }
 
     console.log("Post saved with populated user:", populatedPost);
-    
+
     // Send the populated post back in the response
     res.status(201).json(populatedPost);
   } catch (error) {
@@ -57,7 +58,6 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: "Error saving post" });
   }
 });
-
 // update a post
 router.put('/:id', async (req, res) => {
   try {

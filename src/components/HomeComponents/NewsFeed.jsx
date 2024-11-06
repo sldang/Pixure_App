@@ -77,14 +77,14 @@ const NewsFeed = () => {
           setPostContent={setPostContent}
           handleUpload={handleUpload}
         />
-        {posts.map((post, index) => (
-          <Post 
-            key={index} 
-            user={post.userId?.user?.nickname || "Unknown User"} // Adjusted for nested user structure
-            content={post.desc} 
-            time={post.createdAt} // Assuming createdAt is a timestamp from your backend
-          />
-        ))}
+       {posts.map((post, index) => (
+  <Post 
+    key={index} 
+    user={post.userId?.nickname || `${post.userId?.firstName || ''} ${post.userId?.lastName || ''}`.trim() || "Unknown User"} 
+    content={post.desc} 
+    time={post.createdAt} // Assuming createdAt is a timestamp from your backend
+  />
+))}
       </div>
     </div>
   );
