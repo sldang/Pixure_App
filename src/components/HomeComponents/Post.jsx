@@ -2,7 +2,7 @@ import React from 'react';
 
 const Post = ({ user, content, time }) => {
   // Access nickname or fallback to firstName and lastName if nickname is missing
-  const username = user?.nickname || `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
+  const username = user?.user.nickname || `${user?.user.firstName || ''} ${user?.user.lastName || ''}`.trim();
 
   return (
     <div className='w-full rounded-md shadow-lg mt-[30px] mb-[30px]'>

@@ -80,7 +80,7 @@ const NewsFeed = () => {
        {posts.map((post, index) => (
   <Post 
     key={index} 
-    user={post.userId?.nickname || `${post.userId?.firstName || ''} ${post.userId?.lastName || ''}`.trim() || "Unknown User"} 
+    user={post.userId?.user.nickname || `${post.userId?.user.firstName || ''} ${post.userId?.user.lastName || ''}`.trim() || "Unknown User"} 
     content={post.desc} 
     time={post.createdAt} // Assuming createdAt is a timestamp from your backend
   />
