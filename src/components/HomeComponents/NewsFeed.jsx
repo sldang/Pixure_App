@@ -52,6 +52,8 @@ const NewsFeed = () => {
               Authorization: `Bearer ${user.token}`,
               'Content-Type': 'application/json',
             },
+            baseURL: `https://pixure-server.onrender.com`,
+            withCredentials: true,
           }
         );
         const savedPost = response.data;
@@ -78,7 +80,7 @@ const NewsFeed = () => {
         {posts.map((post, index) => (
           <Post 
             key={index} 
-            user={post.userId?.nickname || "Unknown User"} // Display nickname, fallback to "Unknown User" if missing
+            user={post.userId?.user?.nickname || "Unknown User"} // Adjusted for nested user structure
             content={post.desc} 
             time={post.createdAt} // Assuming createdAt is a timestamp from your backend
           />
