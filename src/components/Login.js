@@ -54,7 +54,7 @@ export default function Login() {
             // Dispatch the user data to the context to update the app state
             dispatch({ type: 'LOGIN', payload: { userId, email, name, token } });
 
-            console.log('User ID:', id); // Optional: log the user ID for debugging
+            console.log('User ID:', userId); // Optional: log the user ID for debugging
         } else {
             setErrorMessage(json.error || "Login failed. Please check your credentials.");
         }
