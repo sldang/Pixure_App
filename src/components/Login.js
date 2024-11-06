@@ -29,7 +29,6 @@ export default function Login() {
     };
 
     // real login
-    console.log(process.env.REACT_APP_SERVER_URL);
     const authenticateUser = async () => {
     console.log(process.env.REACT_APP_SERVER_URL);
     try {
@@ -45,14 +44,15 @@ export default function Login() {
         if (response.ok) {
             console.log("Logged in successfully");
 
+            userId = json._id;
             // Extract the user ID and other details from the response
-            const { id, email, name, token } = json;
+            const { userId, email, name, token } = json;
 
             // Save the user data (including ID) to localStorage
-            localStorage.setItem('user', JSON.stringify({ id, email, name, token }));
+            localStorage.setItem('user', JSON.stringify({ userId, email, name, token }));
 
             // Dispatch the user data to the context to update the app state
-            dispatch({ type: 'LOGIN', payload: { id, email, name, token } });
+            dispatch({ type: 'LOGIN', payload: { userId, email, name, token } });
 
             console.log('User ID:', id); // Optional: log the user ID for debugging
         } else {
