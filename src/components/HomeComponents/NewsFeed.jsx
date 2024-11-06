@@ -3,11 +3,11 @@ import UploadPost from './UploadPost';
 import Post from './Post';
 import PersonalProfile from './PersonalProfile';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
 import { useAuthContext } from '../../hooks/useAuthContext';
-import { AuthContext } from "../../contexts/AuthContext"
+import { AuthContext } from "../../contexts/AuthContext";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL; 
+
 const NewsFeed = () => {
   const { user } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
@@ -25,48 +25,47 @@ const NewsFeed = () => {
     };
     fetchPosts();
   }, []);
+
   const handleUpload = async () => { 
-    //const user = JSON.parse(localStorage.getItem('user')).user.id; // Retrieve user data from localStorage
-    const userId = user ? user.user.id : null;  // Access userId
-    console.log("UserId:", userId);
-  
+    const userId = user ? user.id : null;
+
     if (!userId) {
       console.error("User ID is missing from localStorage");
       return; // Exit the function if userId is missing
     }
-  
+
     const newPost = { 
-      userId: userId, // Include userId in the post data
+      userId: userId,
       desc: postContent,
       img: "", // Optional image URL if applicable
       likes: [],
     };
 
     if (postContent) {
-      
       console.log("Data being sent to backend:", newPost);
       try {
         const response = await axios.post(
-            `https://pixure-server.onrender.com/api/posts`,
-            newPost,
-            {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                    'Content-Type': 'application/json',
-                },
-                baseURL: `https://pixure-server.onrender.com`,
-                withCredentials: true,
-            }
+          `https://pixure-server.onrender.com/api/posts`,
+          newPost,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              'Content-Type': 'application/json',
+            },
+          }
         );
         const savedPost = response.data;
         console.log('Post saved:', savedPost);
-        setPosts([...posts, savedPost]);
+
+        // Add the new post to the list of posts
+        setPosts([savedPost, ...posts]);
         setPostContent('');
       } catch (error) {
         console.error('Error uploading post:', error);
       }
     }
   };
+
   return (
     <div className="flex justify-center w-full h-screen items-start pt-10">
       <div className="w-full max-w-[600px] ml-10">
@@ -77,7 +76,12 @@ const NewsFeed = () => {
           handleUpload={handleUpload}
         />
         {posts.map((post, index) => (
-          <Post key={index} user={post.user} time={post.time} content={post.content} />
+          <Post 
+            key={index} 
+            user={post.userId} // Adjust this if you want to display the user's name instead of the ID
+            content={post.desc} 
+            time={post.createdAt} // Assuming createdAt is a timestamp from your backend
+          />
         ))}
       </div>
     </div>
