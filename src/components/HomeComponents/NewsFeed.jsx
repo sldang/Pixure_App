@@ -9,7 +9,7 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL; 
 const NewsFeed = () => {
-  const { user } = useAuthContext();
+  const { user } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState('');
 
@@ -28,6 +28,7 @@ const NewsFeed = () => {
   const handleUpload = async () => { 
     //const user = JSON.parse(localStorage.getItem('user')).user.id; // Retrieve user data from localStorage
     const userId = user ? user.user.id : null;  // Access userId
+    console.log("UserId:", userId);
   
     if (!userId) {
       console.error("User ID is missing from localStorage");

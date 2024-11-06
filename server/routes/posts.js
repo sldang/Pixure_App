@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
   try {
     userId = mongoose.Types.ObjectId(req.body.userId); // Convert userId to ObjectId if needed
   } catch (error) {
-    return res.status(400).json({ error: "Invalid userId format" });
+    return res.status(420).json({ error: "Invalid userId format" });
   }
 
   const newPost = new Post({
