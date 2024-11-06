@@ -29,7 +29,8 @@ export default function Login() {
     };
 
     // real login
-    const authenticateUser = async () => {
+   // real login
+   const authenticateUser = async () => {
     console.log(process.env.REACT_APP_SERVER_URL);
     try {
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/login`, { 
@@ -43,18 +44,8 @@ export default function Login() {
         const json = await response.json();
         if (response.ok) {
             console.log("Logged in successfully");
-
-            userId = json._id;
-            // Extract the user ID and other details from the response
-            const { userId, email, name, token } = json;
-
-            // Save the user data (including ID) to localStorage
-            localStorage.setItem('user', JSON.stringify({ userId, email, name, token }));
-
-            // Dispatch the user data to the context to update the app state
-            dispatch({ type: 'LOGIN', payload: { userId, email, name, token } });
-
-            console.log('User ID:', userId); // Optional: log the user ID for debugging
+            localStorage.setItem('user', JSON.stringify(json));
+            dispatch({type: 'LOGIN', payload: json});
         } else {
             setErrorMessage(json.error || "Login failed. Please check your credentials.");
         }
@@ -63,6 +54,7 @@ export default function Login() {
         console.error("Fetch error:", error);
     }
 };
+
     // fake login
     const fakeAuthenticateUser = async () => {
         const fakeCredentials = {
