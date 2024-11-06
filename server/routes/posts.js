@@ -25,33 +25,33 @@ router.options('*', (req, res) => {
 
 /// Add new post
 router.post('/', async (req, res) => {
-  // Check if userId is present and valid
-  if (!req.body.userId) {
-    return res.status(400).json({ error: "userId is required" });
-  }
+  console.log("Received data:", req.body);
 
-  let userId;
-  try {
-    userId = mongoose.Types.ObjectId(req.body.userId); // Convert userId to ObjectId if needed
-  } catch (error) {
-    return res.status(420).json({ error: "Invalid userId format" });
+  const userId = req.body.userId;
+
+  // Check if userId is present and is a valid ObjectId format
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    console.log("Invalid userId format:", userId);
+    return res.status(400).json({ error: "Invalid userId format" });
   }
 
   const newPost = new Post({
-    userId:userId,
+    userId: mongoose.Types.ObjectId(userId), // Now we know it's valid
     desc: req.body.desc,
-    img: req.body.img,
-    likes: req.body.likes || [],
+    img: req.body.img || "", // Default to empty string if not provided
+    likes: req.body.likes || [], // Default to empty array if not provided
   });
 
   try {
     const savedPost = await newPost.save();
+    console.log("Post saved:", savedPost);
     res.status(201).json(savedPost);
   } catch (error) {
     console.error('Error saving post:', error);
     res.status(500).json({ error: "Error saving post" });
   }
 });
+
 // update a post
 router.put('/:id', async (req, res) => {
   try {
@@ -140,6 +140,7 @@ router.get('/profile/:userId', async (req, res) => {
   }
 });
 
+/*
 router.post('/', async (req, res) => {
   const newPost = new Post(req.body);
   try {
@@ -150,5 +151,6 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error', error });
   }
 });
+*/
 
 module.exports = router;

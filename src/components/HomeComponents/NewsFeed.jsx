@@ -37,14 +37,17 @@ const NewsFeed = () => {
   
     if (postContent) {
       const newPost = { 
+        
         userId: userId, // Include userId in the post data
         desc: postContent,
         img: "", // Optional image URL if applicable
         likes: [],
       };
-  
+      console.log("Data being sent to backend:", newPost);
       try {
-        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/api/posts`, newPost);
+        const response = await axios.post(
+          `${process.env.REACT_APP_SERVER_URL}/api/posts`, newPost
+        );
         const savedPost = response.data;
         console.log('Post saved:', savedPost);
         setPosts([...posts, savedPost]);
