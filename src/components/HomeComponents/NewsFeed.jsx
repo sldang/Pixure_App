@@ -53,6 +53,8 @@ const NewsFeed = () => {
                     Authorization: `Bearer ${user.token}`,
                     'Content-Type': 'application/json',
                 },
+                baseURL: process.env.REACT_APP_SERVER_URL,
+                withCredentials: true,
             }
         );
         const savedPost = response.data;
