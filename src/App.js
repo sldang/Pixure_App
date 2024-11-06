@@ -23,7 +23,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        {user && <Sidebar />}  {/* sidebar will be visible if user is authenticated */}
+        {user && <Sidebar />}  {/* Sidebar will be visible if user is authenticated */}
         <div className="content">  {/* adjust layout to leave space for sidebar */}
           <Routes>
             <Route path="/" element={user ? <HomePosts /> : <LoginPage/>} />
