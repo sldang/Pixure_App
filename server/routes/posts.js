@@ -30,18 +30,23 @@ router.post('/', async (req, res) => {
   const userId = req.body.userId;
 
   const newPost = new Post({
-    userId: userId, // Attach the userId to the post
+    userId: userId,
     desc: req.body.desc,
-    img: req.body.img || "", // Default to empty string if not provided
-    likes: req.body.likes || [], // Default to empty array if not provided
+    img: req.body.img || "",
+    likes: req.body.likes || [],
   });
 
   try {
     // Save the new post
     const savedPost = await newPost.save();
 
-    // Populate the userId field to include only the nickname
-    const populatedPost = await savedPost.populate('userId', 'nickname').execPopulate();
+    // Try populating the userId field to include only the nickname
+    const populatedPost = await savedPost.populate('userId', 'nickname');
+    
+    if (!populatedPost.userId || !populatedPost.userId.nickname) {
+      console.error("Nickname could not be populated or does not exist");
+      return res.status(500).json({ error: "Nickname could not be populated" });
+    }
 
     console.log("Post saved with populated user:", populatedPost);
     
@@ -52,6 +57,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: "Error saving post" });
   }
 });
+
 // update a post
 router.put('/:id', async (req, res) => {
   try {
