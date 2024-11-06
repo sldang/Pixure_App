@@ -26,8 +26,8 @@ const NewsFeed = () => {
     fetchPosts();
   }, []);
   const handleUpload = async () => { 
-    //const user = JSON.parse(localStorage.getItem('user')); // Retrieve user data from localStorage
-    const userId = user ? user.id : null;  // Access userId
+    //const user = JSON.parse(localStorage.getItem('user')).user.id; // Retrieve user data from localStorage
+    const userId = user ? user.user.id : null;  // Access userId
   
     if (!userId) {
       console.error("User ID is missing from localStorage");
