@@ -36,26 +36,25 @@ const NewsFeed = () => {
     }
   
     const newPost = { 
-        
       userId: userId, // Include userId in the post data
       desc: postContent,
       img: "", // Optional image URL if applicable
       likes: [],
     };
-    
+
     if (postContent) {
       
       console.log("Data being sent to backend:", newPost);
       try {
         const response = await axios.post(
-            `${process.env.REACT_APP_SERVER_URL}/api/posts`,
+            `https://pixure-server.onrender.com/api/posts`,
             newPost,
             {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
                     'Content-Type': 'application/json',
                 },
-                baseURL: process.env.REACT_APP_SERVER_URL,
+                baseURL: `https://pixure-server.onrender.com`,
                 withCredentials: true,
             }
         );
