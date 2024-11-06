@@ -17,6 +17,7 @@ export default function Signup() {
     e.preventDefault();
     console.log(signupState['email-address'])
     createAccount()
+    
   }
 
   //handle Signup API Integration here
