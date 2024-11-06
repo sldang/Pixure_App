@@ -4,6 +4,7 @@ import Post from './Post';
 import PersonalProfile from './PersonalProfile';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { useAuthContext } from '../../hooks/useAuthContext';
 
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL; 
@@ -24,7 +25,7 @@ const NewsFeed = () => {
     fetchPosts();
   }, []);
   const handleUpload = async () => {
-    const { user } = useAuthContext();
+    const { user } = useAuthContext;
     //const user = JSON.parse(localStorage.getItem('user')); // Retrieve user data from localStorage
     const userId = user ? user.id : null;  // Access userId
   
