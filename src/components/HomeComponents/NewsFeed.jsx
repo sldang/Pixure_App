@@ -78,7 +78,7 @@ const NewsFeed = () => {
         {posts.map((post, index) => (
           <Post 
             key={index} 
-            user={post.userId} // Adjust this if you want to display the user's name instead of the ID
+            user={post.userId?.nickname || "Unknown User"} // Display nickname, fallback to "Unknown User" if missing
             content={post.desc} 
             time={post.createdAt} // Assuming createdAt is a timestamp from your backend
           />
@@ -86,6 +86,5 @@ const NewsFeed = () => {
       </div>
     </div>
   );
-};
-
+}
 export default NewsFeed;

@@ -40,8 +40,8 @@ router.post('/', async (req, res) => {
     // Save the new post
     const savedPost = await newPost.save();
 
-    // Populate the userId field to include user information like nickname or full name
-    const populatedPost = await savedPost.populate('userId', 'nickname firstName lastName').execPopulate();
+    // Populate the userId field to include only the nickname
+    const populatedPost = await savedPost.populate('userId', 'nickname').execPopulate();
 
     console.log("Post saved with populated user:", populatedPost);
     
