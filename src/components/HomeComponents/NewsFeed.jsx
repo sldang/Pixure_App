@@ -27,7 +27,7 @@ const NewsFeed = () => {
   }, []);
 
   const handleUpload = async () => { 
-    const userId = user ? user.id : null;
+    const userId = user ? user.user.id : null;
 
     if (!userId) {
       console.error("User ID is missing from localStorage");
