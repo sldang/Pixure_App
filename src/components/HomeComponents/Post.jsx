@@ -17,3 +17,4 @@ const Post = ({ user, content, time }) => {
     </div>
   );
 };
+export default Post;
