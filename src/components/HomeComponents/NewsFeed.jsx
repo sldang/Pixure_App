@@ -45,9 +45,16 @@ const NewsFeed = () => {
       };
       console.log("Data being sent to backend:", newPost);
       try {
-        const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/api/posts`, newPost, {
-          headers: { 'Content-Type': 'application/json' }
-        });
+        const response = await axios.post(
+            `${process.env.REACT_APP_SERVER_URL}/api/posts`,
+            newPost,
+            {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
         const savedPost = response.data;
         console.log('Post saved:', savedPost);
         setPosts([...posts, savedPost]);
