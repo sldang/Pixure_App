@@ -23,7 +23,7 @@ router.options('*', (req, res) => {
   res.sendStatus(204); // No content
 });
 
-/// Add new post
+// Add new post
 router.post('/', async (req, res) => {
   console.log("Received data:", req.body);
 
@@ -40,18 +40,22 @@ router.post('/', async (req, res) => {
     // Save the new post
     const savedPost = await newPost.save();
 
-    // Attempt to populate userId to include nickname, firstName, and lastName fields
-    const populatedPost = await savedPost.populate('userId', 'nickname firstName lastName').execPopulate();
+    // Populate userId with nickname, firstName, and lastName
+    const populatedPost = await savedPost.populate('userId', 'nickname firstName lastName');
 
-    // Log the populated user data to verify if nickname is populated correctly
-    console.log("Populated userId in post:", populatedPost.userId);
+    // Check for nickname or fallback to firstName/lastName if nickname is unavailable
+    if (!populatedPost.userId) {
+      console.error("User information could not be populated.");
+      return res.status(500).json({ error: "User information could not be populated" });
+    }
+
+    console.log("Post saved with populated user:", populatedPost);
 
     // Send the populated post back in the response
     res.status(201).json(populatedPost);
   } catch (error) {
-    console.error('Error saving or populating post:', error.message); // Log the error message
-    console.error(error.stack); // Log the full error stack for detailed information
-    res.status(500).json({ error: "Error saving or populating post" });
+    console.error('Error saving post:', error);
+    res.status(500).json({ error: "Error saving post" });
   }
 });
 // update a post
