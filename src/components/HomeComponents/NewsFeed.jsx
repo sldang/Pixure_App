@@ -35,14 +35,16 @@ const NewsFeed = () => {
       return; // Exit the function if userId is missing
     }
   
-    if (postContent) {
-      const newPost = { 
+    const newPost = { 
         
-        userId: userId, // Include userId in the post data
-        desc: postContent,
-        img: "", // Optional image URL if applicable
-        likes: [],
-      };
+      userId: userId, // Include userId in the post data
+      desc: postContent,
+      img: "", // Optional image URL if applicable
+      likes: [],
+    };
+    
+    if (postContent) {
+      
       console.log("Data being sent to backend:", newPost);
       try {
         const response = await axios.post(
