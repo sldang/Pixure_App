@@ -5,7 +5,7 @@ import PersonalProfile from './PersonalProfile';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuthContext } from '../../hooks/useAuthContext';
-
+import { AuthContext } from "../../contexts/AuthContext"
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL; 
 const NewsFeed = () => {
