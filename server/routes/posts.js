@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
   }
 
   const newPost = new Post({
-    userId: userId,
+    userId:userId,
     desc: req.body.desc,
     img: req.body.img,
     likes: req.body.likes || [],
