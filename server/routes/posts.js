@@ -23,14 +23,11 @@ router.options('*', (req, res) => {
   res.sendStatus(204); // No content
 });
 
-// Add new post
+/// Add new post
 router.post('/', async (req, res) => {
   console.log("Received data:", req.body);
 
   const userId = req.body.userId;
-
-  // Log userId and check if it's valid
-  console.log("UserId provided:", userId);
 
   const newPost = new Post({
     userId: userId,
@@ -40,20 +37,20 @@ router.post('/', async (req, res) => {
   });
 
   try {
-    // Attempt to save the post
+    // Save the new post
     const savedPost = await newPost.save();
-    console.log("Post saved successfully:", savedPost);
 
-    // Attempt to populate the userId field with nickname, firstName, and lastName
+    // Attempt to populate userId to include nickname, firstName, and lastName fields
     const populatedPost = await savedPost.populate('userId', 'nickname firstName lastName').execPopulate();
-    console.log("Populated post data:", populatedPost);
+
+    // Log the populated user data to verify if nickname is populated correctly
+    console.log("Populated userId in post:", populatedPost.userId);
 
     // Send the populated post back in the response
     res.status(201).json(populatedPost);
   } catch (error) {
-    console.error('Error occurred during post creation or population:');
-    console.error('Error message:', error.message);
-    console.error('Full error stack:', error.stack);
+    console.error('Error saving or populating post:', error.message); // Log the error message
+    console.error(error.stack); // Log the full error stack for detailed information
     res.status(500).json({ error: "Error saving or populating post" });
   }
 });
