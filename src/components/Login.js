@@ -31,41 +31,38 @@ export default function Login() {
     // real login
     console.log(process.env.REACT_APP_SERVER_URL);
     const authenticateUser = async () => {
-        try {
-            const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/login`, { 
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: loginState['email-address'],
-                    password: loginState['password'],
-                })
-            });
-    
-            const json = await response.json();
-    
-            if (response.ok) {
-                console.log("Logged in successfully");
-    
-                // Store _id as userId and name (assuming _id is returned by the backend)
-                const userData = {
-                    userId: json._id,   // Use _id as userId
-                    name: json.name || "", // Use name or default to an empty string
-                };
-    
-                // Save to localStorage
-                localStorage.setItem("user", JSON.stringify(userData));
-                
-                // Dispatch login action with userId and name
-                dispatch({ type: 'LOGIN', payload: userData });
-            } else {
-                console.error(json.error || "Login failed");
-                setErrorMessage(json.error || "Login failed. Please check your credentials.");
-            }
-        } catch (error) {
-            setErrorMessage('Error fetching user data. Please try again.');
-            console.error("Fetch error:", error);
+    console.log(process.env.REACT_APP_SERVER_URL);
+    try {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/login`, { 
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: loginState['email-address'],
+                password: loginState['password'],
+            })
+        });
+        const json = await response.json();
+        if (response.ok) {
+            console.log("Logged in successfully");
+
+            // Extract the user ID and other details from the response
+            const { id, email, name, token } = json;
+
+            // Save the user data (including ID) to localStorage
+            localStorage.setItem('user', JSON.stringify({ id, email, name, token }));
+
+            // Dispatch the user data to the context to update the app state
+            dispatch({ type: 'LOGIN', payload: { id, email, name, token } });
+
+            console.log('User ID:', id); // Optional: log the user ID for debugging
+        } else {
+            setErrorMessage(json.error || "Login failed. Please check your credentials.");
         }
-    };
+    } catch (error) {
+        setErrorMessage('Error fetching user data. Please try again.');
+        console.error("Fetch error:", error);
+    }
+};
     // fake login
     const fakeAuthenticateUser = async () => {
         const fakeCredentials = {
