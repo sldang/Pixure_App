@@ -2,60 +2,66 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    firstName:{
-        type: String,
-        required: false,
-     },
-    lastName:{
+    firstName: {
         type: String,
         required: false,
     },
-    nickname:{
+    lastName: {
         type: String,
         required: false,
     },
-    email:{
+    nickname: {
         type: String,
         required: false,
     },
-    password:{
+    email: {
         type: String,
         required: false,
     },
-    zipcode:{
+    password: {
         type: String,
         required: false,
     },
-    followerList: {
-        type: Array,
+    zipcode: {
+        type: String,
         required: false,
     },
-    followList: {
-        type: Array,
-        required: false,
-    },
+    followerList: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+        }
+    ],
+    followList: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+        }
+    ],
     karma: {
         type: String,
         required: false,
     },
     communityIDs: {
-        type: String,
+        type: String, // Assuming communityIDs as a single string; change to Array if it's multiple IDs
         required: false,
     },
-    posts: {
-        type: String,
-        required: false,
-    },
+    posts: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Post",
+        }
+    ],
     age: {
         type: String,
         required: false,
     },
     searchTags: {
-        type: String,
+        type: String, // Change to Array if you expect multiple tags
         required: false,
     },
     postAndFlagsTags: {
-        type: String,
+        type: String, // Change to Array if you expect multiple tags
         required: false,
     },
     profilePic: {
@@ -67,7 +73,8 @@ const userSchema = new Schema({
         required: false,
     },
     parentAccountID: {
-        type: String,
+        type: Schema.Types.ObjectId, // Assuming this references another User
+        ref: "User",
         required: false,
     },
     childAccount: {
@@ -75,10 +82,10 @@ const userSchema = new Schema({
         required: false,
     },
     childAccountID: {
-        type: String,
+        type: Schema.Types.ObjectId, // Assuming this references another User
+        ref: "User",
         required: false,
     },
-
 });
 
-module.exports = mongoose.model('User', userSchema,'User')
+module.exports = mongoose.model("User", userSchema, "User");

@@ -1,7 +1,17 @@
 const User = require("../models/User");
 const router = require("express").Router();
 const bcryptjs = require("bcryptjs");
+const cors = require('cors');
 const jwt = require("jsonwebtoken");
+// CORS middleware setup
+router.use(
+  cors({
+    origin: 'https://pixure-app-3h6l.onrender.com' ,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
 //update user
 router.put("/:id", async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdmin) {

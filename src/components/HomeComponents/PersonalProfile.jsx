@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { AuthContext } from "../../contexts/AuthContext"; // Assuming you have an AuthContext to access the user info
+import axios from 'axios';
 
 const PersonalProfile = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const PersonalProfile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const userId = user && user.user ? user.user.id : null; // Adjusted to access nested userId
+        const userId = user? user.user.id : null; // Adjusted to access nested userId
         if (!userId) {
           console.error("User ID is missing.");
           return;
@@ -24,7 +24,7 @@ const PersonalProfile = () => {
 
         const response = await axios.get(`https://pixure-server.onrender.com/api/user/profile/${userId}`, {
           headers: {
-            'Authorization': `Bearer ${user.token}`,  // Assuming token is available in the context
+            'Authorization': `Bearer ${user.token}`, // Assuming token is available in the context
             'Content-Type': 'application/json',
           },
           withCredentials: true,
