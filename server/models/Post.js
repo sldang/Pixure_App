@@ -4,7 +4,8 @@ const postSchema = new mongoose.Schema({
   desc: String,
   img: String,
   likes: { type: Array, default: [] },
-});
+}
+{ timestamps: true });
 
 
 module.exports = mongoose.model("Post", postSchema, 'Post');
