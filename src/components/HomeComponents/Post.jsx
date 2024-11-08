@@ -1,11 +1,12 @@
 import React from 'react';
 
+// Helper function to format the date
 const formatDate = (timestamp) => {
   const date = new Date(timestamp);
   return date.toLocaleString(); 
 };
 
-const Post = ({ user, content, time, img, onDelete, onUpdate }) => {
+const Post = ({ user, content, time, imageData, onDelete, onUpdate }) => {
   const username = user || "Unknown User"; 
 
   return (
@@ -31,13 +32,14 @@ const Post = ({ user, content, time, img, onDelete, onUpdate }) => {
         </div>
       </div>
       <div className='mt-[20px] mb-[20px]'>
-      {img && (
-  <img
-    src={img.startsWith('http') ? img : `https://pixure-server.onrender.com${img}`}
-    alt="Uploaded content"
-    className='w-full h-auto mb-[10px]'
-  />
-)}
+        {/* Render the image if imageData exists */}
+        {imageData && (
+          <img
+            src={imageData}
+            alt="Uploaded content"
+            className='w-full h-auto mb-[10px]'
+          />
+        )}
         <span>{content}</span>
       </div>
     </div>

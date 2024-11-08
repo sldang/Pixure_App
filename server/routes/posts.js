@@ -5,6 +5,7 @@ const router = express.Router();
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const verifyToken = require('../middleware/verifyToken'); // Import the middleware
 // CORS middleware setup
 router.use(
@@ -15,16 +16,7 @@ router.use(
     credentials: true,
   })
 );
-// Set up storage configuration for multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Folder where images will be stored
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
-  }
-});
-
+const storage = multer.memoryStorage();
 // Set up file filter to allow only specific image types, including .jfif
 const fileFilter = (req, file, cb) => {
   // Accept only specific file types
@@ -36,46 +28,28 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Configure multer with storage and file filter
-const upload = multer({ 
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // Optional: Limit file size to 5MB
-});
+const upload = multer({ storage: storage });
 
 
-
-// Add new post with image upload
 router.post('/', upload.single('img'), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "Unsupported file type or no file provided" });
-  }
   try {
-      console.log("Received data:", req.body); // Log received data
-      console.log("File data:", req.file); // Log uploaded file data
+    const userId = req.body.userId;
+    const imageBuffer = req.file.buffer; // Access the image buffer
+    const base64Image = imageBuffer.toString('base64'); // Convert buffer to Base64
 
-      const userId = req.body.userId;
-      console.log("UserId:", userId);
+    const newPost = new Post({
+      userId: userId,
+      desc: req.body.desc || '',
+      imageData: `data:${req.file.mimetype};base64,${base64Image}`, // Set Base64 string with MIME type
+      likes: req.body.likes || [],
+    });
 
-      const newPost = new Post({
-          userId: userId,
-          desc: req.body.desc || "", // Default to empty string if not provided
-          img: req.file ? `/uploads/${req.file.filename}` : "", // Store path to uploaded image
-          likes: req.body.likes || [], // Default to empty array if not provided
-      });
-
-      console.log("New Post object:", newPost); // Log new post object
-
-      const savedPost = await newPost.save();
-      console.log("Saved Post:", savedPost); // Log saved post object
-
-      const populatedPost = await Post.findById(savedPost._id).populate('userId', 'nickname');
-      console.log("Populated Post:", populatedPost); // Log populated post
-
-      res.status(201).json(populatedPost);
+    const savedPost = await newPost.save();
+    const populatedPost = await Post.findById(savedPost._id).populate('userId', 'nickname');
+    res.status(201).json(populatedPost);
   } catch (error) {
-      console.error('Error saving post with image:', error); // Log detailed error stack
-      res.status(500).json({ error: "Error saving post with image", details: error.message });
+    console.error('Error saving post with image:', error);
+    res.status(500).json({ error: "Error saving post with image" });
   }
 });
 // Handle preflight requests (OPTIONS)
