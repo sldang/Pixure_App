@@ -197,7 +197,7 @@ const Sidebar = () => {
               alt="Profile"
               className="w-10 h-10 rounded-full object-cover"
             />
-            <span className="text-sm text-black font-medium" onClick={handleProfileClick}>{userEmail}</span>
+            <span className="text-sm text-black font-medium" onClick={handleProfileClick}>@username</span>
           </div>
           <FaSignOutAlt
             className="text-xl text-black cursor-pointer hover:text-red-500 transition-colors duration-300"
