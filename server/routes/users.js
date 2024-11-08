@@ -3,6 +3,7 @@ const router = require("express").Router();
 const bcryptjs = require("bcryptjs");
 const cors = require('cors');
 const jwt = require("jsonwebtoken");
+
 // CORS middleware setup
 router.use(
   cors({
@@ -12,6 +13,7 @@ router.use(
     credentials: true,
   })
 );
+
 //update user
 router.put("/:id", async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdmin) {
@@ -52,13 +54,13 @@ router.delete("/:id", async (req, res) => {
 
 // Get a user profile with nickname and follower/following counts
 router.get("/profile/:userId", async (req, res) => {
-  const userId = req.params.userId; // Assuming it's passed as a path parameter
+  const userId = req.params.userId; // Get userId from the request parameters
 
   try {
-    // Find the user by ID
+    // Find the user by ID and populate the followerList and followList
     const user = await User.findById(userId)
       .populate('followerList', '_id')  // Only retrieve _id for count
-      .populate('followList', '_id');   // Only retrieve _id for count
+      .populate('followList', '_id')     // Only retrieve _id for count
 
     if (!user) {
       return res.status(404).json("User not found");
@@ -66,10 +68,10 @@ router.get("/profile/:userId", async (req, res) => {
 
     // Create the profile data response
     const profileData = {
-      nickname: user.nickname,  // Display the nickname
+      nickname: user.nickname || "Unknown User",  // Use nickname as the display name
       postsCount: user.posts ? user.posts.length : 0,  // Count of posts
-      followersCount: user.followerList ? user.followerList.length : 0,
-      followingCount: user.followList ? user.followList.length : 0,
+      followersCount: user.followerList.length,  // Count of followers
+      followingCount: user.followList.length,     // Count of followings
     };
 
     res.status(200).json(profileData);
