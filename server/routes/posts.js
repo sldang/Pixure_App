@@ -41,18 +41,17 @@ router.post('/', async (req, res) => {
     const savedPost = await newPost.save();
 
     // Populate the userId field to include only the nickname
-    const populatedPost = await savedPost.populate('userId', 'nickname').execPopulate();
+    const populatedPost = await Post.findById(savedPost._id).populate('userId', 'nickname');
 
     console.log("Post saved with populated user:", populatedPost);
     
     // Send the populated post back in the response
     res.status(201).json(populatedPost);
   } catch (error) {
-    console.error('Error saving post:', error);
+    console.error('Error saving or populating post:', error);
     res.status(500).json({ error: "Error saving or populating post", details: error.message });
   }
 });
-
 // update a post
 router.put('/:id', async (req, res) => {
   try {
