@@ -2,66 +2,60 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    firstName: {
+    firstName:{
+        type: String,
+        required: false,
+     },
+    lastName:{
         type: String,
         required: false,
     },
-    lastName: {
+    nickname:{
         type: String,
         required: false,
     },
-    nickname: {
+    email:{
         type: String,
         required: false,
     },
-    email: {
+    password:{
         type: String,
         required: false,
     },
-    password: {
+    zipcode:{
         type: String,
         required: false,
     },
-    zipcode: {
-        type: String,
+    followerList: {
+        type: Array,
         required: false,
     },
-    followerList: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-        }
-    ],
-    followList: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-        }
-    ],
+    followList: {
+        type: Array,
+        required: false,
+    },
     karma: {
         type: String,
         required: false,
     },
     communityIDs: {
-        type: String, // Assuming communityIDs as a single string; change to Array if it's multiple IDs
+        type: String,
         required: false,
     },
-    posts: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "Post",
-        }
-    ],
+    posts: {
+        type: String,
+        required: false,
+    },
     age: {
         type: String,
         required: false,
     },
     searchTags: {
-        type: String, // Change to Array if you expect multiple tags
+        type: String,
         required: false,
     },
     postAndFlagsTags: {
-        type: String, // Change to Array if you expect multiple tags
+        type: String,
         required: false,
     },
     profilePic: {
@@ -73,8 +67,7 @@ const userSchema = new Schema({
         required: false,
     },
     parentAccountID: {
-        type: Schema.Types.ObjectId, // Assuming this references another User
-        ref: "User",
+        type: String,
         required: false,
     },
     childAccount: {
@@ -82,10 +75,10 @@ const userSchema = new Schema({
         required: false,
     },
     childAccountID: {
-        type: Schema.Types.ObjectId, // Assuming this references another User
-        ref: "User",
+        type: String,
         required: false,
     },
+
 });
 
-module.exports = mongoose.model("User", userSchema, "User");
+module.exports = mongoose.model('User', userSchema,'User')
