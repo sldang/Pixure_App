@@ -1,16 +1,12 @@
-import Header from "../components/Header";
 import Signup from "../components/Signup";
+import './Signup.css';
 
-export default function SignupPage(){
-    return(
-        <>
-            <Header
-              heading="Signup to create an account"
-              paragraph="Already have an account? "
-              linkName="Login"
-              linkUrl="/Login"
-            />
-            <Signup/>
-        </>
-    )
+export default function SignupPage() {
+    return (
+        <div className="signup-page">
+            <div className="signup-container">
+                <Signup />
+            </div>
+        </div>
+    );
 }
