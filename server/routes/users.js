@@ -39,30 +39,30 @@ router.delete("/:id", async (req, res) => {
     return res.status(403).json("You can delete only your account!");
   }
 });
-
-// Get a user profile with follower and following counts
+// Get a user profile with nickname (username) and follower/following counts
 router.get("/profile", async (req, res) => {
-  const userId = req.query.userId;
-  const username = req.query.username;
-  
+  const userId = req.query.userId; // User ID can be passed as a query parameter
+
   try {
-    // Find user by ID or username
-    const user = userId
-      ? await User.findById(userId)
-      : await User.findOne({ username: username });
-    
+    // Find the user by ID
+    const user = await User.findById(userId)
+      .populate('posts') // Populate posts if needed
+      .populate('followers') // Populate followers if needed
+      .populate('following'); // Populate following if needed
+
     if (!user) {
       return res.status(404).json("User not found");
     }
 
-    // Destructure and exclude sensitive fields
+    // Exclude sensitive fields and return nickname (username)
     const { password, updatedAt, ...other } = user._doc;
 
-    // Add follower and following counts to the response
+    // Create the profile data response
     const profileData = {
-      ...other,
+      nickname: user.nickname, // Use nickname as the username
+      postsCount: user.posts.length,
       followersCount: user.followers.length,
-      followingCount: user.followings.length,
+      followingCount: user.following.length,
     };
 
     res.status(200).json(profileData);
@@ -71,6 +71,7 @@ router.get("/profile", async (req, res) => {
     res.status(500).json("An error occurred while fetching user profile");
   }
 });
+
 //get friends
 router.get("/friends/:userId", async (req, res) => {
   try {

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const PersonalProfile = () => {
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState({
+    nickname: '',          // Add nickname to the state
     postsCount: 0,
     followersCount: 0,
     followingCount: 0,
@@ -16,16 +17,17 @@ const PersonalProfile = () => {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            // Add authorization headers if required
+            Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token if needed
           },
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           setProfileData({
-            postsCount: data.posts.length,        // Assuming `data.posts` is an array of posts
-            followersCount: data.followers.length, // Assuming `data.followers` is an array of followers
-            followingCount: data.following.length, // Assuming `data.following` is an array of following
+            nickname: data.nickname || 'Unknown User', // Set the nickname here
+            postsCount: data.postsCount,               // Use counts returned by the API
+            followersCount: data.followersCount,
+            followingCount: data.followingCount,
           });
         } else {
           console.error('Failed to fetch profile data');
@@ -57,7 +59,7 @@ const PersonalProfile = () => {
         {/* Profile Info */}
         <div className="flex-1">
           <div className="flex items-center space-x-4 mb-2">
-            <h2 className="text-2xl font-bold whitespace-nowrap">John Doe</h2>
+            <h2 className="text-2xl font-bold whitespace-nowrap">{profileData.nickname}</h2> {/* Display the nickname */}
             <button className="bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800" onClick={handleEditClick}>
               Edit Profile
             </button>
