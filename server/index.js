@@ -3,7 +3,7 @@ const cors = require("cors");
 const express = require("express");
 const connectDB = require("./connectDB");
 const jwt = require('jsonwebtoken');
-
+const path = require('path');
 const bcryptjs = require("bcryptjs");
 const Post = require('./models/Post');
 const Community = require('./models/Community');
@@ -27,7 +27,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 const postRoute = require('./routes/posts');
 app.use('/api/posts', postRoute);
-
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Connect to the database
 connectDB();
 

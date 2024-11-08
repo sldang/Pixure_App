@@ -33,27 +33,41 @@ const NewsFeed = () => {
     fetchUserPosts();
   }, [user]);
 
-  const handleUpload = async () => {
+  const handleUpload = async (postContent, image) => {
     const userId = user ? user.user.id : null;
+
     if (!userId) {
-      console.error("User ID is missing.");
-      return;
+        console.error("User ID is missing.");
+        return;
     }
-    const newPost = { userId: userId, desc: postContent, img: "", likes: [] };
-    if (postContent) {
-      try {
-        const response = await axios.post(`/api/posts`, newPost, {
-          headers: { Authorization: `Bearer ${user.token}` },
-          withCredentials: true,
-        });
+
+    const formData = new FormData();
+    formData.append("userId", userId);
+    formData.append("desc", postContent);
+    if (image) {
+        formData.append("img", image); 
+    }
+
+    try {
+        const response = await axios.post(
+            `https://pixure-server.onrender.com/api/posts`,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+                withCredentials: true,
+            }
+        );
+
         const savedPost = response.data;
         setPosts([savedPost, ...posts]);
         setPostContent('');
-      } catch (error) {
+    } catch (error) {
         console.error('Error uploading post:', error);
-      }
     }
-  };
+};
 
   const handleDelete = async (postId) => {
     try {
@@ -99,6 +113,7 @@ const NewsFeed = () => {
             user={post.userId?.nickname || "Unknown User"}
             content={post.desc}
             time={post.createdAt}
+            img={post.img ? `https://pixure-server.onrender.com${post.img}` : null}
             onDelete={() => handleDelete(post._id)}
             onUpdate={() => handleUpdate(post._id)}
           />

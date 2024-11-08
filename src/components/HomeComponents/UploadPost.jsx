@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const UploadPost = ({ postContent, setPostContent, handleUpload }) => {
+    const [image, setImage] = useState(null);
+
+    const handleImageChange = (e) => {
+        setImage(e.target.files[0]);
+    };
+
     return (
         <div className='w-full h-[150px] rounded-lg shadow-lg'>
             <div className='wrapper p-[10px]'>
@@ -13,20 +19,10 @@ const UploadPost = ({ postContent, setPostContent, handleUpload }) => {
                         onChange={(e) => setPostContent(e.target.value)} // Update input state
                     />
                 </div>
+                <input type="file" onChange={handleImageChange} /> {/* New file input for image */}
                 <hr className='m-[20px]' />
                 <div className="bottom flex items-center justify-between">
-                    <div className='flex ml-[20px]'>
-                        <div className='flex items-center mr-[15px] cursor-pointer'>
-                            <span>Photos</span>
-                        </div>
-                        <div className='flex items-center mr-[15px] cursor-pointer'>
-                            <span>Tags</span>
-                        </div>
-                        <div className='flex items-center mr-[15px] cursor-pointer'>
-                            <span>Location</span>
-                        </div>
-                    </div>
-                    <button className='bg-black text-white p-[7px] rounded-lg' onClick={handleUpload}>Upload</button>
+                    <button className='bg-black text-white p-[7px] rounded-lg' onClick={() => handleUpload(postContent, image)}>Upload</button>
                 </div>
             </div>
         </div>

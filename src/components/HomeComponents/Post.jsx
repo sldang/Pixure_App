@@ -6,7 +6,7 @@ const formatDate = (timestamp) => {
   return date.toLocaleString(); // Formats to "MM/DD/YYYY, HH:MM:SS AM/PM"
 };
 
-const Post = ({ user, content, time, onDelete, onUpdate }) => {
+const Post = ({ user, content, time, img, onDelete, onUpdate }) => {
   const username = user || "Unknown User"; // user will be nickname if populated correctly
 
   return (
@@ -32,7 +32,14 @@ const Post = ({ user, content, time, onDelete, onUpdate }) => {
         </div>
       </div>
       <div className='mt-[20px] mb-[20px]'>
-        <span>{content}</span>  
+        {img && (
+          <img
+            src={img}
+            alt="Uploaded content"
+            className='w-full h-auto mb-[10px]'
+          />
+        )}
+        <span>{content}</span>
       </div>
     </div>
   );
