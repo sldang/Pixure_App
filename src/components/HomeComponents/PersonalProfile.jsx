@@ -33,8 +33,8 @@ const PersonalProfile = () => {
         const response = await axios.get(`https://pixure-server.onrender.com/api/User/:${userEmail}/follow-stats`);
         setProfileData.followersCount(response.data.followersCount)
         setProfileData.followedCount(response.data.followedCount)
-        if (response.status === 200) {
-          const data = response.data;
+        // if (response.status === 200) {
+        //   const data = response.data;
           setProfileData({
             nickname: data.nickname || `err`, // Correctly access nickname
             postsCount: data.postsCount,
