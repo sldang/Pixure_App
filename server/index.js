@@ -336,6 +336,33 @@ app.get('/api/getUserFollowers', async (req,res) => {
     }
 });
 
+app.get('/user/:userEmail/follow-stats', async (req, res) => {
+    try {
+        // Get user ID from request parameters
+        const { userEmail } = req.params;
+        
+        // Find the user by ID
+        const user = await User.findOne(userEmail);
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        // Get the count of followers and followed
+        const followersCount = user.followerList.length;
+        const followedCount = user.followList.length;
+
+        // Respond with the counts
+        res.status(200).json({
+            followersCount,
+            followedCount
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
