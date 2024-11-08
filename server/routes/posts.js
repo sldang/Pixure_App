@@ -45,8 +45,8 @@ router.post('/', upload.single('img'), async (req, res) => {
       const populatedPost = await Post.findById(savedPost._id).populate('userId', 'nickname');
       res.status(201).json(populatedPost);
   } catch (error) {
-      console.error('Error saving post with image:', error);
-      res.status(500).json({ error: "Error saving post with image" });
+        console.error('Detailed Error Stack:', error.stack);
+       res.status(500).json({ error: "Error saving post with image", details: error.message});
   }
 });
 // Handle preflight requests (OPTIONS)
