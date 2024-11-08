@@ -30,23 +30,31 @@ const upload = multer({ storage: storage });
 // Add new post with image upload
 router.post('/', upload.single('img'), async (req, res) => {
   try {
+      console.log("Received data:", req.body); // Log received data
+      console.log("File data:", req.file); // Log uploaded file data
+
       const userId = req.body.userId;
-      const desc = req.body.desc || ""; // Default to empty string if no description is provided
-      const likes = Array.isArray(req.body.likes) ? req.body.likes : []; // Ensure likes is an array
-  
+      console.log("UserId:", userId);
+
       const newPost = new Post({
           userId: userId,
-          desc: req.body.desc,
+          desc: req.body.desc || "", // Default to empty string if not provided
           img: req.file ? `/uploads/${req.file.filename}` : "", // Store path to uploaded image
-          likes: req.body.likes || [],
+          likes: req.body.likes || [], // Default to empty array if not provided
       });
 
+      console.log("New Post object:", newPost); // Log new post object
+
       const savedPost = await newPost.save();
+      console.log("Saved Post:", savedPost); // Log saved post object
+
       const populatedPost = await Post.findById(savedPost._id).populate('userId', 'nickname');
+      console.log("Populated Post:", populatedPost); // Log populated post
+
       res.status(201).json(populatedPost);
   } catch (error) {
-        console.error('Detailed Error Stack:', error.stack);
-       res.status(500).json({ error: "Error saving post with image", details: error.message});
+      console.error('Error saving post with image:', error); // Log detailed error stack
+      res.status(500).json({ error: "Error saving post with image", details: error.message });
   }
 });
 // Handle preflight requests (OPTIONS)
