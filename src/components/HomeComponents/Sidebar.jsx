@@ -16,7 +16,7 @@ const Sidebar = () => {
   const [profileImage, setProfileImage] = useState(null); // user profile image state
   const parsedData = JSON.parse(localStorage.getItem('user'));
   const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
-
+  const userNickname = parsedData && parsedData.user ? parsedData.user.email : null;
   // example notifications
   const [notifications] = useState([
     { user: 'John Doe', content: 'liked your post', time: '1d ago' },
@@ -197,7 +197,7 @@ const Sidebar = () => {
               alt="Profile"
               className="w-10 h-10 rounded-full object-cover"
             />
-            <span className="text-sm text-black font-medium" onClick={handleProfileClick}>@username</span>
+            <span className="text-sm text-black font-medium" onClick={handleProfileClick}>{userNickname}</span>
           </div>
           <FaSignOutAlt
             className="text-xl text-black cursor-pointer hover:text-red-500 transition-colors duration-300"
