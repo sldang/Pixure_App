@@ -342,7 +342,7 @@ app.get('/api/user/:userEmail/follow-stats', async (req, res) => {
         const { userEmail } = req.params;
         
         // Find the user by ID
-        const user = await User.findOne(userEmail);
+        const user = await User.findOne({ email: userEmail });
         
         if (!user) {
             return res.status(404).json({ message: "User not found" });
