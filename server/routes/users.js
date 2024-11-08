@@ -67,11 +67,11 @@ router.get("/profile/:userId", async (req, res) => {
     }
 
     // Accessing nested nickname
-    const nickname = user.user.nickname || "Unknown User"; // Adjusted for nested structure
+    
 
     // Create the profile data response
     const profileData = {
-      nickname,  // Use nickname as the display name
+      nickname: user.nickname,  // Use nickname as the display name
       postsCount: user.posts ? user.posts.length : 0,  // Count of posts
       followersCount: user.followerList.length,  // Count of followers
       followingCount: user.followList.length,     // Count of followings
