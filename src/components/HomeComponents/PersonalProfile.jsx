@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { AuthContext } from "../../contexts/AuthContext";
 
 const PersonalProfile = () => {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   const [profileData, setProfileData] = useState({
-    nickname: '',          // Add nickname to the state
+    nickname: '',
     postsCount: 0,
     followersCount: 0,
     followingCount: 0,
@@ -13,32 +16,30 @@ const PersonalProfile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await fetch('https://pixure-server.onrender.com/api/user/profile', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Include token if needed
-          },
+        const userId = user ? user.user.id : null;
+        if (!userId) {
+          console.error("User ID is missing.");
+          return;
+        }
+
+        const response = await axios.get(`/api/user/profile/${userId}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+          withCredentials: true,
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setProfileData({
-            nickname: data.nickname || 'Unknown User', // Set the nickname here
-            postsCount: data.postsCount,               // Use counts returned by the API
-            followersCount: data.followersCount,
-            followingCount: data.followingCount,
-          });
-        } else {
-          console.error('Failed to fetch profile data');
-        }
+        setProfileData({
+          nickname: response.data.nickname || 'Unknown User',
+          postsCount: response.data.postsCount || 0,
+          followersCount: response.data.followersCount || 0,
+          followingCount: response.data.followingCount || 0,
+        });
       } catch (error) {
-        console.error('Error fetching profile data:', error);
+        console.error('Error fetching profile data:', error.response ? error.response.data : error.message);
       }
     };
 
     fetchProfileData();
-  }, []);
+  }, [user]);
 
   const handleEditClick = () => {
     navigate('/editprofile');
@@ -47,7 +48,6 @@ const PersonalProfile = () => {
   return (
     <div className="max-w-lg mx-auto p-4">
       <div className="flex items-center space-x-4">
-        {/* Profile Image */}
         <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
           <img
             src="" // Replace with your image URL or `profileData.imageURL` if you have it
@@ -56,10 +56,9 @@ const PersonalProfile = () => {
           />
         </div>
 
-        {/* Profile Info */}
         <div className="flex-1">
           <div className="flex items-center space-x-4 mb-2">
-            <h2 className="text-2xl font-bold whitespace-nowrap">{profileData.nickname}</h2> {/* Display the nickname */}
+            <h2 className="text-2xl font-bold whitespace-nowrap">{profileData.nickname}</h2>
             <button className="bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800" onClick={handleEditClick}>
               Edit Profile
             </button>
@@ -75,7 +74,6 @@ const PersonalProfile = () => {
         </div>
       </div>
 
-      {/* Profile Bio */}
       <div className="mt-4">
         <p>Everyone has a story to tell. I'm gonna tell you mine.</p>
       </div>
