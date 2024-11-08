@@ -15,7 +15,7 @@ const UserProfileDisplay = ({ nickname, postsCount, followersCount, followingCou
 
         <div className="flex-1">
           <div className="flex items-center space-x-4 mb-2">
-            <h2 className="text-2xl font-bold whitespace-nowrap">{nickname || "Unknown User"}</h2>
+            <h2 className="text-2xl font-bold whitespace-nowrap">{nickname|| "Unknown User"}</h2>
             <button className="bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800">
               Edit Profile
             </button>

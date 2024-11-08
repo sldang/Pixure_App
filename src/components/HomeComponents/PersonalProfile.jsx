@@ -57,7 +57,7 @@ const PersonalProfile = () => {
 
   return (
     <UserProfileDisplay 
-      nickname={profileData.nickname} 
+      nickname ={profileData.nickname} 
       postsCount={profileData.postsCount} 
       followersCount={profileData.followersCount} 
       followingCount={profileData.followingCount} 

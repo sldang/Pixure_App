@@ -65,10 +65,10 @@ router.get("/profile/:userId", async (req, res) => {
     if (!user) {
       return res.status(404).json("User not found");
     }
-
+    const nickname = user ? user.user.nickname : null;
     // Create the profile data response
     const profileData = {
-      nickname: user.user.nickname || "Unknown User",  // Use nickname as the display name
+      nickname,  // Use nickname as the display name
       postsCount: user.posts ? user.posts.length : 0,  // Count of posts
       followersCount: user.followerList.length,  // Count of followers
       followingCount: user.followList.length,     // Count of followings
