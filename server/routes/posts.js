@@ -31,6 +31,9 @@ const upload = multer({ storage: storage });
 router.post('/', upload.single('img'), async (req, res) => {
   try {
       const userId = req.body.userId;
+      const desc = req.body.desc || ""; // Default to empty string if no description is provided
+      const likes = Array.isArray(req.body.likes) ? req.body.likes : []; // Ensure likes is an array
+  
       const newPost = new Post({
           userId: userId,
           desc: req.body.desc,

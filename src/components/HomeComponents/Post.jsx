@@ -1,13 +1,12 @@
 import React from 'react';
 
-// Helper function to format date
 const formatDate = (timestamp) => {
   const date = new Date(timestamp);
-  return date.toLocaleString(); // Formats to "MM/DD/YYYY, HH:MM:SS AM/PM"
+  return date.toLocaleString(); 
 };
 
 const Post = ({ user, content, time, img, onDelete, onUpdate }) => {
-  const username = user || "Unknown User"; // user will be nickname if populated correctly
+  const username = user || "Unknown User"; 
 
   return (
     <div className='w-full rounded-md shadow-lg mt-[30px] mb-[30px]'>
@@ -32,13 +31,13 @@ const Post = ({ user, content, time, img, onDelete, onUpdate }) => {
         </div>
       </div>
       <div className='mt-[20px] mb-[20px]'>
-        {img && (
-          <img
-            src={img}
-            alt="Uploaded content"
-            className='w-full h-auto mb-[10px]'
-          />
-        )}
+      {img && (
+  <img
+    src={img.startsWith('http') ? img : `https://pixure-server.onrender.com${img}`}
+    alt="Uploaded content"
+    className='w-full h-auto mb-[10px]'
+  />
+)}
         <span>{content}</span>
       </div>
     </div>
