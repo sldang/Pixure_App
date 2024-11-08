@@ -23,11 +23,11 @@ const PersonalProfile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const userId = user.user.id; // Accessing userId directly
-        if (!userId) {
-          console.error("User ID is missing.");
-          return;
-        }
+        // const userId = user.user.id; // Accessing userId directly
+        // if (!userId) {
+        //   console.error("User ID is missing.");
+        //   return;
+        // }
 
         console.log(userEmail);
         const response = await axios.get(`https://pixure-server.onrender.com/api/User/:${userEmail}/follow-stats`);
