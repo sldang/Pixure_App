@@ -8,7 +8,7 @@ const formatDate = (timestamp) => {
 
 const Post = ({ user, content, time, imageData, onDelete, onUpdate }) => {
   const username = user || "Unknown User"; 
-
+  const imageSrc = imageData ? `data:image/jpeg;base64,${imageData}` : null;
   return (
     <div className='w-full rounded-md shadow-lg mt-[30px] mb-[30px]'>
       <div className='p-[10px]'>
@@ -35,7 +35,7 @@ const Post = ({ user, content, time, imageData, onDelete, onUpdate }) => {
         {/* Render the image if imageData exists */}
         {imageData && (
           <img
-            src={imageData}
+            src={imageSrc}
             alt="Uploaded content"
             className='w-full h-auto mb-[10px]'
           />
