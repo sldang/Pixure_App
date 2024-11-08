@@ -29,7 +29,7 @@ const PersonalProfile = () => {
           return;
         }
 
-
+        console.log(userEmail);
         const response = await axios.get(`https://pixure-server.onrender.com/api/User/:${userEmail}/follow-stats`);
         setProfileData.followersCount(response.data.followersCount)
         setProfileData.followedCount(response.data.followedCount)
