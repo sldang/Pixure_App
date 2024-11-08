@@ -12,7 +12,6 @@ const NewsFeed = () => {
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState('');
 
-  // Fetch posts from backend
   useEffect(() => {
     const fetchUserPosts = async () => {
       try {
@@ -73,7 +72,7 @@ const NewsFeed = () => {
     try {
       await axios.delete(`/api/posts/${postId}`, {
         headers: { Authorization: `Bearer ${user.token}` },
-        data: { userId: user.user.id }, // Pass userId for verification
+        data: { userId: user.user.id },
       });
       setPosts(posts.filter((post) => post._id !== postId));
     } catch (error) {
@@ -113,7 +112,7 @@ const NewsFeed = () => {
             user={post.userId?.nickname || "Unknown User"}
             content={post.desc}
             time={post.createdAt}
-            img={post.img ? `https://pixure-server.onrender.com${post.img}` : null}
+            img={post.imageData || null} // Use imageData directly
             onDelete={() => handleDelete(post._id)}
             onUpdate={() => handleUpdate(post._id)}
           />
@@ -124,3 +123,4 @@ const NewsFeed = () => {
 };
 
 export default NewsFeed;
+           

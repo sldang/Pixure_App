@@ -1,14 +1,13 @@
 import React from 'react';
 
-// Helper function to format the date
 const formatDate = (timestamp) => {
   const date = new Date(timestamp);
   return date.toLocaleString(); 
 };
 
-const Post = ({ user, content, time, imageData, onDelete, onUpdate }) => {
+const Post = ({ user, content, time, img, onDelete, onUpdate }) => {
   const username = user || "Unknown User"; 
-  const imageSrc = imageData ? `data:image/jpeg;base64,${imageData}` : null;
+
   return (
     <div className='w-full rounded-md shadow-lg mt-[30px] mb-[30px]'>
       <div className='p-[10px]'>
@@ -32,10 +31,9 @@ const Post = ({ user, content, time, imageData, onDelete, onUpdate }) => {
         </div>
       </div>
       <div className='mt-[20px] mb-[20px]'>
-        {/* Render the image if imageData exists */}
-        {imageData && (
+        {img && (
           <img
-            src={imageSrc}
+            src={img} // Use base64 data directly
             alt="Uploaded content"
             className='w-full h-auto mb-[10px]'
           />
