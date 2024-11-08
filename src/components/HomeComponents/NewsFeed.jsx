@@ -40,6 +40,35 @@ const NewsFeed = () => {
     fetchUserPosts();
   }, [user]);
 
+  const handleDelete = async (postId) => {
+    try {
+      await axios.delete(`/api/posts/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`
+        }
+      });
+      setPosts(posts.filter(post => post._id !== postId)); // Remove deleted post from the UI
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  };
+
+  const handleEdit = async (postId, updatedContent) => {
+    try {
+      const response = await axios.put(`/api/posts/${postId}`, 
+        { desc: updatedContent, userId: user.user.id },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        }
+      );
+      setPosts(posts.map(post => post._id === postId ? { ...post, desc: updatedContent } : post)); // Update post in the UI
+    } catch (error) {
+      console.error('Error updating post:', error);
+    }
+  };
+
   const handleUpload = async () => { 
     const userId = user ? user.user.id : null;
 
@@ -97,6 +126,7 @@ const NewsFeed = () => {
           posts.map((post, index) => (
             <Post 
               key={index} 
+              post={post} 
               user={post.userId?.nickname || "Unknown User"} // Display nickname, fallback to "Unknown User" if missing
               content={post.desc} 
               time={post.createdAt} // Assuming createdAt is a timestamp from your backend
