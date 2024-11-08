@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { AuthContext } from "../../contexts/AuthContext";
+import { AuthContext } from "../../contexts/AuthContext"; // Assuming you have an AuthContext to access the user info
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
+
 const PersonalProfile = () => {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); // Access user data, including userId
   const [profileData, setProfileData] = useState({
     nickname: '',
     postsCount: 0,
@@ -17,25 +18,32 @@ const PersonalProfile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const userId = user ? user.user.id : null;
+        const userId = user ? user.user.id : null; // Retrieve userId from context
         if (!userId) {
           console.error("User ID is missing.");
           return;
         }
 
         const response = await axios.get(`/api/user/profile/${userId}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
+          headers: {
+            Authorization: `Bearer ${user.token}`, // Include token if needed
+          },
           withCredentials: true,
         });
 
-        setProfileData({
-          nickname: response.data.nickname || 'Unknown User',
-          postsCount: response.data.postsCount || 0,
-          followersCount: response.data.followersCount || 0,
-          followingCount: response.data.followingCount || 0,
-        });
+        if (response.status === 200) {
+          const data = response.data;
+          setProfileData({
+            nickname: data.nickname || 'Unknown User', // Set the nickname here
+            postsCount: data.postsCount || 0,
+            followersCount: data.followersCount || 0,
+            followingCount: data.followingCount || 0,
+          });
+        } else {
+          console.error('Failed to fetch profile data');
+        }
       } catch (error) {
-        console.error('Error fetching profile data:', error.response ? error.response.data : error.message);
+        console.error('Error fetching profile data:', error);
       }
     };
 
