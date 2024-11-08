@@ -57,31 +57,41 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if(post.userId == req.body.userId) {
-      await post.updateOne({ $set: req.body });
-      res.status(200).json("Post updated.");
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    // Ensure the user owns the post
+    if (String(post.userId) === req.body.userId) { 
+      await post.updateOne({ $set: { desc: req.body.desc } }); // Limit update fields to prevent accidental overwrites
+      res.status(200).json({ message: "Post updated successfully." });
     } else {
-      res.status(403).json("You may only update your own posts!");
+      res.status(403).json({ error: "You may only update your own posts!" });
     }
   } catch (err) {
     console.error('Error updating post:', err);
-    res.status(500).json(err);
+    res.status(500).json({ error: "Error updating post", details: err.message });
   }
 });
 
 // delete a post
-router.delete("/:id", async (req, res) => {
-  try{
+router.delete('/:id', async (req, res) => {
+  try {
     const post = await Post.findById(req.params.id);
-    if(post.userId == req.body.userId){
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    // Ensure the user owns the post
+    if (String(post.userId) === req.body.userId) {
       await post.deleteOne();
-      res.status(200).json('Post deleted.');
+      res.status(200).json({ message: "Post deleted successfully." });
     } else {
-      res.status(403).json("You may only delete your own posts!");
+      res.status(403).json({ error: "You may only delete your own posts!" });
     }
   } catch (err) {
     console.error('Error deleting post:', err);
-    res.status(500).json(err);
+    res.status(500).json({ error: "Error deleting post", details: err.message });
   }
 });
 
