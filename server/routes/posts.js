@@ -18,17 +18,38 @@ router.use(
 // Set up storage configuration for multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-      cb(null, 'uploads/'); // Folder where images will be stored
+    cb(null, 'uploads/'); // Folder where images will be stored
   },
   filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
-  },
+    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+  }
 });
 
-const upload = multer({ storage: storage });
+// Set up file filter to allow only specific image types, including .jfif
+const fileFilter = (req, file, cb) => {
+  // Accept only specific file types
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jfif'];
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true); // Accept the file
+  } else {
+    cb(new Error('Unsupported file type'), false); // Reject the file
+  }
+};
+
+// Configure multer with storage and file filter
+const upload = multer({ 
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // Optional: Limit file size to 5MB
+});
+
+
 
 // Add new post with image upload
 router.post('/', upload.single('img'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "Unsupported file type or no file provided" });
+  }
   try {
       console.log("Received data:", req.body); // Log received data
       console.log("File data:", req.file); // Log uploaded file data
@@ -193,5 +214,9 @@ router.get('/profile/:userId', async (req, res) => {
     res.status(500).json(err);
   }
 });
-
+// Error handling middleware
+router.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: "Unhandled error", details: err.message });
+});
 module.exports = router;
