@@ -37,9 +37,9 @@ const PersonalProfile = () => {
           const data = response.data;
           setProfileData({
             nickname: data.nickname || `err`, // Correctly access nickname
-            postsCount: data.postsCount || 0,
-            followersCount: data.followersCount || 0,
-            followingCount: data.followingCount || 0,
+            postsCount: data.postsCount,
+            followersCount: data.followersCount,
+            followingCount: data.followingCount,
           });
         } else {
           console.error('Failed to fetch profile data');

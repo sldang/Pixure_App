@@ -336,7 +336,7 @@ app.get('/api/getUserFollowers', async (req,res) => {
     }
 });
 
-app.get('/user/:userEmail/follow-stats', async (req, res) => {
+app.get('/api/user/:userEmail/follow-stats', async (req, res) => {
     try {
         // Get user ID from request parameters
         const { userEmail } = req.params;
