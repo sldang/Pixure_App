@@ -39,13 +39,16 @@ router.delete("/:id", async (req, res) => {
     return res.status(403).json("You can delete only your account!");
   }
 });
+
 // Get a user profile with nickname and follower/following counts
 router.get("/profile/:userId", async (req, res) => {
-  const userId = req.params.userId; // Use `userId` from the route parameter
+  const userId = req.params.userId; // Assuming it's passed as a path parameter
 
   try {
     // Find the user by ID
-    const user = await User.findById(userId);
+    const user = await User.findById(userId)
+      .populate('followerList', '_id')  // Only retrieve _id for count
+      .populate('followList', '_id');   // Only retrieve _id for count
 
     if (!user) {
       return res.status(404).json("User not found");
@@ -53,10 +56,10 @@ router.get("/profile/:userId", async (req, res) => {
 
     // Create the profile data response
     const profileData = {
-      nickname: user.nickname, // Use nickname as the display name
-      postsCount: user.posts ? user.posts.length : 0,
-      followersCount: user.followers ? user.followers.length : 0,
-      followingCount: user.followings ? user.followings.length : 0,
+      nickname: user.nickname,  // Display the nickname
+      postsCount: user.posts ? user.posts.length : 0,  // Count of posts
+      followersCount: user.followerList ? user.followerList.length : 0,
+      followingCount: user.followList ? user.followList.length : 0,
     };
 
     res.status(200).json(profileData);
@@ -66,6 +69,7 @@ router.get("/profile/:userId", async (req, res) => {
   }
 });
 
+module.exports = router;
 //get friends
 router.get("/friends/:userId", async (req, res) => {
   try {

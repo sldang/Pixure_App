@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from "../../contexts/AuthContext"; // Assuming you have an AuthContext to access the user info
 
-axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
-
 const PersonalProfile = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext); // Access user data, including userId
@@ -18,7 +16,7 @@ const PersonalProfile = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const userId = user ? user.user.id : null; // Retrieve userId from context
+        const userId = user && user.user ? user.user.id : null; // Adjusted to access nested userId
         if (!userId) {
           console.error("User ID is missing.");
           return;
@@ -26,7 +24,8 @@ const PersonalProfile = () => {
 
         const response = await axios.get(`/api/user/profile/${userId}`, {
           headers: {
-            Authorization: `Bearer ${user.token}`, // Include token if needed
+            'Authorization': `Bearer ${user.token}`,  // Assuming token is available in the context
+            'Content-Type': 'application/json',
           },
           withCredentials: true,
         });
@@ -34,7 +33,7 @@ const PersonalProfile = () => {
         if (response.status === 200) {
           const data = response.data;
           setProfileData({
-            nickname: data.nickname || 'Unknown User', // Set the nickname here
+            nickname: data.nickname || 'Unknown User',
             postsCount: data.postsCount || 0,
             followersCount: data.followersCount || 0,
             followingCount: data.followingCount || 0,
