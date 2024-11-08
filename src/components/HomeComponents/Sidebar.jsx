@@ -16,7 +16,8 @@ const Sidebar = () => {
   const [profileImage, setProfileImage] = useState(null); // user profile image state
   const parsedData = JSON.parse(localStorage.getItem('user'));
   const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
-  const userNickname = parsedData && parsedData.user ? parsedData.user.email : null;
+  const userNickname = parsedData && parsedData.user ? parsedData.user.nickname : null;
+  
   // example notifications
   const [notifications] = useState([
     { user: 'John Doe', content: 'liked your post', time: '1d ago' },

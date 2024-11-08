@@ -4,15 +4,21 @@ import axios from 'axios';
 import { AuthContext } from "../../contexts/AuthContext";
 import UserProfileDisplay from './UserProfileDisplay'; // Import the new component
 
+
+
 const PersonalProfile = () => {
+  const parsedData = JSON.parse(localStorage.getItem('user'));
+  const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
+  const userNickname = parsedData && parsedData.user ? parsedData.user.email : null;
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [profileData, setProfileData] = useState({
-    nickname: '',
+    nickname: userNickname,
     postsCount: 0,
     followersCount: 0,
     followingCount: 0,
   });
+
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -34,7 +40,7 @@ const PersonalProfile = () => {
         if (response.status === 200) {
           const data = response.data;
           setProfileData({
-            nickname: data.nickname || 'Unknown User', // Correctly access nickname
+            nickname: data.nickname || `err`, // Correctly access nickname
             postsCount: data.postsCount || 0,
             followersCount: data.followersCount || 0,
             followingCount: data.followingCount || 0,
