@@ -52,6 +52,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: "Error saving or populating post", details: error.message });
   }
 });
+
 // update a post
 router.put('/:id', async (req, res) => {
   try {
@@ -101,13 +102,13 @@ router.put('/:id/like', async (req, res) => {
   }
 })
 
-// Get a post by id
-router.get('/:id', async (req, res) => {
+// Get all posts of user with userId
+router.get('/profile/:userId', async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
-    res.status(200).json(post);
+    const posts = await Post.find({ userId: req.params.userId }).populate('userId', 'nickname'); // Populate nickname
+    res.status(200).json(posts);
   } catch (err) {
-    console.error('Error finding post: ', err);
+    console.error('Error fetching user posts:', err);
     res.status(500).json(err);
   }
 });
