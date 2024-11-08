@@ -66,12 +66,12 @@ router.get("/profile/:userId", async (req, res) => {
       return res.status(404).json("User not found");
     }
 
-    // Accessing nested nickname
-    
+    // Directly access the nickname from the user object
+    const nickname = user.nickname; // Assuming nickname is stored directly in the user document
 
     // Create the profile data response
     const profileData = {
-      nickname: user.nickname,  // Use nickname as the display name
+      nickname: nickname || "Unknown User",  // Use nickname as the display name
       postsCount: user.posts ? user.posts.length : 0,  // Count of posts
       followersCount: user.followerList.length,  // Count of followers
       followingCount: user.followList.length,     // Count of followings
@@ -83,6 +83,7 @@ router.get("/profile/:userId", async (req, res) => {
     res.status(500).json("An error occurred while fetching user profile");
   }
 });
+
 module.exports = router;
 //get friends
 router.get("/friends/:userId", async (req, res) => {

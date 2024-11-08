@@ -4,9 +4,7 @@ const User = require('../models/User');
 const router = express.Router();
 const cors = require('cors');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const verifyToken = require('../middleware/verifyToken'); // Import the middleware
+
 // CORS middleware setup
 router.use(
   cors({

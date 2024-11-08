@@ -34,7 +34,7 @@ const PersonalProfile = () => {
         if (response.status === 200) {
           const data = response.data;
           setProfileData({
-            nickname: data.user.nickname || 'Unknown User',
+            nickname: data.nickname || 'Unknown User', // Correctly access nickname
             postsCount: data.postsCount || 0,
             followersCount: data.followersCount || 0,
             followingCount: data.followingCount || 0,
@@ -56,7 +56,7 @@ const PersonalProfile = () => {
 
   return (
     <UserProfileDisplay 
-      nickname={profileData.user.nickname} 
+      nickname={profileData.nickname} // Directly use the nickname from profileData
       postsCount={profileData.postsCount} 
       followersCount={profileData.followersCount} 
       followingCount={profileData.followingCount} 
