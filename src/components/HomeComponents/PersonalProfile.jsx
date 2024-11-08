@@ -33,8 +33,8 @@ const PersonalProfile = () => {
         const response = await axios.get(`https://pixure-server.onrender.com/api/User/:${userEmail}/follow-stats`);
         setProfileData.followersCount(response.data.followersCount)
         setProfileData.followedCount(response.data.followedCount)
-        // if (response.status === 200) {
-        //   const data = response.data;
+        if (response.status === 200) {
+          const data = response.data;
           setProfileData({
             nickname: data.nickname || `err`, // Correctly access nickname
             postsCount: data.postsCount,
@@ -42,7 +42,7 @@ const PersonalProfile = () => {
             followingCount: data.followingCount,
           });
         } else {
-          console.error('Failed to fetch profile data');
+          console.error('Failed to fetch profile data!!!');
         }
       } catch (error) {
         console.error('Error fetching profile data:', error);
