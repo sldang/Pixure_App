@@ -13,24 +13,38 @@ const NewsFeed = () => {
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState('');
 
-  // Fetch posts from backend
+  // Fetch user's posts from backend
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchUserPosts = async () => {
       try {
-        const response = await axios.get('/api/posts');
+        const userId = user ? user.user.id : null;
+        if (!userId) {
+          console.error("User ID is missing.");
+          return;
+        }
+
+        const response = await axios.get(
+          `https://pixure-server.onrender.com/api/posts/profile/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+            withCredentials: true,
+          }
+        );
         setPosts(response.data);
       } catch (error) {
-        console.error('Error fetching posts:', error);
+        console.error('Error fetching user posts:', error);
       }
     };
-    fetchPosts();
-  }, []);
+    fetchUserPosts();
+  }, [user]);
 
   const handleUpload = async () => { 
     const userId = user ? user.user.id : null;
 
     if (!userId) {
-      console.error("User ID is missing from localStorage");
+      console.error("User ID is missing.");
       return; // Exit the function if userId is missing
     }
 
@@ -77,16 +91,21 @@ const NewsFeed = () => {
           setPostContent={setPostContent}
           handleUpload={handleUpload}
         />
-        {posts.map((post, index) => (
-          <Post 
-            key={index} 
-            user={post.userId?.nickname || "Unknown User"} // Display nickname, fallback to "Unknown User" if missing
-            content={post.desc} 
-            time={post.createdAt} // Assuming createdAt is a timestamp from your backend
-          />
-        ))}
+        {posts.length === 0 ? (
+          <p>No posts available.</p>
+        ) : (
+          posts.map((post, index) => (
+            <Post 
+              key={index} 
+              user={post.userId?.nickname || "Unknown User"} // Display nickname, fallback to "Unknown User" if missing
+              content={post.desc} 
+              time={post.createdAt} // Assuming createdAt is a timestamp from your backend
+            />
+          ))
+        )}
       </div>
     </div>
   );
-}
+};
+
 export default NewsFeed;
