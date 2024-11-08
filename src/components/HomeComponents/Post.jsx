@@ -1,14 +1,13 @@
 import React from 'react';
 
 const Post = ({ user, content, time }) => {
-  // Access nickname or fallback to firstName and lastName if nickname is missing
-  const username = user?.user.nickname || `${user?.user.firstName || ''} ${user?.user.lastName || ''}`.trim();
+  const username = user || "Unknown User"; // user will be nickname if populated correctly
 
   return (
     <div className='w-full rounded-md shadow-lg mt-[30px] mb-[30px]'>
       <div className='p-[10px]'>
         <div className='flex items-center '>
-          <span className='font-bold ml-[10px] mr-[10px]'>{username || 'Unknown User'}</span>
+          <span className='font-bold ml-[10px] mr-[10px]'>{username}</span>
           <span className='text-sm'>{time || 'Just now'}</span>
         </div>
       </div>
@@ -18,5 +17,4 @@ const Post = ({ user, content, time }) => {
     </div>
   );
 };
-
 export default Post;

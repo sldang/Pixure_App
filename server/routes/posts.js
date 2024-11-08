@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
   const userId = req.body.userId;
 
   const newPost = new Post({
-    userId: userId, // Attach the userId to the post
+    userId: userId,
     desc: req.body.desc,
     img: req.body.img || "",
     likes: req.body.likes || [],
@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(populatedPost);
   } catch (error) {
     console.error('Error saving post:', error);
-    res.status(500).json({ error: "Error saving post" });
+    res.status(500).json({ error: "Error saving or populating post", details: error.message });
   }
 });
 
