@@ -1,4 +1,3 @@
-// PersonalProfile.jsx
 import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -57,10 +56,11 @@ const PersonalProfile = () => {
 
   return (
     <UserProfileDisplay 
-      nickname ={profileData.nickname} 
+      nickname={profileData.nickname} 
       postsCount={profileData.postsCount} 
       followersCount={profileData.followersCount} 
       followingCount={profileData.followingCount} 
+      onEdit={handleEditClick} // Passing the edit handler
     />
   );
 };

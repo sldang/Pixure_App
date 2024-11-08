@@ -1,7 +1,6 @@
-
 import React from 'react';
 
-const UserProfileDisplay = ({ nickname, postsCount, followersCount, followingCount }) => {
+const UserProfileDisplay = ({ nickname, postsCount, followersCount, followingCount, onEdit }) => {
   return (
     <div className="max-w-lg mx-auto p-4">
       <div className="flex items-center space-x-4">
@@ -15,8 +14,8 @@ const UserProfileDisplay = ({ nickname, postsCount, followersCount, followingCou
 
         <div className="flex-1">
           <div className="flex items-center space-x-4 mb-2">
-            <h2 className="text-2xl font-bold whitespace-nowrap">{nickname|| "Unknown User"}</h2>
-            <button className="bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800">
+            <h2 className="text-2xl font-bold whitespace-nowrap">{nickname || "Unknown User"}</h2>
+            <button className="bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800" onClick={onEdit}>
               Edit Profile
             </button>
           </div>

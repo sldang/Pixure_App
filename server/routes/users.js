@@ -60,12 +60,15 @@ router.get("/profile/:userId", async (req, res) => {
     // Find the user by ID and populate the followerList and followList
     const user = await User.findById(userId)
       .populate('followerList', '_id')  // Only retrieve _id for count
-      .populate('followList', '_id')     // Only retrieve _id for count
+      .populate('followList', '_id');    // Only retrieve _id for count
 
     if (!user) {
       return res.status(404).json("User not found");
     }
-    const nickname = user ? user.user.nickname : null;
+
+    // Accessing nested nickname
+    const nickname = user.user.nickname || "Unknown User"; // Adjusted for nested structure
+
     // Create the profile data response
     const profileData = {
       nickname,  // Use nickname as the display name
@@ -80,7 +83,6 @@ router.get("/profile/:userId", async (req, res) => {
     res.status(500).json("An error occurred while fetching user profile");
   }
 });
-
 module.exports = router;
 //get friends
 router.get("/friends/:userId", async (req, res) => {
