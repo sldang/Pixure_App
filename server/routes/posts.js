@@ -16,42 +16,50 @@ router.use(
     credentials: true,
   })
 );
+// Set up memory storage for multer to handle image uploads in memory
 const storage = multer.memoryStorage();
-// Set up file filter to allow only specific image types, including .jfif
 const fileFilter = (req, file, cb) => {
-  // Accept only specific file types
   const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jfif'];
   if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true); // Accept the file
+    cb(null, true);
   } else {
-    cb(new Error('Unsupported file type'), false); // Reject the file
+    cb(new Error('Unsupported file type'), false);
   }
 };
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 
-const upload = multer({ storage: storage });
-
-
+// Combined route for creating a post, with or without an image
 router.post('/', upload.single('img'), async (req, res) => {
   try {
     const userId = req.body.userId;
-    const imageBuffer = req.file.buffer; // Access the image buffer
-    const base64Image = imageBuffer.toString('base64'); // Convert buffer to Base64
 
+    // If there's an image, convert it to base64; otherwise, leave `imageData` empty
+    let imageData = '';
+    if (req.file) {
+      const imageBuffer = req.file.buffer;
+      imageData = `data:${req.file.mimetype};base64,${imageBuffer.toString('base64')}`;
+    }
+
+    // Create the post object with optional image data
     const newPost = new Post({
       userId: userId,
       desc: req.body.desc || '',
-      imageData: `data:${req.file.mimetype};base64,${base64Image}`, // Set Base64 string with MIME type
+      imageData: imageData,
       likes: req.body.likes || [],
     });
 
+    // Save the post to the database
     const savedPost = await newPost.save();
     const populatedPost = await Post.findById(savedPost._id).populate('userId', 'nickname');
+
     res.status(201).json(populatedPost);
   } catch (error) {
-    console.error('Error saving post with image:', error);
-    res.status(500).json({ error: "Error saving post with image" });
+    console.error('Error saving post:', error);
+    res.status(500).json({ error: 'Error saving post', details: error.message });
   }
 });
+
+module.exports = router;
 // Handle preflight requests (OPTIONS)
 router.options('*', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https:pixure-app-3h6l.onrender.com');
@@ -61,35 +69,6 @@ router.options('*', (req, res) => {
   res.sendStatus(204); // No content
 });
 
-// Add new post
-router.post('/', async (req, res) => {
-  console.log("Received data:", req.body);
-
-  const userId = req.body.userId;
-
-  const newPost = new Post({
-    userId: userId,
-    desc: req.body.desc,
-    img: req.body.img || "",
-    likes: req.body.likes || [],
-  });
-
-  try {
-    // Save the new post
-    const savedPost = await newPost.save();
-
-    // Populate the userId field to include only the nickname
-    const populatedPost = await Post.findById(savedPost._id).populate('userId', 'nickname');
-
-    console.log("Post saved with populated user:", populatedPost);
-    
-    // Send the populated post back in the response
-    res.status(201).json(populatedPost);
-  } catch (error) {
-    console.error('Error saving or populating post:', error);
-    res.status(500).json({ error: "Error saving or populating post", details: error.message });
-  }
-});
 
 // update a post
 router.put('/:id', async (req, res) => {
