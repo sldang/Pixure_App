@@ -9,7 +9,7 @@ import UserProfileDisplay from './UserProfileDisplay'; // Import the new compone
 const PersonalProfile = () => {
   const parsedData = JSON.parse(localStorage.getItem('user'));
   const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
-  const userNickname = parsedData && parsedData.user ? parsedData.user.email : null;
+  const userNickname = parsedData && parsedData.user ? parsedData.user.nickname : null
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [profileData, setProfileData] = useState({
