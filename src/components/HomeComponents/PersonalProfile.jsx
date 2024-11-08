@@ -22,7 +22,7 @@ const PersonalProfile = () => {
           return;
         }
 
-        const response = await axios.get(`/api/user/profile/${userId}`, {
+        const response = await axios.get(`https://pixure-server.onrender.com/api/user/profile/${userId}`, {
           headers: {
             'Authorization': `Bearer ${user.token}`,  // Assuming token is available in the context
             'Content-Type': 'application/json',
