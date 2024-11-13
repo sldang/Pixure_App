@@ -3,7 +3,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import Community from '../server/models/Community.js'; 
-require("dotenv").config()
+require("dotenv").config();
 
 const communitySchema = new mongoose.Schema({
   name: {
@@ -23,7 +23,7 @@ const Community = mongoose.model('Community', communitySchema, 'Community');
 
 describe('Community Schema', () => {
   beforeAll(async () => {
-    await mongoose.connect(MONGO_URI, {
+    await mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

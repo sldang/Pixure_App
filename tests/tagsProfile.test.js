@@ -3,6 +3,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import TagsProfile from '../server/models/TagsProfile.js'; 
+require("dotenv").config();
+
 
 const tagsProfileSchema = new mongoose.Schema({
   tagName: {

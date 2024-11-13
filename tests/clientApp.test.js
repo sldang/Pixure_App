@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import axios from "axios";
 import App from "../client/src/App.jsx";
+require("dotenv").config();
 
 // Mock axios
 vi.mock("axios");

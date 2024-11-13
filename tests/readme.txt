@@ -15,3 +15,7 @@ npm install -D jsdom
 
 files filled: 
 server/models
+
+
+shcemas aren't working, need to look into into
+resourceIndex functions are made to be reusable data manipulation for efficient post editing and numeric karma opperations

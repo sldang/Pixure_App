@@ -3,6 +3,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import PostReport from '../server/models/PostReport.js'; 
+require("dotenv").config();
+
 
 const postReportSchema = new mongoose.Schema({
   postId: {

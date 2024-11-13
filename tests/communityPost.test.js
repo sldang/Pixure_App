@@ -3,6 +3,9 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import CommunityPost from '../server/models/CommunityPost.js'; 
+require("dotenv").config();
+
+
 
 const communityPostSchema = new mongoose.Schema({
   title: {

@@ -3,6 +3,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import PostComment from '../server/models/PostComment.js'; 
+require("dotenv").config();
+
 
 const postCommentSchema = new mongoose.Schema({
   postId: {

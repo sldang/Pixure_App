@@ -3,6 +3,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import CommunityReport from '../server/models/CommunityReport.js'; 
+require("dotenv").config();
+
 
 const communityReportSchema = new mongoose.Schema({
   reporter: {

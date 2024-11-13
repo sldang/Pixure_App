@@ -3,6 +3,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import LocalCommunityAccount from '../server/models/LocalCommunityAccount.js'; 
+require("dotenv").config();
+
 
 const localCommunityAccountSchema = new mongoose.Schema({
   accountId: {

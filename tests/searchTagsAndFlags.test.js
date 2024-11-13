@@ -3,6 +3,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import SearchTagsAndFlags from '../server/models/SearchTagsAndFlags.js'; 
+require("dotenv").config();
+
 
 const searchTagsAndFlagsSchema = new mongoose.Schema({
   tagName: {

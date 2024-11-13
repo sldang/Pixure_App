@@ -3,6 +3,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import Message from '../server/models/Message.js'; 
+require("dotenv").config();
+
 
 const MessageSchema = new mongoose.Schema({
   conversationId: {

@@ -3,6 +3,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import FlagsProfile from '../server/models/FlagsProfile.js'; 
+require("dotenv").config();
+
 
 const flagsProfileSchema = new mongoose.Schema({
   userId: {

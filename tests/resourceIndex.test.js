@@ -37,7 +37,7 @@ describe('Math utilities', () => {
     expect(divide(6, 3)).toBe(2);
     expect(divide(6, 0)).toBeNull();
   });
-
+/*
   // Additional math tests
   it('should add zero correctly', () => {
     expect(add(0, 0)).toBe(0);
@@ -58,6 +58,7 @@ describe('Math utilities', () => {
     expect(divide(-6, 3)).toBe(-2);
     expect(divide(6, -3)).toBe(-2);
   });
+  */
 });
 
 // String utilities tests

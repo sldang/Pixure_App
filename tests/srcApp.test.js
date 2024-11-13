@@ -6,6 +6,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { AuthContext } from '../contexts/AuthContext';
 import { CommunityProvider } from '../contexts/CommunityContext';
 import App from '../src/App.js';
+require("dotenv").config();
+
 
 // Mock components
 vi.mock('../pages/Signup', () => ({

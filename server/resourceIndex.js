@@ -6,6 +6,8 @@ export const add = (a, b) => a + b;
 export const subtract = (a, b) => a - b;
 export const multiply = (a, b) => a * b;
 export const divide = (a, b) => b !== 0 ? a / b : null;
+export const increment = (a) => a + 1;
+export const decrement = (a) => a - 1;
 
 // String utilities
 export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);

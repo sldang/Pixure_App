@@ -3,6 +3,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import mongoose from 'mongoose';
 import User from '../server/models/User.js'; 
+require("dotenv").config();
+
 
 const userSchema = new mongoose.Schema({
   firstName: { type: String, required: false },
