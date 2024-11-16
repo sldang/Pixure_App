@@ -4,7 +4,6 @@ const User = require('../models/User');
 const router = express.Router();
 const cors = require("cors");
 
-
 router.post("/", async (req, res) => {
     const { userEmail, otherEmail } = req.body;
     console.log("User Email:", userEmail);
