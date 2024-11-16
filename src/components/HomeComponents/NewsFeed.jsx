@@ -1,59 +1,102 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import UploadPost from './UploadPost';
 import Post from './Post';
 import PersonalProfile from './PersonalProfile';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
+import { AuthContext } from "../../contexts/AuthContext";
 
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
-axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL; 
 const NewsFeed = () => {
+  const { user } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
   const [postContent, setPostContent] = useState('');
 
-  // Fetch posts from backend
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchUserPosts = async () => {
       try {
-        const response = await axios.get('/api/posts');
+        const userId = user ? user.user.id : null;
+        if (!userId) {
+          console.error("User ID is missing.");
+          return;
+        }
+        const response = await axios.get(`/api/posts/profile/${userId}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+          withCredentials: true,
+        });
         setPosts(response.data);
       } catch (error) {
-        console.error('Error fetching posts:', error);
+        console.error('Error fetching user posts:', error);
       }
     };
-    fetchPosts();
-  }, []);
-  const handleUpload = async () => {
-    if (postContent) {
-      const newPost = { 
-        postId: uuidv4(), // Generate a unique ID
-        content: postContent, 
-        time: 'Just now' 
-      };
+    fetchUserPosts();
+  }, [user]);
+
+  const handleUpload = async (postContent, image) => {
+    const userId = user ? user.user.id : null;
   
-      try {
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts`, {
-          method: 'POST',
+    if (!userId) {
+      console.error("User ID is missing.");
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append("userId", userId);
+    formData.append("desc", postContent);
+    if (image) {
+      formData.append("img", image); 
+    }
+  
+    try {
+      const response = await axios.post(
+        `https://pixure-server.onrender.com/api/posts`,
+        formData,
+        {
           headers: {
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.token}`,
+            'Content-Type': 'multipart/form-data',
           },
-          body: JSON.stringify(newPost),
-        });
-  
-        if (response.ok) {
-          const savedPost = await response.json();
-          console.log('Post saved:', savedPost);
-  
-          setPosts([...posts, savedPost]);
-          setPostContent('');
-        } else {
-          console.error('Failed to save post:', response.statusText);
+          withCredentials: true,
         }
+      );
+  
+      const savedPost = response.data;
+      setPosts([savedPost, ...posts]);
+      setPostContent('');
+    } catch (error) {
+      console.error('Error uploading post:', error.response ? error.response.data : error.message);
+    }
+  };
+
+  const handleDelete = async (postId) => {
+    try {
+      await axios.delete(`/api/posts/${postId}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+        data: { userId: user.user.id },
+      });
+      setPosts(posts.filter((post) => post._id !== postId));
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  const handleUpdate = async (postId) => {
+    const updatedContent = prompt("Edit your post content:");
+    if (updatedContent) {
+      try {
+        await axios.put(`/api/posts/${postId}`, 
+          { desc: updatedContent, userId: user.user.id }, 
+          { headers: { Authorization: `Bearer ${user.token}` } }
+        );
+        setPosts(posts.map((post) => 
+          post._id === postId ? { ...post, desc: updatedContent } : post
+        ));
       } catch (error) {
-        console.error('Error uploading post:', error);
+        console.error("Error updating post:", error);
       }
     }
   };
+
   return (
     <div className="flex justify-center w-full h-screen items-start pt-10">
       <div className="w-full max-w-[600px] ml-10">
@@ -64,7 +107,15 @@ const NewsFeed = () => {
           handleUpload={handleUpload}
         />
         {posts.map((post, index) => (
-          <Post key={index} user={post.user} time={post.time} content={post.content} />
+          <Post 
+            key={index}
+            user={post.userId?.nickname || "Unknown User"}
+            content={post.desc}
+            time={post.createdAt}
+            img={post.imageData || null} // Use imageData directly
+            onDelete={() => handleDelete(post._id)}
+            onUpdate={() => handleUpdate(post._id)}
+          />
         ))}
       </div>
     </div>
@@ -72,3 +123,4 @@ const NewsFeed = () => {
 };
 
 export default NewsFeed;
+           

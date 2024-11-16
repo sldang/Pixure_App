@@ -1,0 +1,171 @@
+/* import google font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+* {
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* center the page layout */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f8fa; /* subtle background color */
+    padding: 20px;
+}
+
+/* login card styling */
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 2.5rem;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.1); /* slightly stronger shadow */
+    text-align: center;
+}
+
+/* pixure title */
+.login-card h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+/* login subtitle */
+.login-card h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+/* sign-up text */
+.login-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+.login-card a {
+    color: #4a90e2;
+    text-decoration: none;
+}
+
+.login-card a:hover {
+    text-decoration: underline;
+}
+
+/* form styling */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* input field styling */
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-size: 15px;
+}
+
+.login-form input[type="email"]:focus,
+.login-form input[type="password"]:focus {
+    border-color: #4a90e2;
+    box-shadow: 0px 0px 8px rgba(74, 144, 226, 0.3);
+    outline: none;
+}
+
+/* login button */
+.login-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4a90e2;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-form button:hover {
+    background-color: #357abd;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 12px rgba(53, 122, 189, 0.3);
+}
+
+/* success and error messages */
+.success-message {
+    color: #4caf50;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 14px;
+    margin-top: 8px;
+    text-align: center;
+}
+
+/* loading spinner or text */
+.loading-spinner {
+    color: #4a90e2;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* form options (checkboxes) */
+.form-options {
+    display: flex;
+    gap: 20px; /* added spacing between checkboxes */
+    justify-content: center; /* center the checkboxes */
+    font-size: 14px;
+    color: #666;
+}
+
+/* custom checkbox styling */
+.form-options label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.form-options input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    accent-color: #4a90e2; /* modern styling for checkboxes with color */
+}
+
+/* forgot password link */
+.forgot-password {
+    margin-top: 20px;
+}
+
+.forgot-password a {
+    color: #4a90e2;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+    color: #ff4d4d; /* changes to red on hover */
+    text-decoration: none; /* no underline */
+}

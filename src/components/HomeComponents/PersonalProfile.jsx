@@ -1,47 +1,70 @@
-import React from 'react'
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { AuthContext } from "../../contexts/AuthContext";
+import UserProfileDisplay from './UserProfileDisplay'; // Import the new component
+
+
 
 const PersonalProfile = () => {
-
+  const parsedData = JSON.parse(localStorage.getItem('user'));
+  const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
+  const userNickname = parsedData && parsedData.user ? parsedData.user.nickname : null
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const [profileData, setProfileData] = useState({
+    nickname: userNickname,
+    postsCount: 0,
+    followersCount: 0,
+    followedCount: 0,
+  });
+
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        // const userId = user.user.id; // Accessing userId directly
+        // if (!userId) {
+        //   console.error("User ID is missing.");
+        //   return;
+        // }
+
+        console.log(userEmail);
+        const response = await axios.get(`https://pixure-server.onrender.com/api/User/:${userEmail}/follow-stats`);
+        setProfileData.followersCount(response.data.followersCount)
+        setProfileData.followedCount(response.data.followedCount)
+        if (response.status === 200) {
+          const data = response.data;
+          setProfileData({
+            nickname: data.nickname || `err`, // Correctly access nickname
+            postsCount: data.postsCount,
+            followersCount: data.followersCount,
+            followingCount: data.followingCount,
+          });
+        } else {
+          console.error('Failed to fetch profile data!!!');
+        }
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    };
+
+    fetchProfileData();
+  }, [user]);
 
   const handleEditClick = () => {
     navigate('/editprofile');
   };
 
   return (
-    <div className="max-w-lg mx-auto p-4">
-    <div className="flex items-center space-x-4">
-      {/* Profile Image */}
-      <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
-        <img
-          src="" // Replace with your image URL
-          alt="Profile"
-          className="w-full h-full rounded-full object-cover"
-        />
-      </div>
+    <UserProfileDisplay 
+      nickname={profileData.nickname} // Directly use the nickname from profileData
+      postsCount={profileData.postsCount} 
+      followersCount={profileData.followersCount} 
+      followingCount={profileData.followingCount} 
+      onEdit={handleEditClick} // Passing the edit handler
+    />
+  );
+};
 
-      {/* Profile Info */}
-      <div className="flex-1">
-        <div className="flex items-center space-x-4 mb-2">
-          <h2 className="text-2xl font-bold whitespace-nowrap">John Doe</h2>
-          <button className="bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800" onClick={handleEditClick}>Edit Profile</button>
-          <button className="bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800">Edit Description</button>
-        </div>
-        <div className="flex space-x-4 mb-4">
-          <p><strong>0</strong> posts</p>
-          <p><strong>0</strong> followers</p>
-          <p><strong>0</strong> following</p>
-        </div>
-      </div>
-    </div>
-
-    {/* Profile Bio */}
-    <div className="mt-4">
-      <p>Everyone has a story to tell. I'm gonna tell you mine.</p>
-    </div>
-  </div>
-  )
-}
-
-export default PersonalProfile
+export default PersonalProfile;

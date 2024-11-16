@@ -1,18 +1,12 @@
-import Header from "../components/Header"
-import Login from "../components/Login"
-import Home from "../pages/Home"
+import Login from "../components/Login";
+import './Login.css';
 
-export default function LoginPage(){
-    return(
-        <>
-             <Header
-                heading="Login to your account"
-                paragraph="Don't have an account yet? "
-                linkName="Sign Up"
-                linkUrl="/signup"
-
-                />
-            <Login/>
-        </>
-    )
+export default function LoginPage() {
+    return (
+        <div className="login-page">
+            <div className="login-container">
+                <Login />
+            </div>
+        </div>
+    );
 }

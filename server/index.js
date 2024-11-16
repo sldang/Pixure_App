@@ -3,7 +3,7 @@ const cors = require("cors");
 const express = require("express");
 const connectDB = require("./connectDB");
 const jwt = require('jsonwebtoken');
-
+const path = require('path');
 const bcryptjs = require("bcryptjs");
 const Post = require('./models/Post');
 const Community = require('./models/Community');
@@ -27,7 +27,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 const postRoute = require('./routes/posts');
 app.use('/api/posts', postRoute);
-
+// Serve static files from the uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Connect to the database
 connectDB();
 
@@ -335,10 +336,37 @@ app.get('/api/getUserFollowers', async (req,res) => {
     }
 });
 
+app.get('/api/user/:userEmail/follow-stats', async (req, res) => {
+    try {
+        // Get user ID from request parameters
+        const { userEmail } = req.params;
+        
+        // Find the user by ID
+        const user = await User.findOne({ email: userEmail });
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        // Get the count of followers and followed
+        const followersCount = user.followerList.length;
+        const followedCount = user.followList.length;
+
+        // Respond with the counts
+        res.status(200).json({
+            followersCount,
+            followedCount
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
-app.use("/api/users", usersRoute)
+app.use("/api/users", usersRoute);
 
 // Simple endpoint to check if server is running
 app.get("/", (req, res) => {
