@@ -8,7 +8,7 @@ const multer = require('multer');
 // CORS middleware setup
 router.use(
   cors({
-    origin: 'https://pixure-app-3h6l.onrender.com' ,
+    origin: process.env.FRONTEND_URL ,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
