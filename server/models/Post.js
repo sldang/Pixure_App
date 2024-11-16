@@ -1,4 +1,6 @@
-const mongoose = require("mongoose");
+
+// server/models/Post.js
+import mongoose from 'mongoose';
 
 const postSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -6,6 +8,8 @@ const postSchema = new mongoose.Schema({
   img: String,
   imageData: String,
   likes: { type: Array, default: [] },
-}, { timestamps: true }); 
+}, { timestamps: true });
 
-module.exports = mongoose.model("Post", postSchema, 'Post');
+const Post = mongoose.model('Post', postSchema);
+
+export default Post;
