@@ -6,6 +6,7 @@ npm test
 
 to run a specific test file://
 npm test **filename
+npx vitest run **filename
 
 relevant instalations:
 npm install -D @testing-library/react
