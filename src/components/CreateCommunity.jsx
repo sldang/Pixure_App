@@ -1,22 +1,26 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCommunityContext } from '../contexts/CommunityContext';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCommunityContext } from "../contexts/CommunityContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CreateCommunity = () => {
   const navigate = useNavigate();
   const { dispatch } = useCommunityContext();
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    imageUrl: '', 
+    name: "",
+    description: "",
+    imageUrl: "",
+    communityType: "General (No Age Restriction)", // Default community type
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleFileChange = (e) => {
@@ -24,7 +28,7 @@ const CreateCommunity = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData((prevData) => ({ ...prevData, imageUrl: reader.result })); // Save Base64 string
+        setFormData((prevData) => ({ ...prevData, imageUrl: reader.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -34,18 +38,18 @@ const CreateCommunity = () => {
     e.preventDefault();
 
     if (!formData.name || !formData.description) {
-      toast.error('Please fill out all required fields!');
+      toast.error("Please fill out all required fields!");
       return;
     }
 
     const newCommunity = {
       ...formData,
-      members: 0, // Default members to 0
+      members: 0,
     };
 
-    dispatch({ type: 'ADD_COMMUNITY', payload: newCommunity });
+    dispatch({ type: "ADD_COMMUNITY", payload: newCommunity });
     toast.success(`Community "${formData.name}" has been created!`);
-    setTimeout(() => navigate('/explore'), 2000); // Navigate after toast
+    setTimeout(() => navigate("/explore"), 2000);
   };
 
   return (
@@ -93,6 +97,26 @@ const CreateCommunity = () => {
               style={styles.fileInput}
             />
           </div>
+
+          {/* Community Type Dropdown */}
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="communityType">
+              Community Type
+            </label>
+            <select
+              id="communityType"
+              name="communityType"
+              value={formData.communityType}
+              onChange={handleChange}
+              style={styles.select}
+            >
+              <option value="General (No Age Restriction)">
+                General (No Age Restriction)
+              </option>
+              <option value="18+ (Age-Restricted)">18+ (Age-Restricted)</option>
+            </select>
+          </div>
+
           <div style={styles.buttonGroup}>
             <button type="submit" style={styles.submitButton}>
               Create
@@ -100,7 +124,7 @@ const CreateCommunity = () => {
             <button
               type="button"
               style={styles.cancelButton}
-              onClick={() => navigate('/explore')}
+              onClick={() => navigate("/explore")}
             >
               Cancel
             </button>
@@ -115,97 +139,107 @@ const CreateCommunity = () => {
 // styles for the component
 const styles = {
   container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
-    backgroundColor: '#f4f4f4',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "100vh",
+    backgroundColor: "#f4f4f4",
   },
   card: {
-    backgroundColor: '#fff',
-    padding: '40px',
-    borderRadius: '10px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    width: '100%',
-    maxWidth: '500px',
-    textAlign: 'center',
+    backgroundColor: "#fff",
+    padding: "40px",
+    borderRadius: "10px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    width: "100%",
+    maxWidth: "500px",
+    textAlign: "center",
   },
   heading: {
-    fontSize: '28px',
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: '20px',
+    fontSize: "28px",
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: "20px",
   },
   form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px',
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
   },
   formGroup: {
-    textAlign: 'left',
+    textAlign: "left",
   },
   label: {
-    display: 'block',
-    fontWeight: '600',
-    marginBottom: '5px',
+    display: "block",
+    fontWeight: "600",
+    marginBottom: "5px",
   },
   required: {
-    color: 'red',
-    fontSize: '14px',
-    marginLeft: '5px',
+    color: "red",
+    fontSize: "14px",
+    marginLeft: "5px",
   },
   input: {
-    width: '100%',
-    padding: '10px',
-    fontSize: '16px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    outline: 'none',
-    transition: 'border-color 0.3s',
+    width: "100%",
+    padding: "10px",
+    fontSize: "16px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    outline: "none",
+    transition: "border-color 0.3s",
   },
   textarea: {
-    width: '100%',
-    padding: '10px',
-    fontSize: '16px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    outline: 'none',
-    minHeight: '100px',
-    transition: 'border-color 0.3s',
+    width: "100%",
+    padding: "10px",
+    fontSize: "16px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    outline: "none",
+    minHeight: "100px",
+    transition: "border-color 0.3s",
   },
   fileInput: {
-    display: 'block',
-    padding: '10px',
-    fontSize: '16px',
-    borderRadius: '5px',
-    outline: 'none',
-    marginTop: '10px',
+    display: "block",
+    padding: "10px",
+    fontSize: "16px",
+    borderRadius: "5px",
+    outline: "none",
+    marginTop: "10px",
+  },
+  select: {
+    width: "100%",
+    padding: "10px",
+    fontSize: "16px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    outline: "none",
+    backgroundColor: "#fff",
+    transition: "border-color 0.3s",
   },
   buttonGroup: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: "flex",
+    justifyContent: "space-between",
   },
   submitButton: {
-    padding: '10px 20px',
-    fontSize: '16px',
-    fontWeight: '600',
-    color: '#fff',
-    backgroundColor: '#4a90e2',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s',
+    padding: "10px 20px",
+    fontSize: "16px",
+    fontWeight: "600",
+    color: "#fff",
+    backgroundColor: "#4a90e2",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    transition: "background-color 0.3s",
   },
   cancelButton: {
-    padding: '10px 20px',
-    fontSize: '16px',
-    fontWeight: '600',
-    color: '#333',
-    backgroundColor: '#e4e4e4',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s',
+    padding: "10px 20px",
+    fontSize: "16px",
+    fontWeight: "600",
+    color: "#333",
+    backgroundColor: "#e4e4e4",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    transition: "background-color 0.3s",
   },
 };
 
