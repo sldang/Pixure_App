@@ -1,6 +1,6 @@
 // tests/verifyToken.test.js
 const jwt = require('jsonwebtoken');
-const verifyToken = require('../../server/middleware/verifyToken');
+const verifyToken = require('../../server/middleware/verifyToken.js');
 
 process.env.JWT_SECRET = 'your_secret_key';
 
