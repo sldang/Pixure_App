@@ -187,7 +187,7 @@ app.post("/api/User", async (req, res) => {
             firstName, lastName, nickname, email, zipcode, password,
             followerList, followList, karma, communityIDs, posts, age,
             searchTags, postAndFlagsTags, profilePic, parentAccount,
-            parentAccountID, childAccount, childAccountID
+            parentAccountID, childAccount, childAccountID, bio
         } = req.body;
 
         // Validate required fields
@@ -218,7 +218,8 @@ app.post("/api/User", async (req, res) => {
             parentAccount,
             parentAccountID,
             childAccount,
-            childAccountID
+            childAccountID,
+            bio,
         });
 
         // Save the new user to the database

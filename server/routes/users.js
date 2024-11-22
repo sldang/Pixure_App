@@ -3,6 +3,7 @@ const router = require("express").Router();
 const bcryptjs = require("bcryptjs");
 const cors = require('cors');
 const jwt = require("jsonwebtoken");
+const multer = require('multer');
 
 // CORS middleware setup
 router.use(
@@ -13,6 +14,18 @@ router.use(
     credentials: true,
   })
 );
+
+// memory storage for multer
+const storage = multer.memoryStorage();
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jfif'];
+  if(allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Unsupported file type'), false);
+  }
+};
+const upload = multer({ storage, fileFilter });
 
 //update user
 router.put("/:id", async (req, res) => {
@@ -75,6 +88,7 @@ router.get("/profile/:userId", async (req, res) => {
       postsCount: user.posts ? user.posts.length : 0,  // Count of posts
       followersCount: user.followerList.length,  // Count of followers
       followingCount: user.followList.length,     // Count of followings
+      profilePicture: user.profilePicture,  // get profile picture
     };
 
     res.status(200).json(profileData);
@@ -183,6 +197,38 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// update user profile picture
+router.post('/:id/upload', upload.single('profilePicture'), async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    const imageBuffer = req.file.buffer;
+    const profilePicture = `data:${req.file.mimetype};base64,${imageBuffer.toString('base64')}`;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { profilePicture: profilePicture },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "Profile picture uploaded successfully",
+      profilePicture: user.profilePicture,
+    });
+  } catch (err) {
+    console.error("Error uploading profile picture", err);
+    res.status(500).json({ error: "Error uploading profile picture", details: err.message });
   }
 });
 
