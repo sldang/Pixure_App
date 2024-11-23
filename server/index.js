@@ -44,10 +44,16 @@ app.get("/", (req, res) => {
 });
 
 // API routes
-app.use("/api/users", require("./routes/users"));
-app.use("/api/posts", require("./routes/posts"));
-app.use("/api/messages", require("./routes/messages"));
-app.use("/api/conversations", require("./routes/conversations"));
+try{
+    app.use("/api/users", require("./routes/users"));
+    app.use("/api/posts", require("./routes/posts"));
+    app.use("/api/messages", require("./routes/messages"));
+    app.use("/api/conversations", require("./routes/conversations"));
+    console.log("Routes have been registered");
+} catch(err) {
+    console.error("Error registering routes: ", err);
+}
+
 
 // Serve react static files
 app.use(express.static(path.join(__dirname, "client/build")));
