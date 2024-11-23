@@ -30,7 +30,7 @@ const PersonalProfile = () => {
         // }
 
         console.log(userEmail);
-        const response = await axios.get(`https://pixure-server.onrender.com/api/User/:${userEmail}/follow-stats`);
+        const response = await axios.get(`https://pixure-server.onrender.com/api/user/${userEmail}/follow-stats`);
         setProfileData.followersCount(response.data.followersCount)
         setProfileData.followedCount(response.data.followedCount)
         if (response.status === 200) {
