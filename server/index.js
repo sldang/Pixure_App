@@ -52,11 +52,6 @@ app.use("/api/conversations", require("./routes/conversations"));
 // Serve react static files
 app.use(express.static(path.join(__dirname, "client/build")));
 
-// Catch-all route for undefined endpoints
-app.get("*", (req, res) => {
-    res.sendStatus(404);
-});
-
 // Start the server
 app.listen(PORT, () => {
    
@@ -382,6 +377,11 @@ app.get('/api/user/:userEmail/follow-stats', async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Server error" });
     }
+});
+
+// Catch-all route for undefined endpoints
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client/build", "index.html"));
 });
 
 require('dotenv').config();

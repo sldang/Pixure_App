@@ -229,7 +229,7 @@ router.post('/:id/upload', upload.single('profilePicture'), async (req, res) => 
     }
 
     console.log("Updated user:", user);
-    
+
     res.status(200).json({
       message: "Profile picture uploaded successfully",
       profilePicture: user.profilePicture,
@@ -238,6 +238,11 @@ router.post('/:id/upload', upload.single('profilePicture'), async (req, res) => 
     console.error("Error uploading profile picture", err);
     res.status(500).json({ error: "Error uploading profile picture", details: err.message });
   }
+});
+
+router.use((req, res, next) => {
+  console.log(`Request received: ${req.method} ${req.originalUrl}`);
+  next();
 });
 
 module.exports = router;
