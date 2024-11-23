@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AuthContext } from "../../contexts/AuthContext";
 
-const API_BASE_URL =  "https://pixure-app-3h6l.onrender.com";
+const API_BASE_URL =  "https://pixure-server.onrender.com";
 
 const UserProfileDisplay = ({
   nickname,
