@@ -209,8 +209,8 @@ router.post('/:id/upload', upload.single('profilePicture'), async (req, res) => 
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const imageBuffer = req.file.buffer;
-    const profilePicture = `data:${req.file.mimetype};base64,${imageBuffer.toString('base64')}`;
+    //const imageBuffer = req.file.buffer;
+    const profilePicture = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
 
     const user = await User.findByIdAndUpdate(
       userId,
