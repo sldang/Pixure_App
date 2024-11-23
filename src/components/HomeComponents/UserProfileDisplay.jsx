@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AuthContext } from "../../contexts/AuthContext";
 
+const API_BASE_URL =  "https://pixure-app-3h6l.onrender.com";
+
 const UserProfileDisplay = ({
   nickname,
   postsCount,
@@ -77,9 +79,9 @@ const UserProfileDisplay = ({
     const fetchProfileImage = async () => {
       try {
         const userId = user ? user.user.id : null;
-        const response = await fetch(`api/users/profile/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/api/users/profile/${userId}`);
         const data = await response.json();
-        setProfilePicture(data.profilePicture || `api/placeholder/96/96`);
+        setProfilePicture(data.profilePicture || `${API_BASE_URL}/api/placeholder/96/96`);
       } catch (error) {
         console.error('Error fetching profile image:', error);
       }

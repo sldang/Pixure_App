@@ -17,11 +17,6 @@ const PostReport = require('./models/PostReport');
 const SearchTagsAndFlags = require('./models/SearchTagsAndFlags');
 const TagsProfile = require('./models/TagsProfile');
 const User = require('./models/User');
-const Conversation = require('./models/Conversation')
-const Message = require('./models/Message');
-const conversationRoute = require('./routes/conversations');
-const messageRoute = require('./routes/messages');
-const usersRoute = require('./routes/users');
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
@@ -42,6 +37,31 @@ app.use(cors({
 
 // Middleware to parse URL-encoded and JSON bodies
 app.use(express.urlencoded({ extended: true }));
+
+// Simple endpoint to check if server is running
+app.get("/", (req, res) => {
+    res.json("Hello, server is running!");
+});
+
+// API routes
+app.use("/api/users", require("./routes/users"));
+app.use("/api/posts", require("./routes/posts"));
+app.use("/api/messages", require("./routes/messages"));
+app.use("/api/conversations", require("./routes/conversations"));
+
+// Serve react static files
+app.use(express.static(path.join(__dirname, "client/build")));
+
+// Catch-all route for undefined endpoints
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
+
+// Start the server
+app.listen(PORT, () => {
+   
+    console.log(`Server running on port ${PORT}`);
+});
 
 // API endpoint to get all communities
 app.get("/api/Community", async (req, res) => {
@@ -364,26 +384,6 @@ app.get('/api/user/:userEmail/follow-stats', async (req, res) => {
     }
 });
 
-
-app.use("/api/conversations", conversationRoute);
-app.use("/api/messages", messageRoute);
-app.use("/api/users", usersRoute);
-
-// Simple endpoint to check if server is running
-app.get("/", (req, res) => {
-    res.json("Hello, server is running!");
-});
-
-// Catch-all route for undefined endpoints
-app.get("*", (req, res) => {
-    res.sendStatus(404);
-});
-
-// Start the server
-app.listen(PORT, () => {
-   
-    console.log(`Server running on port ${PORT}`);
-});
 require('dotenv').config();
 const http = require('http'); // Import HTTP module
 
