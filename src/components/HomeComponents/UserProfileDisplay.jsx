@@ -56,20 +56,11 @@ const UserProfileDisplay = ({
       });
 
       if(!response.ok) {
-        throw new Error('Failed to upload image');
+        throw new Error(`Failed to upload image. Status: ${response.status}`);
       }
 
-      const contentType = response.headers.get("content-type");
-      if(contentType && contentType.includes("application/json")) {
-        const data = await response.json();
-        if(data.profilePicture) {
-          setProfilePicture(data.profilePicture);
-        } else {
-          console.warn("Profile picture not found in response");
-        }
-      } else {
-        console.warn("Response is not JSON");
-      }
+      const data = await response.json();
+      setProfilePicture(data.profilePicture);
     } catch (error) {
       console.error('Error uploading image:', error);
     }

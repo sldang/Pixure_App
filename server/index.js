@@ -54,7 +54,7 @@ app.use(express.static(path.join(__dirname, "client/build")));
 
 // Catch-all route for undefined endpoints
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+    res.sendStatus(404);
 });
 
 // Start the server
