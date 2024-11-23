@@ -58,12 +58,13 @@ const userSchema = new Schema({
         type: String,
         required: false,
     },
-    profilePic: {
+    profilePicture: {
         type: String,
         required: false,
     },
     parentAccount: {
         type: String,
+        default: '',
         required: false,
     },
     parentAccountID: {

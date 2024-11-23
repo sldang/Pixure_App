@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
+import { AuthContext } from "../../contexts/AuthContext";
+
+const API_BASE_URL =  "https://pixure-server.onrender.com";
 
 const UserProfileDisplay = ({
   nickname,
@@ -8,6 +11,7 @@ const UserProfileDisplay = ({
   followingCount,
   onEdit,
 }) => {
+  const { user } = useContext(AuthContext);
   const [isFollowersModalOpen, setFollowersModalOpen] = useState(false);
   const [isFollowingModalOpen, setFollowingModalOpen] = useState(false);
   const [isEditingBio, setIsEditingBio] = useState(false);
@@ -15,7 +19,7 @@ const UserProfileDisplay = ({
     "Everyone has a story to tell. I'm gonna tell you mine."
   );
   const [tempBio, setTempBio] = useState(bio);
-  const [profileImage, setProfileImage] = useState("/api/placeholder/96/96");
+  const [profilePicture, setProfilePicture] = useState("/api/placeholder/96/96");
 
   // Handlers for modals
   const handleFollowersClick = () => setFollowersModalOpen(true);
@@ -37,16 +41,45 @@ const UserProfileDisplay = ({
   };
 
   // Handler for changing profile image
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
+    const userId = user ? user.user.id : null;
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target.result);
-      };
-      reader.readAsDataURL(file);
+    if(!file) return;
+
+    const formData = new FormData();
+    formData.append("profilePicture", file);
+
+    try {
+      const response = await fetch(`https://pixure-app-3h6l.onrender.com/api/users/${userId}/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if(!response.ok) {
+        throw new Error(`Failed to upload image. Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setProfilePicture(data.profilePicture);
+    } catch (error) {
+      console.error('Error uploading image:', error);
     }
   };
+
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      try {
+        const userId = user ? user.user.id : null;
+        const response = await fetch(`${API_BASE_URL}/api/users/profile/${userId}`);
+        const data = await response.json();
+        setProfilePicture(data.profilePicture || `${API_BASE_URL}/api/placeholder/96/96`);
+      } catch (error) {
+        console.error('Error fetching profile image:', error);
+      }
+    };
+
+    fetchProfileImage();
+  }, [user]);
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
@@ -55,7 +88,7 @@ const UserProfileDisplay = ({
         {/* Profile Image */}
         <div className="relative w-32 h-32 group">
           <img
-            src={profileImage}
+            src={profilePicture}
             alt="Profile"
             className="w-full h-full rounded-full object-cover"
           />
