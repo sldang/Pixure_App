@@ -15,6 +15,7 @@ const CreateCommunity = () => {
     communityType: "General (No Age Restriction)", // Default community type
   });
 
+  // Handle form field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -23,6 +24,7 @@ const CreateCommunity = () => {
     }));
   };
 
+  // Handle file uploads
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -34,6 +36,7 @@ const CreateCommunity = () => {
     }
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -53,10 +56,11 @@ const CreateCommunity = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.heading}>Create a Community</h1>
+    <div style={styles.pageContainer}>
+      <div style={styles.formContainer}>
+        <h1 style={styles.heading}>Create a New Community</h1>
         <form onSubmit={handleSubmit} style={styles.form}>
+          {/* Community Name */}
           <div style={styles.formGroup}>
             <label style={styles.label} htmlFor="name">
               Community Name <span style={styles.required}>*</span>
@@ -68,9 +72,11 @@ const CreateCommunity = () => {
               value={formData.name}
               onChange={handleChange}
               style={styles.input}
-              placeholder="Enter community name"
+              placeholder="Enter a community name"
             />
           </div>
+
+          {/* Community Description */}
           <div style={styles.formGroup}>
             <label style={styles.label} htmlFor="description">
               Description <span style={styles.required}>*</span>
@@ -81,9 +87,11 @@ const CreateCommunity = () => {
               value={formData.description}
               onChange={handleChange}
               style={styles.textarea}
-              placeholder="Enter community description"
+              placeholder="Briefly describe your community"
             />
           </div>
+
+          {/* Upload Image */}
           <div style={styles.formGroup}>
             <label style={styles.label} htmlFor="imageUpload">
               Upload Community Image
@@ -117,9 +125,10 @@ const CreateCommunity = () => {
             </select>
           </div>
 
+          {/* Action Buttons */}
           <div style={styles.buttonGroup}>
-            <button type="submit" style={styles.submitButton}>
-              Create
+            <button type="submit" style={styles.createButton}>
+              Create Community
             </button>
             <button
               type="button"
@@ -136,42 +145,45 @@ const CreateCommunity = () => {
   );
 };
 
-// styles for the component
+// Styles for the component
 const styles = {
-  container: {
+  pageContainer: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    minHeight: "100vh",
-    backgroundColor: "#f4f4f4",
-  },
-  card: {
-    backgroundColor: "#fff",
     padding: "40px",
-    borderRadius: "10px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    marginLeft: "240px", // Align to the right of the navbar
+    minHeight: "100vh",
+    backgroundColor: "#f8f9fa",
+  },
+  formContainer: {
+    backgroundColor: "#ffffff",
+    padding: "40px",
+    borderRadius: "12px",
+    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
     width: "100%",
-    maxWidth: "500px",
+    maxWidth: "600px",
     textAlign: "center",
   },
   heading: {
-    fontSize: "28px",
-    fontWeight: "600",
+    fontSize: "32px",
+    fontWeight: "700",
     color: "#333",
-    marginBottom: "20px",
+    marginBottom: "30px",
   },
   form: {
     display: "flex",
     flexDirection: "column",
-    gap: "15px",
+    gap: "20px",
   },
   formGroup: {
     textAlign: "left",
   },
   label: {
-    display: "block",
+    fontSize: "16px",
     fontWeight: "600",
-    marginBottom: "5px",
+    marginBottom: "8px",
+    display: "block",
   },
   required: {
     color: "red",
@@ -180,66 +192,62 @@ const styles = {
   },
   input: {
     width: "100%",
-    padding: "10px",
+    padding: "12px",
     fontSize: "16px",
     border: "1px solid #ccc",
-    borderRadius: "5px",
+    borderRadius: "6px",
     outline: "none",
     transition: "border-color 0.3s",
   },
   textarea: {
     width: "100%",
-    padding: "10px",
+    padding: "12px",
     fontSize: "16px",
     border: "1px solid #ccc",
-    borderRadius: "5px",
+    borderRadius: "6px",
     outline: "none",
-    minHeight: "100px",
+    minHeight: "120px",
     transition: "border-color 0.3s",
   },
   fileInput: {
     display: "block",
-    padding: "10px",
-    fontSize: "16px",
-    borderRadius: "5px",
-    outline: "none",
+    fontSize: "14px",
     marginTop: "10px",
   },
   select: {
     width: "100%",
-    padding: "10px",
+    padding: "12px",
     fontSize: "16px",
     border: "1px solid #ccc",
-    borderRadius: "5px",
+    borderRadius: "6px",
     outline: "none",
-    backgroundColor: "#fff",
-    transition: "border-color 0.3s",
+    backgroundColor: "#ffffff",
   },
   buttonGroup: {
     display: "flex",
     justifyContent: "space-between",
+    marginTop: "20px",
   },
-  submitButton: {
-    padding: "10px 20px",
+  createButton: {
+    padding: "12px 20px",
     fontSize: "16px",
     fontWeight: "600",
-    color: "#fff",
+    color: "#ffffff",
     backgroundColor: "#4a90e2",
     border: "none",
-    borderRadius: "5px",
+    borderRadius: "8px",
     cursor: "pointer",
     transition: "background-color 0.3s",
   },
   cancelButton: {
-    padding: "10px 20px",
+    padding: "12px 20px",
     fontSize: "16px",
     fontWeight: "600",
     color: "#333",
     backgroundColor: "#e4e4e4",
     border: "none",
-    borderRadius: "5px",
+    borderRadius: "8px",
     cursor: "pointer",
-    transition: "background-color 0.3s",
   },
 };
 
