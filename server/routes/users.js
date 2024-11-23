@@ -205,7 +205,11 @@ router.post('/:id/upload', upload.single('profilePicture'), async (req, res) => 
   try {
     const userId = req.params.id;
 
+    console.log("File received:", req.file);
+    console.log("User ID:", userId);
+
     if (!req.file) {
+      console.error("No file uploaded");
       return res.status(400).json({ error: "No file uploaded" });
     }
 
@@ -219,9 +223,11 @@ router.post('/:id/upload', upload.single('profilePicture'), async (req, res) => 
     );
 
     if (!user) {
+      console.error("User not found");
       return res.status(404).json({ error: "User not found" });
     }
 
+    console.log("Updated user:", user);
     res.status(200).json({
       message: "Profile picture uploaded successfully",
       profilePicture: user.profilePicture,
