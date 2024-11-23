@@ -50,7 +50,7 @@ const UserProfileDisplay = ({
     formData.append("profilePicture", file);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/users/${userId}/upload`, {
+      const response = await fetch(`https://pixure-app-3h6l.onrender.com/api/users/${userId}/upload`, {
         method: 'POST',
         body: formData,
       });
