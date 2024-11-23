@@ -50,7 +50,7 @@ const UserProfileDisplay = ({
     formData.append("profilePicture", file);
 
     try {
-      const response = await fetch(`/api/users/${userId}/upload`, {
+      const response = await fetch(`${API_BASE_URL}/api/users/${userId}/upload`, {
         method: 'POST',
         body: formData,
       });
