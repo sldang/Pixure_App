@@ -50,16 +50,20 @@ const UserProfileDisplay = ({
     formData.append("profilePicture", file);
 
     try {
-      const response = await fetch(`https://pixure-app-3h6l.onrender.com/api/users/${userId}/upload`, {
+      const response = await fetch(`https://pixure-server.onrender.com/api/users/${userId}/upload`, {
         method: 'POST',
         body: formData,
       });
+
+      console.log('Response:', response);
 
       if(!response.ok) {
         throw new Error(`Failed to upload image. Status: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log('Data received:', data);
+      
       setProfilePicture(data.profilePicture);
     } catch (error) {
       console.error('Error uploading image:', error);

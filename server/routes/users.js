@@ -230,6 +230,7 @@ router.post('/:id/upload', upload.single('profilePicture'), async (req, res) => 
 
     console.log("Updated user:", user);
 
+    res.setHeader('Content-Type', 'application/json');
     res.status(200).json({
       message: "Profile picture uploaded successfully",
       profilePicture: user.profilePicture,
@@ -241,7 +242,10 @@ router.post('/:id/upload', upload.single('profilePicture'), async (req, res) => 
 });
 
 router.use((req, res, next) => {
-  console.log(`Request received: ${req.method} ${req.originalUrl}`);
+  res.on('finish', () => {
+    console.log(`Response: ${res.statusCode}, Content-Type: ${res.get('Content-Type')}`);
+  });
+  //console.log(`Request received: ${req.method} ${req.originalUrl}`);
   next();
 });
 
