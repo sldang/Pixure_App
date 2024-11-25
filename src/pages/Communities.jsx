@@ -1,86 +1,163 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCommunityContext } from '../contexts/CommunityContext';
+import CommunityModal from './CommunityModal';
 
-// component for displaying joined communities
 const Communities = () => {
-   const { state } = useCommunityContext(); // access state from communitycontext
-   const { joinedCommunities } = state; // destructure joined communities
+  const { state } = useCommunityContext(); // Access state from the context
+  const { joinedCommunities } = state; // Destructure joined communities
 
-   return (
-       <div style={styles.communitiesPage}>
-           <h1 style={styles.heading}>Your Communities</h1>
-           {joinedCommunities.length === 0 ? ( // check if no communities have been joined
-               <p style={styles.noCommunitiesText}>You haven't joined any communities yet.</p>
-           ) : (
-               <div style={styles.communityList}>
-                   {joinedCommunities.map((community, index) => ( // iterate through joined communities
-                       <div key={index} style={styles.communityCard}>
-                           <img src={community.imageUrl} alt={community.name} style={styles.communityImage} />
-                           <h2 style={styles.communityName}>{community.name}</h2>
-                           <p style={styles.communityDescription}>{community.description}</p>
-                       </div>
-                   ))}
-               </div>
-           )}
-       </div>
-   );
+  const [selectedCommunity, setSelectedCommunity] = useState(null); // Track the selected community for the modal
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+
+  // Open the modal for a specific community
+  const openCommunityModal = (community) => {
+    setSelectedCommunity(community);
+    setIsModalOpen(true);
+  };
+
+  // Close the modal
+  const closeCommunityModal = () => {
+    setSelectedCommunity(null);
+    setIsModalOpen(false);
+  };
+
+  return (
+    <div style={styles.communitiesPage}>
+      {/* Header */}
+      <h1 style={styles.heading}>Your Communities</h1>
+
+      {/* No Communities Fallback */}
+      {joinedCommunities.length === 0 ? (
+        <p style={styles.noCommunitiesText}>
+          You haven't joined any communities yet.
+        </p>
+      ) : (
+        <div
+          style={{
+            ...styles.communityGrid,
+            justifyContent: joinedCommunities.length <= 2 ? 'center' : 'flex-start', // Center if 2 or fewer communities
+          }}
+        >
+          {joinedCommunities.map((community, index) => (
+            <div
+              key={index}
+              style={styles.communityCard}
+              onMouseEnter={(e) => e.currentTarget.classList.add('hover')}
+              onMouseLeave={(e) => e.currentTarget.classList.remove('hover')}
+            >
+              <img
+                src={community.imageUrl || 'https://via.placeholder.com/100x100'}
+                alt={community.name}
+                style={styles.communityImage}
+              />
+              <h2 style={styles.communityName}>{community.name}</h2>
+              <p style={styles.communityDescription}>{community.description}</p>
+              <p style={styles.communityMembers}>
+                <strong>{community.members || 'N/A'}</strong> members
+              </p>
+              <button
+                style={styles.openButton}
+                onClick={() => openCommunityModal(community)}
+              >
+                Open
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Community Modal */}
+      {isModalOpen && (
+        <CommunityModal
+          community={selectedCommunity}
+          onClose={closeCommunityModal}
+        />
+      )}
+    </div>
+  );
 };
 
-// inline styles for consistent card layout and centered images
+// Styles for the Communities page
 const styles = {
-   communitiesPage: {
-       padding: '20px',
-       marginLeft: '240px', // adjust for sidebar
-   },
-   heading: {
-       fontSize: '32px',
-       fontWeight: '600',
-       color: '#333',
-       textAlign: 'center',
-       marginBottom: '20px',
-   },
-   noCommunitiesText: {
-       fontSize: '18px',
-       color: '#666',
-       textAlign: 'center',
-   },
-   communityList: {
-       display: 'flex',
-       flexWrap: 'wrap',
-       gap: '20px',
-       justifyContent: 'center',
-   },
-   communityCard: {
-       backgroundColor: '#ffffff',
-       color: '#333',
-       width: '250px',
-       height: '350px', // fixed height for uniformity
-       padding: '20px',
-       borderRadius: '10px',
-       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-       display: 'flex',
-       flexDirection: 'column',
-       alignItems: 'center',
-       justifyContent: 'center',
-       textAlign: 'center',
-       transition: 'background-color 0.3s ease, color 0.3s ease',
-   },
-   communityImage: {
-       width: '80px',
-       height: '80px',
-       borderRadius: '50%',
-       marginBottom: '15px',
-       objectFit: 'cover', // ensure the image fits within the circle
-   },
-   communityName: {
-       fontSize: '18px',
-       color: '#333',
-       marginBottom: '10px',
-   },
-   communityDescription: {
-       fontSize: '14px',
-       color: '#666',
-   },
+  communitiesPage: {
+    padding: '40px',
+    marginLeft: '240px', // Adjust for the sidebar
+    backgroundColor: '#f4f5f7',
+    minHeight: '100vh',
+  },
+  heading: {
+    fontSize: '34px',
+    fontWeight: '700',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: '30px',
+  },
+  noCommunitiesText: {
+    fontSize: '18px',
+    color: '#777',
+    textAlign: 'center',
+    fontStyle: 'italic',
+    marginTop: '50px',
+  },
+  communityGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '24px',
+    alignItems: 'center',
+  },
+  communityCard: {
+    backgroundColor: '#ffffff',
+    color: '#333',
+    borderRadius: '12px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+    textAlign: 'center',
+    padding: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    transition: 'transform 0.2s ease, box-shadow 0.3s ease',
+    cursor: 'pointer',
+  },
+  communityCardHover: {
+    transform: 'scale(1.02)',
+    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+  },
+  communityImage: {
+    width: '100px',
+    height: '100px',
+    borderRadius: '50%',
+    backgroundColor: '#ddd',
+    marginBottom: '15px',
+  },
+  communityName: {
+    fontSize: '20px',
+    fontWeight: '600',
+    marginBottom: '10px',
+    color: '#222',
+  },
+  communityDescription: {
+    fontSize: '14px',
+    color: '#555',
+    marginBottom: '10px',
+    fontStyle: 'italic',
+  },
+  communityMembers: {
+    fontSize: '0.9rem',
+    color: '#777',
+    marginBottom: '15px',
+  },
+  openButton: {
+    backgroundColor: '#4a90e2',
+    color: '#fff',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    border: 'none',
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease, background-color 0.3s ease',
+  },
 };
 
 export default Communities;

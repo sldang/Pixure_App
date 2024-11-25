@@ -4,30 +4,30 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// placeholder communities list
+// Placeholder communities list
 const initialCommunities = [
   {
     name: 'Photography Enthusiasts',
-    description: 'A community for photography lovers to share tips, tricks, and photos.',
-    imageUrl: 'https://via.placeholder.com/80x80',
+    description: 'A vibrant community for sharing tips, tricks, and stunning photos.',
+    imageUrl: 'https://via.placeholder.com/100x100',
     members: 134,
   },
   {
     name: 'Travel Lovers',
-    description: 'Share your travel experiences and get inspired for your next adventure!',
-    imageUrl: 'https://via.placeholder.com/80x80',
+    description: 'Inspire and be inspired by incredible travel stories and destinations!',
+    imageUrl: 'https://via.placeholder.com/100x100',
     members: 72,
   },
   {
     name: 'Book Club',
-    description: 'Join us to discuss the latest bestsellers and classic books.',
-    imageUrl: 'https://via.placeholder.com/80x80',
+    description: 'Dive into exciting discussions about the latest and greatest books.',
+    imageUrl: 'https://via.placeholder.com/100x100',
     members: 200,
   },
   {
     name: 'Fitness',
-    description: 'Connect with others interested in fitness.',
-    imageUrl: 'https://via.placeholder.com/80x80',
+    description: 'Let’s achieve our fitness goals together and share the journey.',
+    imageUrl: 'https://via.placeholder.com/100x100',
     members: 310,
   },
 ];
@@ -35,7 +35,7 @@ const initialCommunities = [
 const Explore = () => {
   const { state, dispatch } = useCommunityContext(); // Access context state and dispatch
   const navigate = useNavigate();
-  const [communities, setCommunities] = useState(initialCommunities); // Local community list
+  const [communities] = useState(initialCommunities);
 
   // Function to handle joining a community
   const joinCommunity = (community) => {
@@ -44,12 +44,12 @@ const Explore = () => {
     );
 
     if (isAlreadyJoined) {
-      toast.error(`You have already joined "${community.name}".`);
+      toast.error(`You already joined "${community.name}".`, { autoClose: 2000 });
       return;
     }
 
     dispatch({ type: 'JOIN_COMMUNITY', payload: community });
-    toast.success(`You've joined "${community.name}"!`);
+    toast.success(`Welcome to "${community.name}"!`, { autoClose: 2000 });
     setTimeout(() => navigate('/communities'), 2000); // Redirect to Communities page
   };
 
@@ -62,29 +62,44 @@ const Explore = () => {
     <div style={styles.explorePage}>
       {/* Header section with title and create button */}
       <div style={styles.exploreHeader}>
-        <h1 style={styles.heading}>Explore Communities</h1>
+        <h1 style={styles.heading}>Find Your Community</h1>
         <button
           style={styles.createCommunityBtn}
           onClick={navigateToCreateCommunity}
         >
-          Create a Community
+          + Create Community
         </button>
       </div>
 
       {/* Grid layout for displaying communities */}
       <div style={styles.communityGrid}>
         {[...communities, ...state.allCommunities].map((community, index) => (
-          <div key={index} style={styles.communityCard}>
-            <img src={community.imageUrl} alt={community.name} style={styles.communityImage} />
+          <div
+            key={index}
+            style={styles.communityCard}
+            onMouseEnter={(e) => e.currentTarget.classList.add('hover')}
+            onMouseLeave={(e) => e.currentTarget.classList.remove('hover')}
+          >
+            <img
+              src={community.imageUrl}
+              alt={community.name}
+              style={styles.communityImage}
+            />
             <h2 style={styles.communityName}>{community.name}</h2>
             <p style={styles.communityDescription}>{community.description}</p>
-            <p style={styles.communityMembers}>{community.members} members</p>
-            <button style={styles.joinButton} onClick={() => joinCommunity(community)}>
+            <p style={styles.communityMembers}>
+              <strong>{community.members}</strong> members
+            </p>
+            <button
+              style={styles.joinButton}
+              onClick={() => joinCommunity(community)}
+            >
               Join Community
             </button>
           </div>
         ))}
       </div>
+
       <ToastContainer />
     </div>
   );
@@ -92,79 +107,97 @@ const Explore = () => {
 
 const styles = {
   explorePage: {
-    padding: '20px',
+    padding: '40px',
     marginLeft: '240px',
-    transition: 'background-color 0.3s ease, color 0.3s ease',
+    backgroundColor: '#f4f5f7',
+    minHeight: '100vh',
   },
   exploreHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '20px',
+    marginBottom: '30px',
   },
   heading: {
-    fontSize: '32px',
-    fontWeight: '600',
+    fontSize: '34px',
+    fontWeight: '700',
     color: '#333',
     textAlign: 'left',
     margin: 0,
   },
   createCommunityBtn: {
     backgroundColor: '#4a90e2',
-    color: 'white',
-    padding: '8px 16px',
-    borderRadius: '5px',
+    color: '#fff',
+    padding: '12px 24px',
+    borderRadius: '8px',
     fontSize: '1rem',
+    fontWeight: '600',
     cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
+    border: 'none',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: 'transform 0.3s, box-shadow 0.3s',
   },
   communityGrid: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '16px',
-    justifyContent: 'center',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '24px',
   },
   communityCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fff',
     color: '#333',
-    width: '250px',
-    height: '400px',
-    padding: '20px',
-    borderRadius: '10px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '12px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
     textAlign: 'center',
+    padding: '20px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    transition: 'background-color 0.3s ease, color 0.3s ease',
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease, box-shadow 0.3s ease',
+  },
+  communityCardHover: {
+    transform: 'scale(1.05)',
+    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
   },
   communityImage: {
-    width: '80px',
-    height: '80px',
+    width: '100px',
+    height: '100px',
     borderRadius: '50%',
     backgroundColor: '#ddd',
-    marginBottom: '10px',
+    marginBottom: '15px',
+    objectFit: 'cover',
   },
   communityName: {
-    fontSize: '18px',
+    fontSize: '20px',
+    fontWeight: '600',
     marginBottom: '10px',
   },
   communityDescription: {
     fontSize: '14px',
     marginBottom: '10px',
+    color: '#555',
+    fontStyle: 'italic',
   },
   communityMembers: {
     fontSize: '0.9rem',
     marginBottom: '15px',
+    color: '#777',
   },
   joinButton: {
-    padding: '8px',
+    padding: '10px',
     backgroundColor: '#4a90e2',
-    color: 'white',
+    color: '#fff',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '6px',
+    fontWeight: '600',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     cursor: 'pointer',
+    transition: 'transform 0.2s ease, background-color 0.3s ease',
+  },
+  joinButtonHover: {
+    backgroundColor: '#357ABD',
+    transform: 'scale(1.05)',
   },
 };
 

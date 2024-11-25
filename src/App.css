@@ -1,7 +1,20 @@
+/* Base styles for the app */
 .App {
   text-align: center;
+  display: flex;
+  background-color: #f5f8fa;
+  color: #333;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Dark mode styles for the app */
+.App.dark-mode {
+  background-color: #1c1c1c;
+  color: #e0e0e0;
+}
+
+/* App logo */
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -13,6 +26,16 @@
   }
 }
 
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* App header */
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -24,15 +47,123 @@
   color: white;
 }
 
+/* App links */
 .App-link {
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Content area */
+.content {
+  flex: 1;
+  padding: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Sidebar container */
+.sidebar-container {
+  width: 240px;
+  height: 100vh;
+  background-color: #ffffff;
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  border-right: 1px solid #e0e0e0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+/* Dark mode for sidebar */
+.sidebar-container.dark-mode {
+  background-color: #2b2b2b;
+  color: #e0e0e0;
+}
+
+/* Sidebar links styling */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  gap: 10px;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.sidebar-item:hover {
+  color: #4a90e2;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-container.dark-mode .sidebar-item:hover {
+  color: #61dafb;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dark mode toggle button */
+.dark-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #4a90e2;
+  color: #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+.dark-mode-toggle:hover {
+  background-color: #357abd;
+}
+
+.sidebar-container.dark-mode .dark-mode-toggle {
+  background-color: #444;
+}
+
+.dark-mode-toggle:hover {
+  background-color: #357abd;
+}
+
+/* User profile and logout section */
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.logout-icon {
+  font-size: 1.25rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.logout-icon:hover {
+  color: #e74c3c;
+}
+
+.profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Like, dislike, and comment button hover effects */
+.like-button:hover svg {
+  color: #4a90e2;
+}
+
+.dislike-button:hover svg {
+  color: #e74c3c;
+}
+
+.comment-button:hover svg {
+  color: #6c757d;
 }
