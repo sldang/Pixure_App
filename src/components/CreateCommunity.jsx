@@ -10,11 +10,11 @@ const CreateCommunity = async () => {
 
   const createCommunity = async () => {
     try {
-      const restrict;
+
       if (formData[communityType].equals("General (No Age Restriction)")) {
-        restrict = false;
+        const restrict = false;
       } else {
-        restrict = true;
+        const restrict = true;
       }
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/createCommunity`, {
         method: "POST",
