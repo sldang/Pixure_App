@@ -79,6 +79,12 @@ const userSchema = new Schema({
         type: String,
         required: false,
     },
+    personalBio: {
+        type: String,
+        required: false,
+    },
+    
+    
 
 });
 
