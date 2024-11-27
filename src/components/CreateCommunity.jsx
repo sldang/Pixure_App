@@ -73,7 +73,7 @@ const handleFileChange = (e) => {
 };
 
 // Handle form submission
-const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   setErrorMessage(''); // clear any previous errors
   setSuccessMessage(''); // clear any previous success messages
