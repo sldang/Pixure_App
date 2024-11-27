@@ -1,5 +1,4 @@
 const express = require("express");
-const Message = require('../models/Message');
 const router = express.Router();
 const cors = require("cors");
 
@@ -14,7 +13,7 @@ router.use(cors({
 router.post("/api/createCommunity", async (req, res) => {
     console.log("Create community request recieved");
     try{
-        const{ name, posts } = req.body;
+        const{ name, communityPosts, communityMembers,  } = req.body;
         if (!name) {
             return res.status(400).json({ error: "name is required" });
         }
@@ -22,6 +21,10 @@ router.post("/api/createCommunity", async (req, res) => {
             name,
             communityPosts,
             communityMembers,
+            description, 
+            restriction,
+            image,
+
         });
 
         await newCommunity.save();
@@ -40,7 +43,7 @@ router.post("/api/followCommunity", async (req, res) => {
         console.log("Follow Email:", communityName);
 
         const follower = await User.findOne({ email });
-        const followed = await Community.findOne({ email: followEmail }); // Ensure you're querying by email field
+        const community = await Community.findOne({  name: communityName }); // Ensure you're querying by email field
 
         // Check if the follower exists
         if (!follower) {
@@ -49,22 +52,22 @@ router.post("/api/followCommunity", async (req, res) => {
         }
 
         // Check if the user to be followed exists
-        if (!followed) {
-            console.log("User to follow not found");
-            return res.status(404).json({ message: "User to follow not found" });
+        if (!community) {
+            console.log("community to follow not found");
+            return res.status(404).json({ message: "community to follow not found" });
         }
 
         // Check if the followEmail is already in the followList to avoid duplicates
-        if (!follower.followList.includes(followEmail)) {
-            follower.followList.push(followEmail);
-            followed.followerList.push(email); // Adding the current user's email to the followed user's followerList
+        if (!follower.communityID.includes(community._id)) {
+            follower.communityID.push(community._id);
+            community.communityMembers.push(email); // Adding the current user's email to the followed user's followerList
             await follower.save(); // Save changes to the follower
-            await followed.save(); // Save changes to the followed user
+            await community.save(); // Save changes to the followed user
             console.log("Email added to follow list");
             return res.status(200).json({ message: "Followed successfully" });
         } else {
-            console.log("Already following this user");
-            return res.status(400).json({ message: "Already following this user" });
+            console.log("Already following this community");
+            return res.status(400).json({ message: "Already following this community" });
         }
     } catch (error) {
         console.error("Error while following:", error);
