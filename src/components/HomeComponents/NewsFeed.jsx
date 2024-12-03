@@ -129,7 +129,23 @@ const NewsFeed = () => {
       console.error("Error adding comment:", error);
     }
   };
+  const handleDeleteComment = async (postId, commentId) => {
+    try {
+      await axios.delete(`/api/posts/${postId}/comments/${commentId}`, {
+        data: { userId: user.user.id }, // Send the user ID for authorization
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
   
+      // Update the post's comments in the state
+      setPosts(posts.map((post) =>
+        post._id === postId
+          ? { ...post, comments: post.comments.filter((comment) => comment._id !== commentId) }
+          : post
+      ));
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
              
   return (
     <div className="flex justify-center w-full h-screen items-start pt-10">
@@ -153,6 +169,7 @@ const NewsFeed = () => {
             onComment={(commentContent) => handleComment(post._id, commentContent)}
             onDelete={() => handleDelete(post._id)}
             onUpdate={() => handleUpdate(post._id)}
+            onDeleteComment={(commentId) => handleDeleteComment(post._id, commentId)} // Pass comment delete handler
           />
         ))}
       </div>

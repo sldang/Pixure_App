@@ -39,11 +39,20 @@ const Post = ({ user, content, time, img, likes, comments, onLike, onComment, on
         />
         <button onClick={handleCommentSubmit}>Comment</button>
         <div className="mt-[10px]">
-          {comments.map((comment, index) => (
-            <div key={index} className="text-sm">
-              <strong>{comment.userId?.nickname || "Unknown User"}:</strong> {comment.content}
-            </div>
-          ))}
+        {comments.map((comment, index) => (
+  <div key={index} className="text-sm flex justify-between items-center">
+    <span>
+      <strong>{comment.userId?.nickname || "Unknown User"}:</strong> {comment.content}
+    </span>
+    <button
+      className="text-red-500 ml-2"
+      onClick={() => onDeleteComment(comment._id)}
+    >
+      Delete
+    </button>
+  </div>
+))}
+
         </div>
       </div>
     </div>

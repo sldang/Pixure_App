@@ -192,5 +192,36 @@ router.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({ error: "Unhandled error", details: err.message });
 });
+// Delete a comment
+router.delete('/:postId/comments/:commentId', async (req, res) => {
+  try {
+    const { userId } = req.body; // Extract the user ID from the request body
+    const { postId, commentId } = req.params;
 
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    // Check if the user is the post owner
+    const isPostOwner = String(post.userId) === userId;
+
+    // Find the comment
+    const comment = post.comments.id(commentId);
+    if (!comment) return res.status(404).json({ error: "Comment not found" });
+
+    // Check if the user is the comment owner
+    const isCommentOwner = String(comment.userId) === userId;
+
+    // Allow deletion only if the user is the post owner or the comment owner
+    if (isPostOwner || isCommentOwner) {
+      comment.remove(); // Remove the comment from the comments array
+      await post.save(); // Save the updated post
+      return res.status(200).json({ message: "Comment deleted successfully." });
+    }
+
+    return res.status(403).json({ error: "You are not authorized to delete this comment." });
+  } catch (err) {
+    console.error('Error deleting comment:', err);
+    res.status(500).json({ error: "Error deleting comment", details: err.message });
+  }
+});
 module.exports = router;
