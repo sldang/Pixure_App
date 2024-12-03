@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState, useEffect, useContext } from 'react';
 const Post = ({ user, content, time, img, likes, comments, onLike, onComment, onDelete, onUpdate, onDeleteComment }) => {
   const [commentInput, setCommentInput] = useState("");
 
