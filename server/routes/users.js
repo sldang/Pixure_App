@@ -182,12 +182,6 @@ router.put("/follow", async (req, res) => {
   }
 });
 
-    res.status(409).json("You already follow this user");
-  } catch (err) {
-    console.error("Error following user:", err);
-    res.status(500).json("An error occurred while trying to follow the user");
-  }
-});
 //unfollow 
 router.put("/:id/unfollow", async (req, res) => {
   if (req.body.userId !== req.params.id) {
