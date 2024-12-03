@@ -1,5 +1,5 @@
 import React, { useState } from 'react'; 
-const Post = ({ user, content, time, img, likes, comments, onLike, onComment, onDelete, onUpdate }) => {
+const Post = ({ user, content, time, img, likes, comments, onLike, onComment, onDelete, onUpdate, onDeleteComment }) => {
   const [commentInput, setCommentInput] = useState("");
 
   const handleCommentSubmit = () => {
