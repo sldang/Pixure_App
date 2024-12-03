@@ -120,13 +120,16 @@ const NewsFeed = () => {
         headers: { Authorization: `Bearer ${user.token}` },
       });
   
-      setPosts(posts.map(post =>
-        post._id === postId ? { ...post, comments: response.data.comments } : post
+      setPosts(posts.map((post) =>
+        post._id === postId
+          ? { ...post, comments: [...post.comments, response.data] } // Append the new comment
+          : post
       ));
     } catch (error) {
       console.error("Error adding comment:", error);
     }
   };
+  
              
   return (
     <div className="flex justify-center w-full h-screen items-start pt-10">

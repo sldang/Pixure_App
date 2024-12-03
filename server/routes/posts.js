@@ -162,15 +162,17 @@ router.post('/:id/comments', async (req, res) => {
     post.comments.push(comment);
     await post.save();
 
-    // Re-fetch the post with populated comments
-    const updatedPost = await Post.findById(req.params.id)
-      .populate('comments.userId', 'nickname');
-    res.status(201).json(updatedPost.comments);
+    // Populate the new comment with the userId's nickname
+    const newComment = post.comments[post.comments.length - 1];
+    const populatedComment = await Post.populate(newComment, { path: 'userId', select: 'nickname' });
+
+    res.status(201).json(populatedComment);
   } catch (err) {
     console.error('Error adding comment:', err);
     res.status(500).json({ error: "Error adding comment", details: err.message });
   }
 });
+
 
 // Get all comments for a post
 router.get('/:id/comments', async (req, res) => {
