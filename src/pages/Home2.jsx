@@ -19,10 +19,10 @@ const Home2 = () => {
       }
 
       try {
+        // Fetch posts from followed users
         const response = await axios.get(`/api/posts/following/${user.user.id}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-        console.log('Fetched follower posts:', response.data); // Debugging
         setFollowerPosts(response.data);
       } catch (error) {
         console.error('Error fetching follower posts:', error.response?.data || error.message);
@@ -34,30 +34,26 @@ const Home2 = () => {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
       <Sidebar />
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center p-4">
-        {/* Follower Posts */}
-        {followerPosts.length === 0 ? (
-          <p>No posts from followed users to display.</p>
-        ) : (
-          followerPosts.map((post, index) => (
-            <Post
-              key={index}
-              user={post.userId?.nickname || 'Unknown User'}
-              content={post.desc}
-              time={new Date(post.createdAt).toLocaleString()}
-              img={post.imageData || null}
-              likes={post.likes}
-              comments={post.comments || []}
-            />
-          ))
-        )}
+      <div className="flex-1 flex flex-col items-center pt-10">
+        <div className="w-full max-w-[600px] mx-4">
+          {followerPosts.length === 0 ? (
+            <p>No posts from followed users to display.</p>
+          ) : (
+            followerPosts.map((post, index) => (
+              <Post
+                key={index}
+                user={post.userId?.nickname || 'Unknown User'}
+                content={post.desc}
+                time={post.createdAt}
+                img={post.imageData || null}
+                likes={post.likes}
+                comments={post.comments || []}
+              />
+            ))
+          )}
+        </div>
       </div>
-
-      {/* Rightbar */}
       <Rightbar />
     </div>
   );

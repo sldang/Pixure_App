@@ -22,7 +22,6 @@ const NewsFeed = () => {
             headers: { Authorization: `Bearer ${user.token}` },
             withCredentials: true,
           });
-          console.log('User Posts API Response:', response.data); // Debug log
           setUserPosts(response.data);
         }
       } catch (error) {
@@ -40,7 +39,6 @@ const NewsFeed = () => {
           const response = await axios.get(`/api/posts/following/${user.user.id}`, {
             headers: { Authorization: `Bearer ${user.token}` },
           });
-          console.log('Follower Posts API Response:', response.data); // Debug log
           setFollowerPosts(response.data);
         }
       } catch (error) {
@@ -131,7 +129,6 @@ const NewsFeed = () => {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-      // Update likes in both user's posts and follower posts
       setUserPosts(
         userPosts.map((post) =>
           post._id === postId
@@ -174,7 +171,6 @@ const NewsFeed = () => {
         }
       );
 
-      // Update comments in both user's posts and follower posts
       setUserPosts(
         userPosts.map((post) =>
           post._id === postId
@@ -193,13 +189,33 @@ const NewsFeed = () => {
       console.error('Error adding comment:', error);
     }
   };
-  useEffect(() => {
-    console.log('Updated User Posts:', userPosts);
-  }, [userPosts]);
-  
-  useEffect(() => {
-    console.log('Updated Follower Posts:', followerPosts);
-  }, [followerPosts]);
+
+  const handleDeleteComment = async (postId, commentId) => {
+    try {
+      await axios.delete(`/api/posts/${postId}/comments/${commentId}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+        data: { userId: user.user.id },
+      });
+
+      setUserPosts(
+        userPosts.map((post) =>
+          post._id === postId
+            ? { ...post, comments: post.comments.filter((c) => c._id !== commentId) }
+            : post
+        )
+      );
+      setFollowerPosts(
+        followerPosts.map((post) =>
+          post._id === postId
+            ? { ...post, comments: post.comments.filter((c) => c._id !== commentId) }
+            : post
+        )
+      );
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
   return (
     <div className="flex justify-center w-full h-screen items-start pt-10">
       <div className="w-full max-w-[600px] ml-10">
@@ -223,6 +239,7 @@ const NewsFeed = () => {
             onComment={(commentContent) => handleComment(post._id, commentContent)}
             onDelete={() => handleDelete(post._id)}
             onUpdate={() => handleUpdate(post._id)}
+            onDeleteComment={(commentId) => handleDeleteComment(post._id, commentId)}
           />
         ))}
       </div>
