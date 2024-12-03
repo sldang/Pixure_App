@@ -9,7 +9,7 @@ import CommunitiesPage from './pages/Communities';
 import CreateCommunity from './components/CreateCommunity';
 import Sidebar from './components/HomeComponents/Sidebar';
 import EditProfile from './components/EditProfile';
-
+import Home2 from './pages/Home2';
 import { useContext } from 'react';
 import { AuthContext } from './contexts/AuthContext';
 import { CommunityProvider } from './contexts/CommunityContext';
@@ -35,7 +35,7 @@ function App() {
 
               {/* Protected Routes */}
               <Route path="/" element={<ProtectedRoute user={user}><HomePage /></ProtectedRoute>} /> {/* Corrected */}
-              <Route path="/home" element={<ProtectedRoute user={user}><HomePage /></ProtectedRoute>} /> {/* Corrected */}
+              <Route path="/home" element={<ProtectedRoute user={user}><Home2 /></ProtectedRoute>} />
               <Route path="/messenger" element={<ProtectedRoute user={user}><MessengerPage /></ProtectedRoute>} />
               <Route path="/explore" element={<ProtectedRoute user={user}><ExplorePage /></ProtectedRoute>} />
               <Route path="/communities" element={<ProtectedRoute user={user}><CommunitiesPage /></ProtectedRoute>} />
