@@ -42,7 +42,7 @@ router.get('/following/:userId', async (req, res) => {
     }
 
     // Ensure followList is valid and contains only ObjectId
-    if (!Array.isArray(user.followList) || user.followList.some(id => typeof id !== 'object')) {
+    if (!Array.isArray(user.followList) || user.followList.some(id => !mongoose.Types.ObjectId.isValid(id))) {
       return res.status(400).json({ error: 'Invalid followList data' });
     }
 
@@ -116,11 +116,11 @@ router.get("/profile/:userId", async (req, res) => {
 
     // Create the profile data response
     const profileData = {
-      nickname: nickname || "Unknown User",  // Use nickname as the display name
-      postsCount: user.posts ? user.posts.length : 0,  // Count of posts
-      followersCount: user.followerList.length,  // Count of followers
-      followingCount: user.followList.length,     // Count of followings
-      profilePicture: user.profilePicture,  // get profile picture
+      nickname: nickname || "Unknown User",
+      postsCount: await Post.countDocuments({ userId }),
+      followersCount: user.followerList.length,
+      followingCount: user.followList.length,
+      profilePicture: user.profilePicture,
     };
 
     res.status(200).json(profileData);
@@ -170,9 +170,9 @@ router.put("/follow", async (req, res) => {
     }
 
     // Check if already following
-    if (!user.followers.includes(currentUser._id)) {
-      await user.updateOne({ $push: { followers: currentUser._id } });
-      await currentUser.updateOne({ $push: { followings: user._id } });
+    if (!user.followers.some(followerId => followerId.equals(currentUser._id))) {
+      await user.updateOne({ $addToSet: { followers: currentUser._id } }); // Use $addToSet to avoid duplicates
+      await currentUser.updateOne({ $addToSet: { followList: user._id } });
       res.status(200).json("User has been followed");
     } else {
       res.status(409).json("You already follow this user");
