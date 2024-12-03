@@ -22,6 +22,7 @@ const NewsFeed = () => {
             headers: { Authorization: `Bearer ${user.token}` },
             withCredentials: true,
           });
+          console.log('User Posts API Response:', response.data); // Debug log
           setUserPosts(response.data);
         }
       } catch (error) {
@@ -39,6 +40,7 @@ const NewsFeed = () => {
           const response = await axios.get(`/api/posts/following/${user.user.id}`, {
             headers: { Authorization: `Bearer ${user.token}` },
           });
+          console.log('Follower Posts API Response:', response.data); // Debug log
           setFollowerPosts(response.data);
         }
       } catch (error) {
@@ -191,7 +193,13 @@ const NewsFeed = () => {
       console.error('Error adding comment:', error);
     }
   };
-
+  useEffect(() => {
+    console.log('Updated User Posts:', userPosts);
+  }, [userPosts]);
+  
+  useEffect(() => {
+    console.log('Updated Follower Posts:', followerPosts);
+  }, [followerPosts]);
   return (
     <div className="flex justify-center w-full h-screen items-start pt-10">
       <div className="w-full max-w-[600px] ml-10">
@@ -201,6 +209,7 @@ const NewsFeed = () => {
           setPostContent={setPostContent}
           handleUpload={handleUpload}
         />
+        {combinedPosts.length === 0 && <p>No posts to display</p>}
         {combinedPosts.map((post, index) => (
           <Post
             key={index}
