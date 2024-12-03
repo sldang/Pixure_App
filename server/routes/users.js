@@ -32,26 +32,30 @@ const upload = multer({
 // Get posts from followers
 router.get('/following/:userId', async (req, res) => {
   try {
+    console.log('UserID Received:', req.params.userId);
     const userId = req.params.userId;
 
+    // Find the user by ID
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
     // Ensure followList is an array
-    if (!Array.isArray(user.followList)) {
+    if (!Array.isArray(user.followList) || user.followList.length === 0) {
       return res.status(200).json([]); // Return empty array if no followList
     }
 
+    // Fetch posts from users in the followList
     const posts = await Post.find({ userId: { $in: user.followList } })
-      .populate('userId', 'nickname profilePicture')
-      .sort({ createdAt: -1 });
+      .populate('userId', 'nickname profilePicture') // Populate user details
+      .sort({ createdAt: -1 }); // Sort by newest first
 
+    // Respond with the posts
     res.status(200).json(posts);
   } catch (err) {
     console.error('Error fetching posts from followers:', err);
-    res.status(500).json({ error: 'Error fetching posts from followers' });
+    res.status(500).json({ error: 'Error fetching posts from followers', details: err.message });
   }
 });
 //update user

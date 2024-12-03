@@ -30,10 +30,10 @@ const userSchema = new Schema({
         type: Array,
         default: [], 
     },
-    followList: {
-        type: Array,
-        default: [], 
-    },
+    followList: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }],
     karma: {
         type: String,
         required: false,
