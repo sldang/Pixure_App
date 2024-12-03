@@ -4,7 +4,8 @@ const bcryptjs = require("bcryptjs");
 const cors = require('cors');
 const jwt = require("jsonwebtoken");
 const multer = require('multer');
-
+const Post = require('../models/Post');
+const express = require('express');
 // CORS middleware setup
 router.use(
   cors({
@@ -28,6 +29,31 @@ const upload = multer({
     }
   },
 });
+// Get posts from followers
+router.get('/following/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Find the user and get their follow list
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const followerIds = user.followList;
+
+    // Fetch posts from the user's followers, sorted by newest first
+    const posts = await Post.find({ userId: { $in: followerIds } })
+      .populate('userId', 'nickname profilePicture') // Populate user details
+      .sort({ createdAt: -1 }); // Newest first
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error('Error fetching posts from followers:', error);
+    res.status(500).json({ error: 'Error fetching posts from followers', details: error.message });
+  }
+});
+
 
 //update user
 router.put("/:id", async (req, res) => {
