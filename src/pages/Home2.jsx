@@ -11,12 +11,11 @@ const Home2 = () => {
   const { user } = useContext(AuthContext);
   const [followerPosts, setFollowerPosts] = useState([]);
 
-  // Fetch posts from followed users
   useEffect(() => {
     const fetchFollowerPosts = async () => {
       try {
-        if (!user) {
-          console.error('User is not logged in.');
+        if (!user || !user.user?.id) {
+          console.error('User ID is missing.');
           return;
         }
         const response = await axios.get(`/api/posts/following/${user.user.id}`, {
@@ -24,13 +23,13 @@ const Home2 = () => {
         });
         setFollowerPosts(response.data);
       } catch (error) {
-        console.error('Error fetching follower posts:', error);
+        console.error('Error fetching follower posts:', error.response || error.message);
       }
     };
-
+  
     fetchFollowerPosts();
   }, [user]);
-
+  
   return (
     <div className="flex">
       <Sidebar />

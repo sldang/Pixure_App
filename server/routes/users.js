@@ -34,29 +34,26 @@ router.get('/following/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    // Find the user
     const user = await User.findById(userId);
     if (!user) {
-      console.error('User not found');
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Get the list of follower IDs
-    const followerIds = user.followList;
+    // Ensure followList is an array
+    if (!Array.isArray(user.followList)) {
+      return res.status(200).json([]); // Return empty array if no followList
+    }
 
-    // Fetch posts from followers, sorted by newest first
-    const posts = await Post.find({ userId: { $in: followerIds } })
-      .populate('userId', 'nickname profilePicture') // Populate user details
-      .sort({ createdAt: -1 }); // Sort by newest first
+    const posts = await Post.find({ userId: { $in: user.followList } })
+      .populate('userId', 'nickname profilePicture')
+      .sort({ createdAt: -1 });
 
-    // Send posts as response
     res.status(200).json(posts);
-  } catch (error) {
-    console.error('Error fetching posts from followers:', error);
-    res.status(500).json({ error: 'Error fetching posts from followers', details: error.message });
+  } catch (err) {
+    console.error('Error fetching posts from followers:', err);
+    res.status(500).json({ error: 'Error fetching posts from followers' });
   }
 });
-
 //update user
 router.put("/:id", async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdmin) {
@@ -148,8 +145,6 @@ router.get("/friends/:userId", async (req, res) => {
     res.status(500).json(err);
   }
 });
-
-// Follow a user by email
 router.put("/follow", async (req, res) => {
   const { email, followEmail } = req.body;
 
@@ -158,29 +153,30 @@ router.put("/follow", async (req, res) => {
   }
 
   try {
-    // Find the target user (to be followed) and the current user by email
     const user = await User.findOne({ email: followEmail });
     const currentUser = await User.findOne({ email: email });
 
-    // Check if users exist
     if (!user || !currentUser) {
       return res.status(404).json("User not found");
     }
 
+    // Ensure followerList and followList are arrays
+    if (!Array.isArray(user.followerList)) user.followerList = [];
+    if (!Array.isArray(currentUser.followList)) currentUser.followList = [];
+
     // Check if already following
-    if (!user.followers.includes(currentUser._id)) {
-      await user.updateOne({ $push: { followers: currentUser._id } });
-      await currentUser.updateOne({ $push: { followings: user._id } });
-      res.status(200).json("User has been followed");
-    } else {
-      res.status(409).json("You already follow this user");
+    if (!user.followerList.includes(currentUser._id.toString())) {
+      await user.updateOne({ $push: { followerList: currentUser._id } });
+      await currentUser.updateOne({ $push: { followList: user._id } });
+      return res.status(200).json("User has been followed");
     }
+
+    res.status(409).json("You already follow this user");
   } catch (err) {
     console.error("Error following user:", err);
     res.status(500).json("An error occurred while trying to follow the user");
   }
 });
-
 //unfollow a user
 
 router.put("/:id/unfollow", async (req, res) => {

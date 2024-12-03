@@ -28,9 +28,12 @@ const userSchema = new Schema({
     },
     followerList: {
         type: Array,
-        required: false,
+        default: [], 
     },
-    followList: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    followList: {
+        type: Array,
+        default: [], 
+    },
     karma: {
         type: String,
         required: false,
