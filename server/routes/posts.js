@@ -192,15 +192,14 @@ router.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({ error: "Unhandled error", details: err.message });
 });
-// Delete a comment
 router.delete('/:postId/comments/:commentId', async (req, res) => {
   try {
-    const { userId } = req.body; // Extract the user ID from the request body
+    const { userId } = req.body; // Extract userId from the request body
     const { postId, commentId } = req.params;
 
-    console.log("Post ID:", postId); // Debug
-    console.log("Comment ID:", commentId); // Debug
-    console.log("User ID:", userId); // Debug
+    console.log("Request received - Post ID:", postId); // Debug
+    console.log("Request received - Comment ID:", commentId); // Debug
+    console.log("Request received - User ID:", userId); // Debug
 
     const post = await Post.findById(postId);
     if (!post) {
@@ -227,7 +226,8 @@ router.delete('/:postId/comments/:commentId', async (req, res) => {
 
     // Allow deletion only if the user is the post owner or the comment owner
     if (isPostOwner || isCommentOwner) {
-      comment.remove(); // Remove the comment from the comments array
+      console.log("User authorized to delete the comment"); // Debug
+      comment.remove(); // Remove the comment
       await post.save(); // Save the updated post
       return res.status(200).json({ message: "Comment deleted successfully." });
     }
@@ -235,7 +235,7 @@ router.delete('/:postId/comments/:commentId', async (req, res) => {
     console.error("User not authorized to delete this comment");
     return res.status(403).json({ error: "You are not authorized to delete this comment." });
   } catch (err) {
-    console.error('Error deleting comment:', err); // Debug full error
+    console.error('Error deleting comment:', err); // Log the error details
     res.status(500).json({ error: "Error deleting comment", details: err.message });
   }
 });

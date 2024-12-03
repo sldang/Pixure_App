@@ -134,7 +134,7 @@ const NewsFeed = () => {
       console.log("Deleting comment:", { postId, commentId }); // Debug
       await axios.delete(`/api/posts/${postId}/comments/${commentId}`, {
         data: { userId: user.user.id }, // Ensure userId is passed correctly
-        headers: { Authorization: `Bearer ${user.token}` },
+        headers: { Authorization: `Bearer ${user.token}` }, // Include authentication headers
       });
   
       // Update the post's comments in the state
