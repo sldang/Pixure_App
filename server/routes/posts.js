@@ -198,15 +198,29 @@ router.delete('/:postId/comments/:commentId', async (req, res) => {
     const { userId } = req.body; // Extract the user ID from the request body
     const { postId, commentId } = req.params;
 
+    console.log("Post ID:", postId); // Debug
+    console.log("Comment ID:", commentId); // Debug
+    console.log("User ID:", userId); // Debug
+
     const post = await Post.findById(postId);
-    if (!post) return res.status(404).json({ error: "Post not found" });
+    if (!post) {
+      console.error("Post not found");
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    console.log("Post found:", post);
 
     // Check if the user is the post owner
     const isPostOwner = String(post.userId) === userId;
 
     // Find the comment
     const comment = post.comments.id(commentId);
-    if (!comment) return res.status(404).json({ error: "Comment not found" });
+    if (!comment) {
+      console.error("Comment not found");
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    console.log("Comment found:", comment);
 
     // Check if the user is the comment owner
     const isCommentOwner = String(comment.userId) === userId;
@@ -218,9 +232,10 @@ router.delete('/:postId/comments/:commentId', async (req, res) => {
       return res.status(200).json({ message: "Comment deleted successfully." });
     }
 
+    console.error("User not authorized to delete this comment");
     return res.status(403).json({ error: "You are not authorized to delete this comment." });
   } catch (err) {
-    console.error('Error deleting comment:', err);
+    console.error('Error deleting comment:', err); // Debug full error
     res.status(500).json({ error: "Error deleting comment", details: err.message });
   }
 });
