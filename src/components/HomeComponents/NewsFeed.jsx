@@ -96,7 +96,38 @@ const NewsFeed = () => {
       }
     }
   };
-
+  const handleLike = async (postId) => {
+    try {
+      await axios.put(`/api/posts/${postId}/like`, { userId: user.user.id }, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      setPosts(posts.map(post =>
+        post._id === postId
+          ? { ...post, likes: post.likes.includes(user.user.id) ? post.likes.filter(id => id !== user.user.id) : [...post.likes, user.user.id] }
+          : post
+      ));
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
+  };
+  
+  const handleComment = async (postId, commentContent) => {
+    try {
+      const response = await axios.post(`/api/posts/${postId}/comments`, {
+        userId: user.user.id,
+        content: commentContent,
+      }, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+  
+      setPosts(posts.map(post =>
+        post._id === postId ? { ...post, comments: response.data.comments } : post
+      ));
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
+             
   return (
     <div className="flex justify-center w-full h-screen items-start pt-10">
       <div className="w-full max-w-[600px] ml-10">
@@ -125,36 +156,4 @@ const NewsFeed = () => {
     </div>
   );
 };
-const handleLike = async (postId) => {
-  try {
-    await axios.put(`/api/posts/${postId}/like`, { userId: user.user.id }, {
-      headers: { Authorization: `Bearer ${user.token}` },
-    });
-    setPosts(posts.map(post =>
-      post._id === postId
-        ? { ...post, likes: post.likes.includes(user.user.id) ? post.likes.filter(id => id !== user.user.id) : [...post.likes, user.user.id] }
-        : post
-    ));
-  } catch (error) {
-    console.error("Error liking post:", error);
-  }
-};
-
-const handleComment = async (postId, commentContent) => {
-  try {
-    const response = await axios.post(`/api/posts/${postId}/comments`, {
-      userId: user.user.id,
-      content: commentContent,
-    }, {
-      headers: { Authorization: `Bearer ${user.token}` },
-    });
-
-    setPosts(posts.map(post =>
-      post._id === postId ? { ...post, comments: response.data.comments } : post
-    ));
-  } catch (error) {
-    console.error("Error adding comment:", error);
-  }
-};
 export default NewsFeed;
-           
