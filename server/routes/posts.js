@@ -197,9 +197,9 @@ router.delete('/:postId/comments/:commentId', async (req, res) => {
     const { userId } = req.body; // Extract userId from the request body
     const { postId, commentId } = req.params;
 
-    console.log("Request received - Post ID:", postId); // Debug
-    console.log("Request received - Comment ID:", commentId); // Debug
-    console.log("Request received - User ID:", userId); // Debug
+    console.log("Request received - Post ID:", postId);
+    console.log("Request received - Comment ID:", commentId);
+    console.log("Request received - User ID:", userId);
 
     const post = await Post.findById(postId);
     if (!post) {
@@ -212,22 +212,21 @@ router.delete('/:postId/comments/:commentId', async (req, res) => {
     // Check if the user is the post owner
     const isPostOwner = String(post.userId) === userId;
 
-    // Find the comment
-    const comment = post.comments.id(commentId);
-    if (!comment) {
+    // Find the comment index
+    const commentIndex = post.comments.findIndex((comment) => String(comment._id) === commentId);
+    if (commentIndex === -1) {
       console.error("Comment not found");
       return res.status(404).json({ error: "Comment not found" });
     }
 
-    console.log("Comment found:", comment);
+    console.log("Comment found at index:", commentIndex);
 
     // Check if the user is the comment owner
-    const isCommentOwner = String(comment.userId) === userId;
+    const isCommentOwner = String(post.comments[commentIndex].userId) === userId;
 
     // Allow deletion only if the user is the post owner or the comment owner
     if (isPostOwner || isCommentOwner) {
-      console.log("User authorized to delete the comment"); // Debug
-      comment.remove(); // Remove the comment
+      post.comments.splice(commentIndex, 1); // Remove the comment from the array
       await post.save(); // Save the updated post
       return res.status(200).json({ message: "Comment deleted successfully." });
     }
@@ -235,8 +234,9 @@ router.delete('/:postId/comments/:commentId', async (req, res) => {
     console.error("User not authorized to delete this comment");
     return res.status(403).json({ error: "You are not authorized to delete this comment." });
   } catch (err) {
-    console.error('Error deleting comment:', err); // Log the error details
+    console.error('Error deleting comment:', err);
     res.status(500).json({ error: "Error deleting comment", details: err.message });
   }
 });
+
 module.exports = router;
