@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 const Rightbar = () => {
     const { user } = useContext(AuthContext);
     const [followersCount, setFollowersCount] = useState(0);
