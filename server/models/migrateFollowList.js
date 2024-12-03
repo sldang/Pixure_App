@@ -1,26 +1,28 @@
-require('dotenv').config(); // Ensure environment variables are loaded
 const mongoose = require('mongoose');
-const User = require('../models/User'); // Adjust the path based on your project structure
+const User = require('./User'); // Adjust the path based on your project structure
 
 async function migrateFollowList() {
     try {
-        const connectionString = process.env.MONGODB_URI; // Use MONGODB_URI
+        const connectionString = 'mongodb+srv://makdzer:PleaseWork1@firstweb.rj7jx.mongodb.net/esentia';
         if (!connectionString) {
-            throw new Error('MONGODB_URI is not defined in the environment variables.');
+            throw new Error('MongoDB connection string is not defined.');
         }
 
-        await mongoose.connect(connectionString, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-
+        await mongoose.connect(connectionString);
         console.log('Connected to MongoDB');
+
         const users = await User.find();
         console.log(`Found ${users.length} users.`);
 
         for (const user of users) {
             console.log(`Processing user: ${user.email}`);
 
+            // Initialize followList as an array if it's not defined
+            if (!Array.isArray(user.followList)) {
+                user.followList = [];
+            }
+
+            // Skip if already converted to ObjectId
             if (user.followList.every(item => mongoose.Types.ObjectId.isValid(item))) {
                 console.log(`User ${user.email} already has ObjectId followList. Skipping...`);
                 continue;
@@ -35,6 +37,7 @@ async function migrateFollowList() {
                     console.warn(`Email ${email} not found for user ${user.email}`);
                 }
             }
+
             user.followList = updatedFollowList;
             await user.save();
             console.log(`Updated followList for user: ${user.email}`);
@@ -44,9 +47,8 @@ async function migrateFollowList() {
     } catch (error) {
         console.error('Error during migration:', error);
     } finally {
-        mongoose.connection.close(() => {
-            console.log('MongoDB connection closed.');
-        });
+        await mongoose.connection.close(); // Properly close connection
+        console.log('MongoDB connection closed.');
     }
 }
 
