@@ -41,9 +41,9 @@ router.get('/following/:userId', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Ensure followList is an array
-    if (!Array.isArray(user.followList) || user.followList.length === 0) {
-      return res.status(200).json([]); // Return empty array if no followList
+    // Ensure followList is valid and contains only ObjectId
+    if (!Array.isArray(user.followList) || user.followList.some(id => typeof id !== 'object')) {
+      return res.status(400).json({ error: 'Invalid followList data' });
     }
 
     // Fetch posts from users in the followList
@@ -58,6 +58,7 @@ router.get('/following/:userId', async (req, res) => {
     res.status(500).json({ error: 'Error fetching posts from followers', details: err.message });
   }
 });
+
 //update user
 router.put("/:id", async (req, res) => {
   if (req.body.userId === req.params.id || req.body.isAdmin) {
@@ -158,20 +159,18 @@ router.put("/follow", async (req, res) => {
 
   try {
     const user = await User.findOne({ email: followEmail });
-    const currentUser = await User.findOne({ email: email });
+    const currentUser = await User.findOne({ email });
 
     if (!user || !currentUser) {
       return res.status(404).json("User not found");
     }
 
-    // Ensure followerList and followList are arrays
-    if (!Array.isArray(user.followerList)) user.followerList = [];
-    if (!Array.isArray(currentUser.followList)) currentUser.followList = [];
-
-    // Check if already following
-    if (!user.followerList.includes(currentUser._id.toString())) {
-      await user.updateOne({ $push: { followerList: currentUser._id } });
-      await currentUser.updateOne({ $push: { followList: user._id } });
+    // Ensure both lists contain only ObjectId
+    if (!user.followerList.includes(currentUser._id)) {
+      user.followerList.push(currentUser._id);
+      currentUser.followList.push(user._id);
+      await user.save();
+      await currentUser.save();
       return res.status(200).json("User has been followed");
     }
 
@@ -181,8 +180,7 @@ router.put("/follow", async (req, res) => {
     res.status(500).json("An error occurred while trying to follow the user");
   }
 });
-//unfollow a user
-
+//unfollow 
 router.put("/:id/unfollow", async (req, res) => {
   if (req.body.userId !== req.params.id) {
     try {
