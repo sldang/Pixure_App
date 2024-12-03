@@ -29,7 +29,6 @@ const upload = multer({
     }
   },
 });
-// Get posts from followers
 router.get('/following/:userId', async (req, res) => {
   try {
     console.log('UserID Received:', req.params.userId);
@@ -41,23 +40,24 @@ router.get('/following/:userId', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Ensure followList is valid and contains only ObjectId
-    if (!Array.isArray(user.followList) || user.followList.some(id => !mongoose.Types.ObjectId.isValid(id))) {
+    // Ensure followList contains valid ObjectIds
+    if (!Array.isArray(user.followList) || !user.followList.every(id => mongoose.Types.ObjectId.isValid(id))) {
+      console.error('Invalid followList data for user:', userId);
       return res.status(400).json({ error: 'Invalid followList data' });
     }
 
-    // Fetch posts from users in the followList
+    // Fetch posts from followed users
     const posts = await Post.find({ userId: { $in: user.followList } })
-      .populate('userId', 'nickname profilePicture') // Populate user details
-      .sort({ createdAt: -1 }); // Sort by newest first
+      .populate('userId', 'nickname profilePicture')
+      .sort({ createdAt: -1 });
 
-    // Respond with the posts
     res.status(200).json(posts);
   } catch (err) {
     console.error('Error fetching posts from followers:', err);
     res.status(500).json({ error: 'Error fetching posts from followers', details: err.message });
   }
 });
+
 
 //update user
 router.put("/:id", async (req, res) => {
@@ -102,31 +102,23 @@ router.get("/profile/:userId", async (req, res) => {
   const userId = req.params.userId; // Get userId from the request parameters
 
   try {
-    // Find the user by ID and populate the followerList and followList
-    const user = await User.findById(userId)
-      .populate('followerList', '_id')  // Only retrieve _id for count
-      .populate('followList', '_id');    // Only retrieve _id for count
+    const user = await User.findById(req.params.userId)
+      .populate('followList', '_id') // Only retrieve IDs
+      .populate('followerList', '_id'); // Only retrieve IDs
 
     if (!user) {
-      return res.status(404).json("User not found");
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    // Directly access the nickname from the user object
-    const nickname = user.nickname; // Assuming nickname is stored directly in the user document
-
-    // Create the profile data response
-    const profileData = {
-      nickname: nickname || "Unknown User",
-      postsCount: await Post.countDocuments({ userId }),
+    res.status(200).json({
+      nickname: user.nickname || 'Unknown User',
       followersCount: user.followerList.length,
       followingCount: user.followList.length,
       profilePicture: user.profilePicture,
-    };
-
-    res.status(200).json(profileData);
+    });
   } catch (err) {
-    console.error("Error fetching user profile:", err);
-    res.status(500).json("An error occurred while fetching user profile");
+    console.error('Error fetching user profile:', err);
+    res.status(500).json({ error: 'Error fetching user profile', details: err.message });
   }
 });
 

@@ -13,19 +13,15 @@ const Home2 = () => {
 
   useEffect(() => {
     const fetchFollowerPosts = async () => {
-      if (!user || !user.user?.id) {
-        console.error('User ID is missing.');
-        return;
-      }
+      if (!user || !user.user?.id) return;
 
       try {
-        // Fetch posts from followed users
         const response = await axios.get(`/api/posts/following/${user.user.id}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         setFollowerPosts(response.data);
       } catch (error) {
-        console.error('Error fetching follower posts:', error.response?.data || error.message);
+        console.error('Error fetching follower posts:', error);
       }
     };
 

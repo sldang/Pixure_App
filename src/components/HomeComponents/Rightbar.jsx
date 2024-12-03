@@ -1,12 +1,32 @@
 import React, { useEffect, useState } from 'react';
-
+import { AuthContext } from '../contexts/AuthContext';
 const Rightbar = () => {
-    const [followers, setFollowers] = useState([]);
-    const [followList, setFollowList] = useState([]);
+    const { user } = useContext(AuthContext);
+    const [followersCount, setFollowersCount] = useState(0);
+    const [followingCount, setFollowingCount] = useState(0);
+  
 
     const parsedData = JSON.parse(localStorage.getItem('user'));
     const userId = parsedData && parsedData.user ? parsedData.user.id : null;
-
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+          if (!user || !user.user?.id) return;
+    
+          try {
+            const response = await fetch(
+              `${process.env.REACT_APP_SERVER_URL}/api/user/profile/${user.user.id}`,
+              { headers: { Authorization: `Bearer ${user.token}` } }
+            );
+            const data = await response.json();
+            setFollowersCount(data.followersCount);
+            setFollowingCount(data.followingCount);
+          } catch (error) {
+            console.error('Error fetching user profile:', error);
+          }
+        };
+    
+        fetchUserProfile();
+      }, [user]);
     useEffect(() => {
         const fetchFollowList = async () => {
             if (!userId) return;
@@ -45,21 +65,16 @@ const Rightbar = () => {
 
     return (
         <div className="max-w-md mx-auto p-4">
-            <h2 className="text-lg font-bold mb-4">Followers</h2>
-            {followers.map((follower, index) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b border-gray-200">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-full bg-gray-300"></div>
-                        <div>
-                            <p className="font-bold text-sm">{follower.nickname || follower.username}</p>
-                        </div>
-                    </div>
-                    <button className="text-blue-500 text-sm font-semibold pl-4">Message</button>
-                </div>
-            ))}
-            {followers.length === 0 && <p>No followers found.</p>}
+          <h2 className="text-lg font-bold mb-4">Profile Stats</h2>
+          <div className="flex justify-between py-2 border-b border-gray-200">
+            <p>Followers:</p>
+            <p>{followersCount}</p>
+          </div>
+          <div className="flex justify-between py-2 border-b border-gray-200">
+            <p>Following:</p>
+            <p>{followingCount}</p>
+          </div>
         </div>
-    );
-};
-
+      );
+    };
 export default Rightbar;
