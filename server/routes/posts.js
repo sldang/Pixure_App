@@ -170,4 +170,33 @@ router.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({ error: "Unhandled error", details: err.message });
 });
+// Add a comment to a post
+router.post('/:id/comments', async (req, res) => {
+  try {
+    const { userId, content } = req.body;
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    const comment = { userId, content };
+    post.comments.push(comment);
+    await post.save();
+    res.status(201).json(post);
+  } catch (err) {
+    console.error('Error adding comment:', err);
+    res.status(500).json({ error: "Error adding comment", details: err.message });
+  }
+});
+
+// Get all comments for a post
+router.get('/:id/comments', async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate('comments.userId', 'nickname');
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    res.status(200).json(post.comments);
+  } catch (err) {
+    console.error('Error fetching comments:', err);
+    res.status(500).json({ error: "Error fetching comments", details: err.message });
+  }
+});
 module.exports = router;

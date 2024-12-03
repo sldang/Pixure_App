@@ -113,6 +113,10 @@ const NewsFeed = () => {
             content={post.desc}
             time={post.createdAt}
             img={post.imageData || null} // Use imageData directly
+            likes={post.likes}
+            comments={post.comments || []}
+            onLike={() => handleLike(post._id)}
+            onComment={(commentContent) => handleComment(post._id, commentContent)}
             onDelete={() => handleDelete(post._id)}
             onUpdate={() => handleUpdate(post._id)}
           />
@@ -121,6 +125,36 @@ const NewsFeed = () => {
     </div>
   );
 };
+const handleLike = async (postId) => {
+  try {
+    await axios.put(`/api/posts/${postId}/like`, { userId: user.user.id }, {
+      headers: { Authorization: `Bearer ${user.token}` },
+    });
+    setPosts(posts.map(post =>
+      post._id === postId
+        ? { ...post, likes: post.likes.includes(user.user.id) ? post.likes.filter(id => id !== user.user.id) : [...post.likes, user.user.id] }
+        : post
+    ));
+  } catch (error) {
+    console.error("Error liking post:", error);
+  }
+};
 
+const handleComment = async (postId, commentContent) => {
+  try {
+    const response = await axios.post(`/api/posts/${postId}/comments`, {
+      userId: user.user.id,
+      content: commentContent,
+    }, {
+      headers: { Authorization: `Bearer ${user.token}` },
+    });
+
+    setPosts(posts.map(post =>
+      post._id === postId ? { ...post, comments: response.data.comments } : post
+    ));
+  } catch (error) {
+    console.error("Error adding comment:", error);
+  }
+};
 export default NewsFeed;
            
