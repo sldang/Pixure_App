@@ -150,6 +150,7 @@ router.get("/friends/:userId", async (req, res) => {
     res.status(500).json(err);
   }
 });
+
 // Follow a user by email
 router.put("/follow", async (req, res) => {
   const { email, followEmail } = req.body;

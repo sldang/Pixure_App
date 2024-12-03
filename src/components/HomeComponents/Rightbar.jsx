@@ -5,16 +5,14 @@ const Rightbar = () => {
     const [followList, setFollowList] = useState([]);
 
     const parsedData = JSON.parse(localStorage.getItem('user'));
-    const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
+    const userId = parsedData && parsedData.user ? parsedData.user.id : null;
 
     useEffect(() => {
         const fetchFollowList = async () => {
-            if (!userEmail) return;
-            console.log(userEmail)
+            if (!userId) return;
 
             try {
-                // Get the followList from the backend if it isn't available in local storage
-                const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/getUserFollowers?email=${userEmail}`);
+                const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/user/${userId}`);
                 const data = await response.json();
                 setFollowList(data.followList || []);
             } catch (error) {
@@ -22,24 +20,20 @@ const Rightbar = () => {
             }
         };
 
-        if (!parsedData.user.followList) {
-            fetchFollowList();
-        } else {
-            setFollowList(parsedData.user.followList);
-        }
-    }, [userEmail]);
+        fetchFollowList();
+    }, [userId]);
 
     useEffect(() => {
         const fetchFollowers = async () => {
             if (followList.length === 0) return;
 
             try {
-                const promises = followList.map((email) =>
-                    fetch(`${process.env.REACT_APP_SERVER_URL}/api/getUserByEmail?email=${email}`)
+                const promises = followList.map((id) =>
+                    fetch(`${process.env.REACT_APP_SERVER_URL}/api/user/profile/${id}`)
                 );
 
                 const responses = await Promise.all(promises);
-                const followersData = await Promise.all(responses.map(res => res.json()));
+                const followersData = await Promise.all(responses.map((res) => res.json()));
                 setFollowers(followersData);
             } catch (error) {
                 console.error('Error fetching followers:', error);
@@ -57,10 +51,10 @@ const Rightbar = () => {
                     <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 rounded-full bg-gray-300"></div>
                         <div>
-                            <p className="font-bold text-sm">{follower.username}</p>
+                            <p className="font-bold text-sm">{follower.nickname || follower.username}</p>
                         </div>
                     </div>
-                    <button className="text-blue-500 text-sm font-semibold pl-4"> Message</button>
+                    <button className="text-blue-500 text-sm font-semibold pl-4">Message</button>
                 </div>
             ))}
             {followers.length === 0 && <p>No followers found.</p>}
