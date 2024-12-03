@@ -155,10 +155,12 @@ router.get('/timeline/:userId', async (req, res) => {
   }
 })
 
-// Get all posts of user with userid
+// Get all posts of user with userId
 router.get('/profile/:userId', async (req, res) => {
   try {
-    const posts = await Post.find({ userId: req.params.userId }).populate('userId', 'username profilePicture'); // Only pull specific fields
+    const posts = await Post.find({ userId: req.params.userId })
+      .populate('userId', 'nickname')  // Populate the user's nickname for the post
+      .populate('comments.userId', 'nickname');  // Populate the user's nickname for each comment
     res.status(200).json(posts);
   } catch (err) {
     console.error('Error fetching user posts:', err);

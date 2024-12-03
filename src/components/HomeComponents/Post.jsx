@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Post = ({ user, content, time, img, likes, onLike, onComment, comments }) => {
+const Post = ({ user, content, time, img, likes, comments, onLike, onComment, onDelete, onUpdate }) => {
   const [commentInput, setCommentInput] = useState("");
 
   const handleCommentSubmit = () => {
@@ -38,7 +38,7 @@ const Post = ({ user, content, time, img, likes, onLike, onComment, comments }) 
         <div className="mt-[10px]">
           {comments.map((comment, index) => (
             <div key={index} className="text-sm">
-              <strong>{comment.userId.nickname || "Unknown User"}:</strong> {comment.content}
+              <strong>{comment.userId?.nickname || "Unknown User"}:</strong> {comment.content}
             </div>
           ))}
         </div>
@@ -46,5 +46,4 @@ const Post = ({ user, content, time, img, likes, onLike, onComment, comments }) 
     </div>
   );
 };
-
 export default Post;
