@@ -8,12 +8,13 @@ const multer = require('multer');
 // CORS middleware setup
 router.use(
   cors({
-    origin: 'https://pixure-app-3h6l.onrender.com' ,
+    origin: 'https://pixure-app-3h6l.onrender.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   })
 );
+
 // Set up memory storage for multer to handle image uploads in memory
 const storage = multer.memoryStorage();
 const fileFilter = (req, file, cb) => {
@@ -57,18 +58,7 @@ router.post('/', upload.single('img'), async (req, res) => {
   }
 });
 
-module.exports = router;
-// Handle preflight requests (OPTIONS)
-router.options('*', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https:pixure-app-3h6l.onrender.com');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(204); // No content
-});
-
-
-// update a post
+// Update a post
 router.put('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -89,7 +79,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// delete a post
+// Delete a post
 router.delete('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -110,11 +100,11 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// like/dislike posts
+// Like/dislike posts
 router.put('/:id/like', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if(!post.likes.includes(req.body.userId)) {
+    if (!post.likes.includes(req.body.userId)) {
       await post.updateOne({ $push: { likes: req.body.userId } });
       res.status(200).json("Post liked!");
     } else {
@@ -125,12 +115,14 @@ router.put('/:id/like', async (req, res) => {
     console.error('Error liking/disliking post: ', err);
     res.status(500).json(err);
   }
-})
+});
 
 // Get all posts of user with userId
 router.get('/profile/:userId', async (req, res) => {
   try {
-    const posts = await Post.find({ userId: req.params.userId }).populate('userId', 'nickname'); // Populate nickname
+    const posts = await Post.find({ userId: req.params.userId })
+      .populate('userId', 'nickname')  // Populate nickname for post userId
+      .populate('comments.userId', 'nickname'); // Populate nickname for comments
     res.status(200).json(posts);
   } catch (err) {
     console.error('Error fetching user posts:', err);
@@ -142,10 +134,14 @@ router.get('/profile/:userId', async (req, res) => {
 router.get('/timeline/:userId', async (req, res) => {
   try {
     const currentUser = await User.findById(req.params.userId);
-    const userPosts = await Post.find({ userId: currentUser._id });
+    const userPosts = await Post.find({ userId: currentUser._id })
+      .populate('userId', 'nickname') // Populate nickname for post userId
+      .populate('comments.userId', 'nickname'); // Populate nickname for comments
     const friendPosts = await Promise.all(
       currentUser.followList.map((friendId) => {
-        return Post.find({ userId: friendId });
+        return Post.find({ userId: friendId })
+          .populate('userId', 'nickname') // Populate nickname for post userId
+          .populate('comments.userId', 'nickname'); // Populate nickname for comments
       })
     );
     res.status(200).json(userPosts.concat(...friendPosts));
@@ -153,25 +149,8 @@ router.get('/timeline/:userId', async (req, res) => {
     console.error('Error fetching timeline: ', err);
     res.status(500).json(err);
   }
-})
+});
 
-// Get all posts of user with userId
-router.get('/profile/:userId', async (req, res) => {
-  try {
-    const posts = await Post.find({ userId: req.params.userId })
-      .populate('userId', 'nickname')  // Populate the user's nickname for the post
-      .populate('comments.userId', 'nickname');  // Populate the user's nickname for each comment
-    res.status(200).json(posts);
-  } catch (err) {
-    console.error('Error fetching user posts:', err);
-    res.status(500).json(err);
-  }
-});
-// Error handling middleware
-router.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({ error: "Unhandled error", details: err.message });
-});
 // Add a comment to a post
 router.post('/:id/comments', async (req, res) => {
   try {
@@ -182,7 +161,11 @@ router.post('/:id/comments', async (req, res) => {
     const comment = { userId, content };
     post.comments.push(comment);
     await post.save();
-    res.status(201).json(post);
+
+    // Re-fetch the post with populated comments
+    const updatedPost = await Post.findById(req.params.id)
+      .populate('comments.userId', 'nickname');
+    res.status(201).json(updatedPost.comments);
   } catch (err) {
     console.error('Error adding comment:', err);
     res.status(500).json({ error: "Error adding comment", details: err.message });
@@ -201,4 +184,11 @@ router.get('/:id/comments', async (req, res) => {
     res.status(500).json({ error: "Error fetching comments", details: err.message });
   }
 });
+
+// Error handling middleware
+router.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: "Unhandled error", details: err.message });
+});
+
 module.exports = router;

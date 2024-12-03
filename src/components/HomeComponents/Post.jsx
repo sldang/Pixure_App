@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-
 const Post = ({ user, content, time, img, likes, comments, onLike, onComment, onDelete, onUpdate }) => {
   const [commentInput, setCommentInput] = useState("");
 
@@ -46,4 +44,5 @@ const Post = ({ user, content, time, img, likes, comments, onLike, onComment, on
     </div>
   );
 };
+
 export default Post;
