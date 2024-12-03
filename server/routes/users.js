@@ -150,6 +150,7 @@ router.get("/friends/:userId", async (req, res) => {
     res.status(500).json(err);
   }
 });
+// Follow a user by email
 router.put("/follow", async (req, res) => {
   const { email, followEmail } = req.body;
 
@@ -158,21 +159,28 @@ router.put("/follow", async (req, res) => {
   }
 
   try {
+    // Find the target user (to be followed) and the current user by email
     const user = await User.findOne({ email: followEmail });
-    const currentUser = await User.findOne({ email });
+    const currentUser = await User.findOne({ email: email });
 
+    // Check if users exist
     if (!user || !currentUser) {
       return res.status(404).json("User not found");
     }
 
-    // Ensure both lists contain only ObjectId
-    if (!user.followerList.includes(currentUser._id)) {
-      user.followerList.push(currentUser._id);
-      currentUser.followList.push(user._id);
-      await user.save();
-      await currentUser.save();
-      return res.status(200).json("User has been followed");
+    // Check if already following
+    if (!user.followers.includes(currentUser._id)) {
+      await user.updateOne({ $push: { followers: currentUser._id } });
+      await currentUser.updateOne({ $push: { followings: user._id } });
+      res.status(200).json("User has been followed");
+    } else {
+      res.status(409).json("You already follow this user");
     }
+  } catch (err) {
+    console.error("Error following user:", err);
+    res.status(500).json("An error occurred while trying to follow the user");
+  }
+});
 
     res.status(409).json("You already follow this user");
   } catch (err) {
