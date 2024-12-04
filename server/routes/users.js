@@ -181,34 +181,35 @@ router.put("/follow", async (req, res) => {
   }
 
   try {
-    // Find both the follower and the followee by their emails
-    const followee = await User.findOne({ email: followeeEmail });
+    // Convert emails to user IDs
     const follower = await User.findOne({ email: followerEmail });
+    const followee = await User.findOne({ email: followeeEmail });
 
-    if (!followee || !follower) {
+    if (!follower || !followee) {
       return res.status(404).json("User not found");
     }
 
-    const followeeId = followee._id; // Extract followeeId
-    const followerId = follower._id; // Extract followerId
+    const followerId = follower._id;
+    const followeeId = followee._id;
 
-    // Check if the follower already follows the followee
+    // Check if already following
     if (!followee.followers.includes(followerId)) {
-      // Update followee's `followers` list
+      // Add follower ID to followee's followers list
       await followee.updateOne({ $addToSet: { followers: followerId } });
 
-      // Update follower's `followList` to store followeeId
-      await follower.updateOne({ $addToSet: { followList: followeeId } });
+      // Add followee email to follower's followList
+      await follower.updateOne({ $addToSet: { followList: followeeEmail } });
 
-      res.status(200).json("User has been followed");
+      return res.status(200).json("User has been followed");
     } else {
-      res.status(409).json("You already follow this user");
+      return res.status(409).json("You already follow this user");
     }
   } catch (err) {
     console.error("Error following user:", err);
     res.status(500).json("An error occurred while trying to follow the user");
   }
 });
+
 
 router.put("/:id/unfollow", async (req, res) => {
   if (req.body.userId !== req.params.id) {

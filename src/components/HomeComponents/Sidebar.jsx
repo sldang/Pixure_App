@@ -1,72 +1,77 @@
-
-import React, { useState, useEffect } from 'react';
-import { FaHome, FaSearch, FaCompass, FaEnvelope, FaBell, FaUser, FaUsers, FaSignOutAlt } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { useLogout } from '../../hooks/useLogout';
-import socket from '../../socket';
-
+import React, { useState, useEffect } from "react";
+import { FaHome, FaSearch, FaCompass, FaEnvelope, FaBell, FaUser, FaUsers, FaSignOutAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { useLogout } from "../../hooks/useLogout";
+import socket from "../../socket";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const { logout } = useLogout();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
-  const [isNotificationsVisible, setIsNotificationsVisible] = useState(false); // toggle notifications visibility
-  const [profileImage, setProfileImage] = useState(null); // user profile image state
-  const parsedData = JSON.parse(localStorage.getItem('user'));
-  const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
-  const userNickname = parsedData && parsedData.user ? parsedData.user.nickname : null;
-  
-  // example notifications
-  const [notifications] = useState([
-    { user: 'John Doe', content: 'liked your post', time: '1d ago' },
-    { user: 'Jane Smith', content: 'commented: "Nice post!"', time: '2d ago' },
-    { user: 'John Doe', content: 'followed you', time: '3d ago' },
-  ]);
+  const [isNotificationsVisible, setIsNotificationsVisible] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
 
+  const parsedData = JSON.parse(localStorage.getItem("user"));
+  const userId = parsedData?.user?.id;
+  const token = parsedData?.token;
+  const userNickname = parsedData?.user?.nickname;
+
+  const defaultProfileImage = "https://via.placeholder.com/150";
+
+  // Fetch Profile Image
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      if (!userId) return;
+      try {
+        const response = await fetch(`/api/users/profile/${user.user.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        setProfileImage(data.profilePicture || null);
+      } catch (error) {
+        console.error("Error fetching profile image:", error);
+        setProfileImage(null);
+      }
+    };
+    fetchProfileImage();
+  }, [userId, token]);
+
+  // Handle Friend Request
   const makeFriend = async (e) => {
-    console.log("makefriend");
     e.preventDefault();
-  
     try {
-      // Get the logged-in user's ID from localStorage (nested structure)
-      const userData = JSON.parse(localStorage.getItem("user"));
-      const userId = userData?.user?.id; // Ensure we access the nested user ID safely
-  
       if (!userId) {
         console.error("User ID not found in localStorage");
         return;
       }
-  
-      // Fetch followee's user ID by email
+
       const followeeResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/by-email`, {
         method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: searchQuery }), // Ensure this is sending the correct email
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: searchQuery }),
       });
-  
+
       if (!followeeResponse.ok) {
         console.error("Failed to fetch followee ID");
         return;
       }
-  
+
       const followeeData = await followeeResponse.json();
-      const followeeId = followeeData._id; // Retrieve followee's user ID
-  
-      // Send follow request with user IDs
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/follow`, {
-        method: "POST",
+      const followeeId = followeeData._id;
+
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
+        method: "PUT",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          followerId: userId, // Logged-in user's ID
-          followeeId: followeeId // Followee's ID
-        })
+          followerEmail: userEmail, // Logged-in user's email
+          followeeEmail: searchQuery // Email of the user to follow
+        }),
       });
-  
+      
       if (response.ok) {
-        const data = await response.json();
-        console.log("Followed successfully:", data);
+        console.log("Followed successfully");
       } else {
         console.error("Failed to follow:", response.statusText);
       }
@@ -74,68 +79,43 @@ const Sidebar = () => {
       console.error("Error in makeFriend:", error);
     }
   };
-  
-  
-  useEffect(() => {
-    const fetchProfileImage = async () => {
-      try {
-        const response = await fetch('/api/user/profile');
-        if (!response.ok) {
-          throw new Error('Failed to fetch profile data');
-        }
-        const data = await response.json();
-        setProfileImage(data.profileImage || null);
-      } catch (error) {
-        console.error('Error fetching profile image:', error);
-        setProfileImage(null);
-      }
-    };
-    fetchProfileImage();
-  }, []);
 
-  const defaultProfileImage = 'https://via.placeholder.com/150';
-
-  const users = ['John Doe', 'Jane Smith', 'Emily Stone'];
-
+  // Search Filter
+  const users = ["John Doe", "Jane Smith", "Emily Stone"];
   useEffect(() => {
     if (searchQuery) {
-      const filtered = users.filter(user => user.toLowerCase().includes(searchQuery.toLowerCase()));
+      const filtered = users.filter((user) => user.toLowerCase().includes(searchQuery.toLowerCase()));
       setFilteredUsers(filtered);
     } else {
       setFilteredUsers([]);
     }
   }, [searchQuery]);
 
+  // Socket Notifications
   useEffect(() => {
     socket.connect();
-    socket.on('connect', () => {
-      console.log('Connected to server');
-    });
-
-    socket.on('notification', (data) => {
-      console.log('New notification:', data);
-    });
-
+    socket.on("connect", () => console.log("Connected to server"));
+    socket.on("notification", (data) => console.log("New notification:", data));
     return () => {
-      socket.off('notification');
+      socket.off("notification");
       socket.disconnect();
     };
   }, []);
 
+  // Handle Logout
   const handleLogout = () => {
     logout();
-
-    navigate('/');
+    navigate("/");
   };
 
-  // toggle notifications visibility
+  // Toggle Notifications
   const toggleNotifications = () => {
-    setIsNotificationsVisible(prevState => !prevState);
+    setIsNotificationsVisible((prev) => !prev);
   };
 
-  // navigate to profile page
+  // Navigate to Profile
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate(`/profile/${userId}`);
   };
 
   return (
@@ -146,27 +126,11 @@ const Sidebar = () => {
             <span className="text-3xl lg:text-4xl font-bold text-black">P</span>
             <span className="text-xl font-semibold text-black">Pixure</span>
           </div>
-
-          {/* sidebar links */}
           <div className="space-y-6">
-            <SidebarItem
-              icon={<FaHome />}
-              label="Home"
-              onClick={() => navigate('/home')}
-            />
-            <SidebarItem
-              icon={<FaSearch />}
-              label="Search"
-              onClick={() => setIsSearchVisible(!isSearchVisible)}
-            />
+            <SidebarItem icon={<FaHome />} label="Home" onClick={() => navigate("/home")} />
+            <SidebarItem icon={<FaSearch />} label="Search" onClick={() => setIsSearchVisible(!isSearchVisible)} />
             {isSearchVisible && (
               <div>
-                {/* <input
-                  placeholder="Search for friends"
-                  className="chatMenuInput"
-                  value={chatMenuInput}
-                  onChange={(e) => setChatMenuInput(e.target.value)}
-                /> */}
                 <input
                   type="text"
                   className="w-full mt-2 px-4 py-2 border rounded-md"
@@ -174,61 +138,17 @@ const Sidebar = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button
-                  className="text-blue-500 text-sm font-semibold"
-                  onClick={(e) => makeFriend(e)}
-                >
+                <button className="text-blue-500 text-sm font-semibold" onClick={makeFriend}>
                   Follow
                 </button>
-                <div className="mt-2">
-                  {filteredUsers.map((user, index) => (
-                    <div key={index} className="py-1">{user}</div>
-                  ))}
-                </div>
+                <div className="mt-2">{filteredUsers.map((user, index) => <div key={index} className="py-1">{user}</div>)}</div>
               </div>
             )}
-            <SidebarItem
-              icon={<FaCompass />}
-              label="Explore"
-              onClick={() => navigate('/explore')}
-            />
-            <SidebarItem
-              icon={<FaBell />}
-              label="Notifications"
-              onClick={toggleNotifications} // toggle notifications on click
-            />
-            {isNotificationsVisible && (
-              <div className="absolute bg-white shadow-lg p-4 rounded-lg top-16 left-60 w-80 z-50">
-                <h2 className="font-bold text-lg mb-2">Notifications</h2>
-                {notifications.map((notif, index) => (
-                  <div key={index} className="py-2 border-b">
-                    <p><strong>{notif.user}</strong> {notif.content}</p>
-                    <span className="text-xs text-gray-500">{notif.time}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            <SidebarItem
-              icon={<FaEnvelope />}
-              label="Messages"
-              onClick={() => navigate('/messenger')}
-            />
-            <SidebarItem
-              icon={<FaUsers />}
-              label="Communities"
-              onClick={() => navigate('/communities')}
-            />
           </div>
         </div>
-
-        {/* user section */}
-        <div className="p-4 flex items-center justify-between w-full cursor-pointer" >
+        <div className="p-4 flex items-center justify-between w-full">
           <div className="flex items-center space-x-2">
-            <img
-              src={profileImage || defaultProfileImage}
-              alt="Profile"
-              className="w-10 h-10 rounded-full object-cover"
-            />
+            <img src={profileImage || defaultProfileImage} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
             <span className="text-sm text-black font-medium" onClick={handleProfileClick}>{userNickname}</span>
           </div>
           <FaSignOutAlt
@@ -242,16 +162,9 @@ const Sidebar = () => {
 };
 
 const SidebarItem = ({ icon, label, onClick }) => (
-  <div
-    className="flex items-center space-x-4 cursor-pointer hover:bg-gray-100 py-2 px-4 rounded-md transition-colors duration-300 group"
-    onClick={onClick}
-  >
-    <div className="relative">
-      <div className="text-xl text-black group-hover:text-black">{icon}</div>
-    </div>
-    <span className="text-sm font-medium text-black group-hover:text-black">
-      {label}
-    </span>
+  <div className="flex items-center space-x-4 cursor-pointer hover:bg-gray-100 py-2 px-4 rounded-md" onClick={onClick}>
+    {icon}
+    <span className="text-sm font-medium">{label}</span>
   </div>
 );
 

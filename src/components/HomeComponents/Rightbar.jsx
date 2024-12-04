@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import { AuthContext } from '../../contexts/AuthContext';
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { AuthContext } from "../../contexts/AuthContext";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
@@ -11,15 +11,18 @@ const Rightbar = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-   
+      if (!user || !user.user?.id) {
+        console.error("User ID not available in AuthContext.");
+        return;
+      }
+
       try {
-        
-        const response = await axios.get(`/api/profile/${user.user.id}`, {
+        const response = await axios.get(`/api/users/profile/${user.user.id}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
 
         if (!response.data) {
-          console.error("No data received from profile endpoint");
+          console.error("No data received from profile endpoint.");
           return;
         }
 
@@ -28,7 +31,11 @@ const Rightbar = () => {
         setFollowersCount(response.data.followersCount || 0);
         setFollowingCount(response.data.followingCount || 0);
       } catch (error) {
-        console.error("Error fetching user profile:", error.response || error.message);
+        console.error(
+          "Error fetching user profile:",
+          error.response?.data || error.message
+        );
+        alert("Failed to fetch profile data. Please try again.");
       }
     };
 
