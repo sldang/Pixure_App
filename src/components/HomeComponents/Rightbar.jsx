@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 
-axios.defaults.baseURL = "https://pixure-server.onrender.com";
 
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 const Rightbar = () => {
   const { user } = useContext(AuthContext);
   const [followersCount, setFollowersCount] = useState(0);

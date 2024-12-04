@@ -5,7 +5,8 @@ import Post from '../components/HomeComponents/Post';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 
-axios.defaults.baseURL = "https://pixure-server.onrender.com";
+
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
 const Home2 = () => {
   const { user } = useContext(AuthContext);
