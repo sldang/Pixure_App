@@ -13,21 +13,20 @@ const Home2 = () => {
 
   useEffect(() => {
     const fetchFollowerPosts = async () => {
-      if (!user || !user.user?.id) return;
+        if (!user || !user.user?.id) return;
 
-      try {
-        const response = await axios.get(`${BASE_URL}/api/posts/following/${user.user.id}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        setFollowerPosts(response.data);
-      } catch (error) {
-        console.error('Error fetching follower posts:', error);
-      }
+        try {
+            const response = await axios.get(`${BASE_URL}/api/posts/following/${user.user.id}`, {
+                headers: { Authorization: `Bearer ${user.token}` },
+            });
+            setFollowerPosts(response.data);
+        } catch (error) {
+            console.error("Error fetching follower posts:", error);
+        }
     };
 
     fetchFollowerPosts();
-  }, [user]);
-
+}, [user]);
   return (
     <div className="flex">
       <Sidebar />

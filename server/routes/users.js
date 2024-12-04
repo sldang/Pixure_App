@@ -29,31 +29,27 @@ const upload = multer({
     }
   },
 });
-//display followed users posts
-router.get('/following/:userId', async (req, res) => {
+router.get("/posts/following/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
   try {
-    const userId = req.params.userId;
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ error: "User not found" });
+      }
 
-    // Find the user by ID
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+      const followEmails = user.followList || [];
+      const followedUsers = await User.find({ email: { $in: followEmails } }, "_id");
+      const followedUserIds = followedUsers.map((u) => u._id);
 
-    // Get user IDs from emails in followList
-    const followEmails = user.followList; // Emails stored in followList
-    const followedUsers = await User.find({ email: { $in: followEmails } }, '_id');
-    const followedUserIds = followedUsers.map((user) => user._id);
+      const posts = await Post.find({ userId: { $in: followedUserIds } })
+          .populate("userId", "nickname profilePicture")
+          .sort({ createdAt: -1 });
 
-    // Fetch posts by user IDs
-    const posts = await Post.find({ userId: { $in: followedUserIds } })
-      .populate('userId', 'nickname profilePicture') // Populate user details
-      .sort({ createdAt: -1 }); // Sort by newest first
-
-    res.status(200).json(posts);
-  } catch (error) {
-    console.error('Error fetching posts from followed users:', error);
-    res.status(500).json({ error: 'Error fetching posts from followed users' });
+      res.status(200).json(posts);
+  } catch (err) {
+      console.error("Error fetching posts from following:", err);
+      res.status(500).json({ error: "Error fetching posts from following", details: err.message });
   }
 });
 
@@ -96,31 +92,27 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Get a user profile with nickname and follower/following counts
 router.get("/profile/:userId", async (req, res) => {
-  const userId = req.params.userId; // Get userId from the request parameters
+  const userId = req.params.userId;
 
   try {
-    // Find the user by ID
-    const user = await User.findById(userId);
+      const user = await User.findOne({ _id: userId });
+      if (!user) {
+          return res.status(404).json({ error: "User not found" });
+      }
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+      const followers = await User.find({ email: { $in: user.followerList } }, "_id email");
+      const followings = await User.find({ email: { $in: user.followList } }, "_id email");
 
-    // Fetch follower and following details using emails
-    const followers = await User.find({ email: { $in: user.followerList } }, '_id email');
-    const following = await User.find({ email: { $in: user.followList } }, '_id email');
-
-    res.status(200).json({
-      nickname: user.nickname || 'Unknown User',
-      followersCount: followers.length, // Count of followers
-      followingCount: following.length, // Count of followings
-      profilePicture: user.profilePicture,
-    });
+      res.status(200).json({
+          nickname: user.nickname || "Unknown User",
+          followersCount: followers.length,
+          followingCount: followings.length,
+          profilePicture: user.profilePicture,
+      });
   } catch (err) {
-    console.error('Error fetching user profile:', err);
-    res.status(500).json({ error: 'Error fetching user profile', details: err.message });
+      console.error("Error fetching user profile:", err);
+      res.status(500).json({ error: "Error fetching user profile", details: err.message });
   }
 });
 

@@ -11,22 +11,22 @@ const Rightbar = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!user || !user.user?.id) return;
+        if (!user || !user.user?.id) return;
 
-      try {
-        const response = await axios.get(`${BASE_URL}/api/user/profile/${user.user.id}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        const data = response.data;
-        setFollowersCount(data.followersCount);
-        setFollowingCount(data.followingCount);
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-      }
+        try {
+            const response = await axios.get(`${BASE_URL}/api/user/profile/${user.user.id}`, {
+                headers: { Authorization: `Bearer ${user.token}` },
+            });
+            setFollowersCount(response.data.followersCount);
+            setFollowingCount(response.data.followingCount);
+        } catch (error) {
+            console.error("Error fetching user profile:", error);
+        }
     };
 
     fetchUserProfile();
-  }, [user]);
+}, [user]);
+
 
   return (
     <div className="max-w-md mx-auto p-4">
