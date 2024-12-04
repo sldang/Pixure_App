@@ -8,16 +8,22 @@ const Rightbar = () => {
   const { user } = useContext(AuthContext); // Retrieve the logged-in user's data
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
+  const [profilePicture, setProfilePicture] = useState(null); // Add profile picture state
+  const [nickname, setNickname] = useState(""); // Add nickname state
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      // Ensure `user` and `user.user.id` exist before proceeding
       if (!user || !user.user?.id) {
         console.error("User ID not available in AuthContext.");
         return;
       }
 
       try {
-        const response = await axios.get(`/api/users/profile/${user.user.id}`, {
+        const userId = user.user.id; // Retrieve userId from AuthContext
+        console.log("Fetching profile for userId:", userId);
+
+        const response = await axios.get(`/api/users/profile/${userId}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
 
@@ -28,8 +34,11 @@ const Rightbar = () => {
 
         console.log("Profile data fetched:", response.data);
 
+        // Update state with profile data
         setFollowersCount(response.data.followersCount || 0);
         setFollowingCount(response.data.followingCount || 0);
+        setProfilePicture(response.data.profilePicture || null); // Update profile picture
+        setNickname(response.data.nickname || "Unknown User"); // Update nickname
       } catch (error) {
         console.error(
           "Error fetching user profile:",
@@ -42,6 +51,8 @@ const Rightbar = () => {
     fetchUserProfile();
   }, [user]);
 
+  const defaultProfilePicture = "https://via.placeholder.com/150"; // Placeholder image
+
   return (
     <div className="max-w-md mx-auto p-4">
       <h2 className="text-lg font-bold mb-4">Profile Stats</h2>
@@ -52,6 +63,14 @@ const Rightbar = () => {
       <div className="flex justify-between py-2 border-b border-gray-200">
         <p>Following:</p>
         <p>{followingCount}</p>
+      </div>
+      <div className="flex items-center mt-4">
+        <img
+          src={profilePicture || defaultProfilePicture}
+          alt="Profile"
+          className="w-16 h-16 rounded-full object-cover"
+        />
+        <p className="ml-4 font-medium">{nickname}</p>
       </div>
     </div>
   );
