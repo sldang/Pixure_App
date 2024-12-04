@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const multer = require('multer');
 const Post = require('../models/Post');
 const express = require('express');
+const mongoose = require("mongoose");
 // CORS middleware setup
 router.use(
   cors({
