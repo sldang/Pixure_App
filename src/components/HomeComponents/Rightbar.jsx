@@ -1,28 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 
 const Rightbar = () => {
   const { user } = useContext(AuthContext);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
-  const [followList, setFollowList] = useState([]); // Declare followList state
-  const [followers, setFollowers] = useState([]); // Declare followers state
 
   const BASE_URL = "https://pixure-server.onrender.com";
-
-  const parsedData = JSON.parse(localStorage.getItem('user'));
-  const userId = parsedData && parsedData.user ? parsedData.user.id : null;
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (!user || !user.user?.id) return;
 
       try {
-        const response = await fetch(
-          `${BASE_URL}/api/user/profile/${user.user.id}`,
-          { headers: { Authorization: `Bearer ${user.token}` } }
-        );
-        const data = await response.json();
+        const response = await axios.get(`${BASE_URL}/api/user/profile/${user.user.id}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        const data = response.data;
         setFollowersCount(data.followersCount);
         setFollowingCount(data.followingCount);
       } catch (error) {
@@ -32,42 +27,6 @@ const Rightbar = () => {
 
     fetchUserProfile();
   }, [user]);
-
-  useEffect(() => {
-    const fetchFollowList = async () => {
-      if (!userId) return;
-
-      try {
-        const response = await fetch(`${BASE_URL}/api/user/${userId}`);
-        const data = await response.json();
-        setFollowList(data.followList || []); // Update followList state
-      } catch (error) {
-        console.error('Error fetching follow list:', error);
-      }
-    };
-
-    fetchFollowList();
-  }, [userId]);
-
-  useEffect(() => {
-    const fetchFollowers = async () => {
-      if (followList.length === 0) return;
-
-      try {
-        const promises = followList.map((id) =>
-          fetch(`${BASE_URL}/api/user/profile/${id}`)
-        );
-
-        const responses = await Promise.all(promises);
-        const followersData = await Promise.all(responses.map((res) => res.json()));
-        setFollowers(followersData); // Update followers state
-      } catch (error) {
-        console.error('Error fetching followers:', error);
-      }
-    };
-
-    fetchFollowers();
-  }, [followList]);
 
   return (
     <div className="max-w-md mx-auto p-4">
