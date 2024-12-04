@@ -101,18 +101,21 @@ router.get("/profile/:userId", async (req, res) => {
   const userId = req.params.userId; // Get userId from the request parameters
 
   try {
-    const user = await User.findById(req.params.userId)
-      .populate('followList', '_id') // Only retrieve IDs
-      .populate('followerList', '_id'); // Only retrieve IDs
+    // Find the user by ID
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Fetch follower and following details using emails
+    const followers = await User.find({ email: { $in: user.followerList } }, '_id email');
+    const following = await User.find({ email: { $in: user.followList } }, '_id email');
+
     res.status(200).json({
       nickname: user.nickname || 'Unknown User',
-      followersCount: user.followerList.length,
-      followingCount: user.followList.length,
+      followersCount: followers.length, // Count of followers
+      followingCount: following.length, // Count of followings
       profilePicture: user.profilePicture,
     });
   } catch (err) {
@@ -120,6 +123,7 @@ router.get("/profile/:userId", async (req, res) => {
     res.status(500).json({ error: 'Error fetching user profile', details: err.message });
   }
 });
+
 
 module.exports = router;
 //get friends
