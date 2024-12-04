@@ -14,25 +14,25 @@ const Home2 = () => {
 
   useEffect(() => {
     const fetchFollowerPosts = async () => {
-      if (!user || !user.user?.email) {
-        console.error("User email not available", user);
+      if (!user || !user.user?.id) { // Use user ID
+        console.error("User ID not available", user);
         return;
       }
-  
-      const email = user.user.email;
-      console.log("Fetching follower posts for email:", email);
-  
+    
+      const userId = user.user.id; // Extract user ID
+      console.log("Fetching follower posts for user ID:", userId);
+    
       try {
-        const response = await axios.get(`/api/posts/following/${email}`, {
+        const response = await axios.get(`/api/posts/following/${userId}`, { // Use user ID in the URL
           headers: { Authorization: `Bearer ${user.token}` },
         });
-  
+    
         if (!response.data || response.data.length === 0) {
           console.warn("No follower posts received:", response.data);
         } else {
           console.log("Follower posts fetched:", response.data);
         }
-  
+    
         setFollowerPosts(response.data || []);
       } catch (error) {
         console.error(
@@ -41,7 +41,7 @@ const Home2 = () => {
         );
       }
     };
-  
+    
     fetchFollowerPosts();
   }, [user]);
   

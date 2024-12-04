@@ -29,32 +29,33 @@ const upload = multer({
     }
   },
 });
-router.get("/posts/following/:email", async (req, res) => {
-  const email = req.params.email;
-  console.log("Request received for following posts with email:", email);
+router.get("/posts/following/:id", async (req, res) => {
+  const userId = req.params.id;
+  console.log("User ID received in request:", userId);
 
   try {
-    const user = await User.findOne({ email });
+    // Find the logged-in user by ID
+    const user = await User.findById(userId);
     if (!user) {
-      console.error("No user found for email:", email);
+      console.error("No user found for ID:", userId);
       return res.status(404).json({ error: "User not found" });
     }
 
     console.log("User found:", user);
 
-    const followEmails = user.followList || [];
-    console.log("Following emails:", followEmails);
+    const followIds = user.followList || [];
+    console.log("Follow list (user IDs):", followIds);
 
-    const followedUsers = await User.find({ email: { $in: followEmails } }, "_id");
-    console.log("Followed users:", followedUsers);
+    // Fetch posts from users in the follow list
+    const posts = await Post.find({ userId: { $in: followIds } })
+      .populate("userId", "nickname profilePicture")
+      .sort({ createdAt: -1 });
 
-    const posts = await Post.find({ userId: { $in: followedUsers.map(u => u._id) } });
-    console.log("Posts fetched for followed users:", posts);
-
+    console.log("Posts fetched:", posts.length);
     res.status(200).json(posts);
   } catch (err) {
-    console.error("Error fetching posts for following:", err);
-    res.status(500).json({ error: "Error fetching posts" });
+    console.error("Error fetching posts from following:", err);
+    res.status(500).json({ error: "Error fetching posts from following", details: err.message });
   }
 });
 
