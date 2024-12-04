@@ -127,33 +127,29 @@ router.delete("/:id", async (req, res) => {
 });
 //get profile info
 router.get("/profile/:id", async (req, res) => {
-  const userId = req.params.id; // Get userId from route parameters
-  console.log("Request received for profile:", userId);
+  const idOrEmail = req.params.id; // Get the ID or email from the request
+  console.log("Request received for profile:", idOrEmail);
 
   try {
-    // Validate if the provided userId is a valid MongoDB ObjectId
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      console.error("Invalid ObjectId:", userId);
-      return res.status(400).json({ error: "Invalid user ID format" });
+    let user;
+
+    // Check if the value is a valid ObjectId
+    if (mongoose.Types.ObjectId.isValid(idOrEmail)) {
+      user = await User.findById(idOrEmail); // Query by ObjectId
+    } else {
+      user = await User.findOne({ email: idOrEmail }); // Query by email
     }
 
-    // Fetch user by ID
-    const user = await User.findById(userId);
     if (!user) {
-      console.error("No user found for ID:", userId);
+      console.error("No user found for ID or email:", idOrEmail);
       return res.status(404).json({ error: "User not found" });
     }
 
     console.log("User found:", user);
 
-    // Fetch followers and following details
     const followers = await User.find({ _id: { $in: user.followerList } }, "_id nickname");
     const followings = await User.find({ _id: { $in: user.followList } }, "_id nickname");
 
-    console.log("Followers count:", followers.length);
-    console.log("Following count:", followings.length);
-
-    // Send response with profile data
     res.status(200).json({
       nickname: user.nickname || "Unknown User",
       followersCount: followers.length,
@@ -165,6 +161,7 @@ router.get("/profile/:id", async (req, res) => {
     res.status(500).json({ error: "Error fetching user profile", details: err.message });
   }
 });
+
 //get friends
 router.get("/friends/:userId", async (req, res) => {
   try {

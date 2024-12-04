@@ -18,6 +18,7 @@ const Rightbar = () => {
         return;
       }
     
+      console.log("Fetching profile for user ID:", user.user.id); // Add this log to confirm the ID
       try {
         const response = await axios.get(`/api/users/profile/${user.user.id}`, {
           headers: { Authorization: `Bearer ${user.token}` },
@@ -40,7 +41,6 @@ const Rightbar = () => {
         alert("Failed to fetch profile data. Please try again.");
       }
     };
-
     fetchUserProfile();
   }, [user]);
 
