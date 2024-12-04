@@ -13,35 +13,22 @@ const Home2 = () => {
   const [followerPosts, setFollowerPosts] = useState([]);
 
   useEffect(() => {
-    const fetchFollowerPosts = async () => {
-      if (!user || !user.user?.id) {
-        console.error("User ID not available", user);
-        return;
-      }
-  
-      const userId = user.user.id; // Extract user ID
-      console.log("Fetching posts of followed users for user ID:", userId);
-  
+    const fetchFollowedPosts = async () => {
       try {
-        const response = await axios.get(`/users/followed-posts/${userId}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/followed-posts/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-  
-        if (!response.data || response.data.length === 0) {
-          console.warn("No posts from followed users:", response.data);
-        } else {
-          console.log("Posts from followed users fetched:", response.data);
+    
+        if (!response.ok) {
+          throw new Error("Failed to fetch posts");
         }
-  
-        setFollowerPosts(response.data || []);
+    
+        const posts = await response.json();
+        setPosts(posts);
       } catch (error) {
-        console.error(
-          "Error fetching posts from followed users:",
-          error.response?.data || error.message
-        );
+        console.error("Error fetching posts from followed users:", error.message);
       }
     };
-  
     fetchFollowerPosts();
   }, [user]);
   

@@ -43,7 +43,7 @@ const Sidebar = () => {
       const followeeResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/by-email`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: searchQuery }) // Send the search query as email
+        body: JSON.stringify({ email: searchQuery }), // Ensure this is sending the correct email
       });
   
       if (!followeeResponse.ok) {

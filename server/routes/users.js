@@ -29,6 +29,24 @@ const upload = multer({
     }
   },
 });
+router.post("/by-email", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Return the user's ID and other necessary data
+    res.status(200).json({ _id: user._id, nickname: user.nickname });
+  } catch (err) {
+    console.error("Error fetching user by email:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 // Get posts of all followed users
 router.get("/users/followed-posts/:id", async (req, res) => {
   const userId = req.params.id;
