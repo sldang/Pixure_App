@@ -2,41 +2,39 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 
+axios.defaults.baseURL = "https://pixure-server.onrender.com";
+
 const Rightbar = () => {
   const { user } = useContext(AuthContext);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
-  const BASE_URL = "https://pixure-server.onrender.com";
-
-  const email = user?.user?.email || null;
-
   useEffect(() => {
     const fetchUserProfile = async () => {
-        if (!user || !user.user?.email) {
-            console.error("User email not available");
-            return;
-        }
+      if (!user || !user.user?.email) {
+        console.error("User email not available");
+        return;
+      }
 
-        const email = user.user.email;
-        console.log("Fetching profile for email:", email);
+      const email = user.user.email;
+      console.log("Fetching profile for email:", email);
 
-        try {
-            const response = await axios.get(`${BASE_URL}/api/user/profile/${email}`, {
-                headers: { Authorization: `Bearer ${user.token}` },
-            });
-            const data = response.data;
-            console.log("Profile data fetched:", data);
+      try {
+        const response = await axios.get(`/api/user/profile/${email}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        const data = response.data;
+        console.log("Profile data fetched:", data);
 
-            setFollowersCount(data.followersCount);
-            setFollowingCount(data.followingCount);
-        } catch (error) {
-            console.error("Error fetching user profile:", error);
-        }
+        setFollowersCount(data.followersCount);
+        setFollowingCount(data.followingCount);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
     };
 
     fetchUserProfile();
-}, [user]);
+  }, [user]);
 
   return (
     <div className="max-w-md mx-auto p-4">

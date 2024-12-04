@@ -5,37 +5,36 @@ import Post from '../components/HomeComponents/Post';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 
+axios.defaults.baseURL = "https://pixure-server.onrender.com";
+
 const Home2 = () => {
   const { user } = useContext(AuthContext);
   const [followerPosts, setFollowerPosts] = useState([]);
 
-  const BASE_URL = "https://pixure-server.onrender.com";
-
   useEffect(() => {
     const fetchFollowerPosts = async () => {
-        if (!user || !user.user?.email) {
-            console.error("User email not available");
-            return;
-        }
+      if (!user || !user.user?.email) {
+        console.error("User email not available");
+        return;
+      }
 
-        const email = user.user.email;
-        console.log("Fetching follower posts for email:", email);
+      const email = user.user.email;
+      console.log("Fetching follower posts for email:", email);
 
-        try {
-            const response = await axios.get(`${BASE_URL}/api/posts/following/${email}`, {
-                headers: { Authorization: `Bearer ${user.token}` },
-            });
-            console.log("Follower posts fetched:", response.data);
+      try {
+        const response = await axios.get(`/api/posts/following/${email}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        console.log("Follower posts fetched:", response.data);
 
-            setFollowerPosts(response.data);
-        } catch (error) {
-            console.error("Error fetching follower posts:", error);
-        }
+        setFollowerPosts(response.data);
+      } catch (error) {
+        console.error("Error fetching follower posts:", error);
+      }
     };
 
     fetchFollowerPosts();
-}, [user]);
-
+  }, [user]);
 
   return (
     <div className="flex">
