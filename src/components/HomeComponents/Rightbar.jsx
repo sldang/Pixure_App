@@ -13,32 +13,25 @@ const Rightbar = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      // Ensure `user` and `user.user.id` exist before proceeding
       if (!user || !user.user?.id) {
         console.error("User ID not available in AuthContext.");
         return;
       }
-
+    
       try {
-        const userId = user.user.id; // Retrieve userId from AuthContext
-        console.log("Fetching profile for userId:", userId);
-
-        const response = await axios.get(`/api/users/profile/${userId}`, {
+        const response = await axios.get(`/api/users/profile/${user.user.id}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-
+    
         if (!response.data) {
           console.error("No data received from profile endpoint.");
           return;
         }
-
+    
         console.log("Profile data fetched:", response.data);
-
-        // Update state with profile data
+    
         setFollowersCount(response.data.followersCount || 0);
         setFollowingCount(response.data.followingCount || 0);
-        setProfilePicture(response.data.profilePicture || null); // Update profile picture
-        setNickname(response.data.nickname || "Unknown User"); // Update nickname
       } catch (error) {
         console.error(
           "Error fetching user profile:",
