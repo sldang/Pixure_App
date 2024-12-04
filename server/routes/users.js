@@ -30,44 +30,43 @@ const upload = multer({
   },
 });
 // Get posts of all followed users
-router.get('/users/followed-posts/:id', async (req, res) => {
+router.get("/users/followed-posts/:id", async (req, res) => {
   const userId = req.params.id;
 
   try {
-    // Find the logged-in user
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Get the list of followed user IDs
-    const followIds = user.followList || [];
-    if (followIds.length === 0) {
-      return res.status(200).json([]); // Return an empty array if no followed users
-    }
+    const followEmails = user.followList || [];
+    console.log("Followed Emails:", followEmails);
 
-    // Fetch posts for each followed user
+    // Find userIds for all emails in the followList
+    const followedUsers = await User.find({ email: { $in: followEmails } }, "_id email");
+    const followedUserIds = followedUsers.map((user) => user._id);
+    console.log("Followed User IDs:", followedUserIds);
+
+    // Fetch posts for each followed userId
     const posts = await Promise.all(
-      followIds.map((followedUserId) => {
-        return Post.find({ userId: followedUserId })
-          .populate('userId', 'nickname profilePicture') // Populate user details
-          .populate('comments.userId', 'nickname') // Populate comment details
-          .sort({ createdAt: -1 }); // Sort posts by latest
-      })
+      followedUserIds.map((id) =>
+        Post.find({ userId: id })
+          .populate("userId", "nickname")
+          .populate("comments.userId", "nickname")
+      )
     );
 
-    // Flatten the array of arrays into a single array of posts
-    const allPosts = posts.flat();
-
-    // Sort combined posts by createdAt (latest first)
-    allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // Flatten and sort all posts by creation date
+    const allPosts = posts.flat().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    console.log("Total Posts Fetched:", allPosts.length);
 
     res.status(200).json(allPosts);
   } catch (err) {
-    console.error('Error fetching posts of followed users:', err);
-    res.status(500).json({ error: "Error fetching posts", details: err.message });
+    console.error("Error fetching posts of followed users:", err);
+    res.status(500).json({ error: "Error fetching posts of followed users", details: err.message });
   }
 });
+
 
 
 //update user
@@ -157,8 +156,6 @@ router.get("/friends/:userId", async (req, res) => {
   }
 });
 
-
-// Follow a user by email
 router.put("/follow", async (req, res) => {
   const { followerEmail, followeeEmail } = req.body;
 
@@ -167,7 +164,7 @@ router.put("/follow", async (req, res) => {
   }
 
   try {
-    // Find the user to be followed (followee) and the current user (follower) by email
+    // Find both the follower and the followee by their emails
     const followee = await User.findOne({ email: followeeEmail });
     const follower = await User.findOne({ email: followerEmail });
 
@@ -175,15 +172,15 @@ router.put("/follow", async (req, res) => {
       return res.status(404).json("User not found");
     }
 
-    const followeeId = followee._id;
-    const followerId = follower._id;
+    const followeeId = followee._id; // Extract followeeId
+    const followerId = follower._id; // Extract followerId
 
-    // Check if the follower is already following the followee
+    // Check if the follower already follows the followee
     if (!followee.followers.includes(followerId)) {
-      // Add the follower to the followee's followers list
+      // Update followee's `followers` list
       await followee.updateOne({ $addToSet: { followers: followerId } });
 
-      // Add the followee to the follower's followList
+      // Update follower's `followList` to store followeeId
       await follower.updateOne({ $addToSet: { followList: followeeId } });
 
       res.status(200).json("User has been followed");
@@ -195,7 +192,6 @@ router.put("/follow", async (req, res) => {
     res.status(500).json("An error occurred while trying to follow the user");
   }
 });
-
 
 router.put("/:id/unfollow", async (req, res) => {
   if (req.body.userId !== req.params.id) {

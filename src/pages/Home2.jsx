@@ -19,16 +19,16 @@ const Home2 = () => {
         return;
       }
   
-      const userId = user.user.id; // Extract logged-in user's ID
-      console.log("Fetching posts for followed users using user ID:", userId);
+      const userId = user.user.id; // Extract user ID
+      console.log("Fetching posts of followed users for user ID:", userId);
   
       try {
-        const response = await axios.get(`/api/users/followed-posts/${userId}`, {
+        const response = await axios.get(`/users/followed-posts/${userId}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
   
         if (!response.data || response.data.length === 0) {
-          console.warn("No posts received from followed users:", response.data);
+          console.warn("No posts from followed users:", response.data);
         } else {
           console.log("Posts from followed users fetched:", response.data);
         }
@@ -45,7 +45,6 @@ const Home2 = () => {
     fetchFollowerPosts();
   }, [user]);
   
-    
     
  
   return (
