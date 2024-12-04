@@ -5,18 +5,18 @@ import Post from '../components/HomeComponents/Post';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 
-axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
-
 const Home2 = () => {
   const { user } = useContext(AuthContext);
   const [followerPosts, setFollowerPosts] = useState([]);
+
+  const BASE_URL = "https://pixure-server.onrender.com";
 
   useEffect(() => {
     const fetchFollowerPosts = async () => {
       if (!user || !user.user?.id) return;
 
       try {
-        const response = await axios.get(`/api/posts/following/${user.user.id}`, {
+        const response = await axios.get(`${BASE_URL}/api/posts/following/${user.user.id}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         setFollowerPosts(response.data);

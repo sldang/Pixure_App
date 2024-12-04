@@ -8,6 +8,8 @@ const Rightbar = () => {
   const [followList, setFollowList] = useState([]); // Declare followList state
   const [followers, setFollowers] = useState([]); // Declare followers state
 
+  const BASE_URL = "https://pixure-server.onrender.com";
+
   const parsedData = JSON.parse(localStorage.getItem('user'));
   const userId = parsedData && parsedData.user ? parsedData.user.id : null;
 
@@ -17,7 +19,7 @@ const Rightbar = () => {
 
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_SERVER_URL}/api/user/profile/${user.user.id}`,
+          `${BASE_URL}/api/user/profile/${user.user.id}`,
           { headers: { Authorization: `Bearer ${user.token}` } }
         );
         const data = await response.json();
@@ -36,7 +38,7 @@ const Rightbar = () => {
       if (!userId) return;
 
       try {
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/user/${userId}`);
+        const response = await fetch(`${BASE_URL}/api/user/${userId}`);
         const data = await response.json();
         setFollowList(data.followList || []); // Update followList state
       } catch (error) {
@@ -53,7 +55,7 @@ const Rightbar = () => {
 
       try {
         const promises = followList.map((id) =>
-          fetch(`${process.env.REACT_APP_SERVER_URL}/api/user/profile/${id}`)
+          fetch(`${BASE_URL}/api/user/profile/${id}`)
         );
 
         const responses = await Promise.all(promises);
