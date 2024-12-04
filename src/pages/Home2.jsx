@@ -12,37 +12,53 @@ const Home2 = () => {
   const [followerPosts, setFollowerPosts] = useState([]); // Define state for posts
 
   useEffect(() => {
-    const fetchFollowedPosts = async () => {
-      if (!user?.user?.id || !user?.token) {
-        console.error("User ID or token is not available.");
-        return;
-      }
-
-      const userId = user.user.id; // Get userId from AuthContext
-      const token = user.token; // Get token from AuthContext
-
+    const fetchFollowerPosts = async () => {
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_SERVER_URL}/api/users/followed-posts/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
+        // Step 1: Get the followList (list of emails of followed users)
+        const followList = user.user.followList || []; 
+        let allPosts = [];
+  
+        // Step 2: Iterate through each email in the followList
+        for (const email of followList) {
+          // Step 2.1: Fetch userId using the email
+          const userResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/by-email`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          });
+  
+          if (!userResponse.ok) {
+            console.error(`Failed to fetch userId for email: ${email}`);
+            continue;
           }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch posts");
+  
+          const { _id: userId } = await userResponse.json();
+  
+          // Step 3: Fetch posts for the userId
+          const postsResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/profile/${userId}`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          });
+  
+          if (!postsResponse.ok) {
+            console.error(`Failed to fetch posts for userId: ${userId}`);
+            continue;
+          }
+  
+          const userPosts = await postsResponse.json();
+          // Step 4: Combine all posts into one array
+          allPosts = [...allPosts, ...userPosts];
         }
-
-        const posts = await response.json();
-        setFollowerPosts(posts); // Update followerPosts state
+  
+        // Step 5: Update state with the combined posts
+        setFollowerPosts(allPosts);
       } catch (error) {
         console.error("Error fetching posts from followed users:", error.message);
       }
     };
-
-    fetchFollowedPosts(); // Fetch posts on component mount
-  }, [user]); // Add user as dependency
-
+  
+    fetchFollowerPosts();
+  }, [user]);
+  
   return (
     <div className="flex">
       <Sidebar />
