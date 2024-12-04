@@ -29,7 +29,7 @@ const upload = multer({
     }
   },
 });
-router.get("/posts/following/:id", async (req, res) => {
+router.get("/users/following/:id", async (req, res) => {
   const userId = req.params.id;
   console.log("User ID received in request:", userId);
 
@@ -58,8 +58,6 @@ router.get("/posts/following/:id", async (req, res) => {
     res.status(500).json({ error: "Error fetching posts from following", details: err.message });
   }
 });
-
-
 
 //update user
 router.put("/:id", async (req, res) => {
@@ -142,34 +140,41 @@ router.get("/friends/:userId", async (req, res) => {
       const { _id, username, profilePicture } = friend;
       friendList.push({ _id, username, profilePicture });
     });
-    res.status(200).json(friendList)
+    res.status(200).json(friendList);
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
+
 // Follow a user by email
 router.put("/follow", async (req, res) => {
-  const { email, followEmail } = req.body;
+  const { followerEmail, followeeEmail } = req.body;
 
-  if (email === followEmail) {
+  if (followerEmail === followeeEmail) {
     return res.status(403).json("You cannot follow yourself");
   }
 
   try {
-    // Find the target user (to be followed) and the current user by email
-    const user = await User.findOne({ email: followEmail });
-    const currentUser = await User.findOne({ email: email });
+    // Find the user to be followed (followee) and the current user (follower) by email
+    const followee = await User.findOne({ email: followeeEmail });
+    const follower = await User.findOne({ email: followerEmail });
 
-    // Check if users exist
-    if (!user || !currentUser) {
+    if (!followee || !follower) {
       return res.status(404).json("User not found");
     }
 
-    // Check if already following
-    if (!user.followers.some(followerId => followerId.equals(currentUser._id))) {
-      await user.updateOne({ $addToSet: { followers: currentUser._id } }); // Use $addToSet to avoid duplicates
-      await currentUser.updateOne({ $addToSet: { followList: user._id } });
+    const followeeId = followee._id;
+    const followerId = follower._id;
+
+    // Check if the follower is already following the followee
+    if (!followee.followers.includes(followerId)) {
+      // Add the follower to the followee's followers list
+      await followee.updateOne({ $addToSet: { followers: followerId } });
+
+      // Add the followee to the follower's followList
+      await follower.updateOne({ $addToSet: { followList: followeeId } });
+
       res.status(200).json("User has been followed");
     } else {
       res.status(409).json("You already follow this user");
@@ -180,7 +185,7 @@ router.put("/follow", async (req, res) => {
   }
 });
 
-//unfollow 
+
 router.put("/:id/unfollow", async (req, res) => {
   if (req.body.userId !== req.params.id) {
     try {
@@ -188,16 +193,16 @@ router.put("/:id/unfollow", async (req, res) => {
       const currentUser = await User.findById(req.body.userId);
       if (user.followers.includes(req.body.userId)) {
         await user.updateOne({ $pull: { followers: req.body.userId } });
-        await currentUser.updateOne({ $pull: { followings: req.params.id } });
-        res.status(200).json("user has been unfollowed");
+        await currentUser.updateOne({ $pull: { followList: req.params.id } });
+        res.status(200).json("User has been unfollowed");
       } else {
-        res.status(403).json("you dont follow this user");
+        res.status(403).json("You don't follow this user");
       }
     } catch (err) {
       res.status(500).json(err);
     }
   } else {
-    res.status(403).json("you cant unfollow yourself");
+    res.status(403).json("You can't unfollow yourself");
   }
 });
 
