@@ -29,9 +29,9 @@ const upload = multer({
     }
   },
 });
+//display followed users posts
 router.get('/following/:userId', async (req, res) => {
   try {
-    console.log('UserID Received:', req.params.userId);
     const userId = req.params.userId;
 
     // Find the user by ID
@@ -40,21 +40,20 @@ router.get('/following/:userId', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Ensure followList contains valid ObjectIds
-    if (!Array.isArray(user.followList) || !user.followList.every(id => mongoose.Types.ObjectId.isValid(id))) {
-      console.error('Invalid followList data for user:', userId);
-      return res.status(400).json({ error: 'Invalid followList data' });
-    }
+    // Get user IDs from emails in followList
+    const followEmails = user.followList; // Emails stored in followList
+    const followedUsers = await User.find({ email: { $in: followEmails } }, '_id');
+    const followedUserIds = followedUsers.map((user) => user._id);
 
-    // Fetch posts from followed users
-    const posts = await Post.find({ userId: { $in: user.followList } })
-      .populate('userId', 'nickname profilePicture')
-      .sort({ createdAt: -1 });
+    // Fetch posts by user IDs
+    const posts = await Post.find({ userId: { $in: followedUserIds } })
+      .populate('userId', 'nickname profilePicture') // Populate user details
+      .sort({ createdAt: -1 }); // Sort by newest first
 
     res.status(200).json(posts);
-  } catch (err) {
-    console.error('Error fetching posts from followers:', err);
-    res.status(500).json({ error: 'Error fetching posts from followers', details: err.message });
+  } catch (error) {
+    console.error('Error fetching posts from followed users:', error);
+    res.status(500).json({ error: 'Error fetching posts from followed users' });
   }
 });
 
