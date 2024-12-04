@@ -14,51 +14,40 @@ const Home2 = () => {
   useEffect(() => {
     const fetchFollowerPosts = async () => {
       try {
-        const followList = user.user.followList || [];
-        let allPosts = [];
-    
-        for (const email of followList) {
-          console.log("Fetching userId for email:", email);
-          const userResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/by-email`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email }),
-          });
-    
-          if (!userResponse.ok) {
-            console.error(`Failed to fetch userId for email: ${email}`);
-            continue;
-          }
-    
-          const { _id: userId } = await userResponse.json();
-          console.log("Fetched userId:", userId);
-    
-          const postsResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/profile/${userId}`, {
-            headers: { Authorization: `Bearer ${user.token}` },
-          });
-    
-          if (!postsResponse.ok) {
-            console.error(`Failed to fetch posts for userId: ${userId}`);
-            continue;
-          }
-    
-          const userPosts = await postsResponse.json();
-          console.log(`Fetched posts for userId ${userId}:`, userPosts);
-          allPosts = [...allPosts, ...userPosts];
-        }
-    
-        allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setFollowerPosts(allPosts);
-        console.log("Combined Posts:", allPosts);
-      } catch (error) {
-        console.error("Error fetching posts from followed users:", error.message);
-      }
-    };
-    
+        // Check if followList is available
+        const followList = user?.user?.followList || [];
 
+        // Fetch posts for each user in followList
+        const postsPromises = followList.map(async (email) => {
+          try {
+            // Fetch userId from email
+            const userResponse = await axios.post(
+              "/api/users/by-email",
+              { email },
+              { headers: { "Content-Type": "application/json" } }
+            );
+            const { _id: userId } = userResponse.data;
+
+            // Fetch posts for the userId
+            const postsResponse = await axios.get(`/api/posts/profile/${userId}`, {
+              headers: { Authorization: `Bearer ${user.token}` },
+            });
+
+            return postsResponse.data;
+          } catch (err) {
+            console.error(`Error fetching data for email: ${email}`, err.message);
+            return [];
+          }
+        });
+
+        // Combine all posts into a single array
         const postsArray = await Promise.all(postsPromises);
         const combinedPosts = postsArray.flat();
-        combinedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by date
+
+        // Sort posts by creation date in descending order
+        combinedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        // Update the state with sorted posts
         setFollowerPosts(combinedPosts);
       } catch (error) {
         console.error("Error fetching posts from followed users:", error.message);
