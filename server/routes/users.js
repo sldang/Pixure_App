@@ -31,15 +31,9 @@ const upload = multer({
 });
 router.get("/posts/following/:email", async (req, res) => {
   const email = req.params.email;
-  console.log("Email received in request:", email);
+  console.log("Request received for following posts with email:", email);
 
   try {
-    // Validate email parameter
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
-    }
-
-    // Lookup user by email
     const user = await User.findOne({ email });
     if (!user) {
       console.error("No user found for email:", email);
@@ -48,27 +42,21 @@ router.get("/posts/following/:email", async (req, res) => {
 
     console.log("User found:", user);
 
-    // Get follow list and fetch posts
     const followEmails = user.followList || [];
-    console.log("Follow list (emails):", followEmails);
+    console.log("Following emails:", followEmails);
 
-    const followedUsers = await User.find({ email: { $in: followEmails } }, "_id email");
-    const followedUserIds = followedUsers.map((u) => u._id);
-    console.log("Followed User IDs:", followedUserIds);
+    const followedUsers = await User.find({ email: { $in: followEmails } }, "_id");
+    console.log("Followed users:", followedUsers);
 
-    const posts = await Post.find({ userId: { $in: followedUserIds } })
-      .populate("userId", "nickname profilePicture")
-      .sort({ createdAt: -1 });
-
-    console.log("Posts fetched:", posts.length);
+    const posts = await Post.find({ userId: { $in: followedUsers.map(u => u._id) } });
+    console.log("Posts fetched for followed users:", posts);
 
     res.status(200).json(posts);
   } catch (err) {
-    console.error("Error fetching posts from following:", err);
-    res.status(500).json({ error: "Error fetching posts from following", details: err.message });
+    console.error("Error fetching posts for following:", err);
+    res.status(500).json({ error: "Error fetching posts" });
   }
 });
-
 
 
 
@@ -109,19 +97,12 @@ router.delete("/:id", async (req, res) => {
     return res.status(403).json("You can delete only your account!");
   }
 });
-
 router.get("/profile/:email", async (req, res) => {
   const email = req.params.email;
-  console.log("Email received in request:", email);
+  console.log("Request received for profile:", email);
 
   try {
-    // Validate email parameter
-    if (!email) {
-      return res.status(400).json({ error: "Email is required" });
-    }
-
-    // Lookup user by email
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }); // Check if the user exists
     if (!user) {
       console.error("No user found for email:", email);
       return res.status(404).json({ error: "User not found" });
@@ -129,25 +110,23 @@ router.get("/profile/:email", async (req, res) => {
 
     console.log("User found:", user);
 
-    // Find followers and following users
-    const followers = await User.find({ email: { $in: user.followerList || [] } }, "_id email");
-    const followings = await User.find({ email: { $in: user.followList || [] } }, "_id email");
-
+    const followers = await User.find({ email: { $in: user.followerList } }, "_id email");
+    const followings = await User.find({ email: { $in: user.followList } }, "_id email");
     console.log("Followers count:", followers.length);
     console.log("Following count:", followings.length);
 
-    // Send response
     res.status(200).json({
       nickname: user.nickname || "Unknown User",
       followersCount: followers.length,
       followingCount: followings.length,
-      profilePicture: user.profilePicture || "https://via.placeholder.com/150",
+      profilePicture: user.profilePicture,
     });
   } catch (err) {
     console.error("Error fetching user profile:", err);
     res.status(500).json({ error: "Error fetching user profile", details: err.message });
   }
 });
+
 
 module.exports = router;
 //get friends
