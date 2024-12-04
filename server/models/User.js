@@ -2,84 +2,32 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    firstName:{
+    firstName: { type: String },
+    lastName: { type: String },
+    nickname: { type: String },
+    email: {
         type: String,
-        required: false,
-     },
-    lastName:{
-        type: String,
-        required: false,
+        required: true, // Enforce email requirement
+        unique: true, // Ensure uniqueness
     },
-    nickname:{
-        type: String,
-        required: false,
-    },
-    email:{
-        type: String,
-        required: false,
-    },
-    password:{
-        type: String,
-        required: false,
-    },
-    zipcode:{
-        type: String,
-        required: false,
-    },
-    followerList: {
-        type: Array,
-        required: false,
-    },
-    followList: {
-        type: Array,
-        required: false,
-    },
-    karma: {
-        type: String,
-        required: false,
-    },
-    communityIDs: {
-        type: String,
-        required: false,
-    },
-    posts: {
-        type: String,
-        required: false,
-    },
-    age: {
-        type: String,
-        required: false,
-    },
-    searchTags: {
-        type: String,
-        required: false,
-    },
-    postAndFlagsTags: {
-        type: String,
-        required: false,
-    },
+    password: { type: String, required: true },
+    zipcode: { type: String },
+    followerList: { type: [String], default: [] }, // Enforce email strings if storing emails
+    followList: { type: [String], default: [] },  // Same as above
+    karma: { type: String },
+    communityIDs: { type: [String], default: [] }, // Use array if applicable
+    posts: { type: [String], default: [] },        // Use array if applicable
+    age: { type: String },
+    searchTags: { type: [String], default: [] },
+    postAndFlagsTags: { type: [String], default: [] },
     profilePicture: {
         type: String,
-        required: false,
+        default: 'https://via.placeholder.com/150', // Default profile picture
     },
-    parentAccount: {
-        type: String,
-        default: '',
-        required: false,
-    },
-    parentAccountID: {
-        type: String,
-        required: false,
-    },
-    childAccount: {
-        type: String,
-        required: false,
-    },
-    childAccountID: {
-        type: String,
-        required: false,
-    },
-
+    parentAccount: { type: String, default: '' },
+    parentAccountID: { type: String },
+    childAccount: { type: String },
+    childAccountID: { type: String },
 });
 
-module.exports = mongoose.model('User', userSchema,'User')
+module.exports = mongoose.model("User", userSchema, "User");

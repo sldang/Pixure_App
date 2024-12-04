@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 
-
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
+
 const Rightbar = () => {
   const { user } = useContext(AuthContext);
   const [followersCount, setFollowersCount] = useState(0);
@@ -23,13 +23,18 @@ const Rightbar = () => {
         const response = await axios.get(`/api/user/profile/${email}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-        const data = response.data;
-        console.log("Profile data fetched:", data);
 
-        setFollowersCount(data.followersCount);
-        setFollowingCount(data.followingCount);
+        if (!response.data) {
+          console.error("No data received from profile endpoint");
+          return;
+        }
+
+        console.log("Profile data fetched:", response.data);
+
+        setFollowersCount(response.data.followersCount || 0);
+        setFollowingCount(response.data.followingCount || 0);
       } catch (error) {
-        console.error("Error fetching user profile:", error);
+        console.error("Error fetching user profile:", error.response || error.message);
       }
     };
 

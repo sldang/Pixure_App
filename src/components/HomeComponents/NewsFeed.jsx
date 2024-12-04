@@ -10,7 +10,6 @@ axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 const NewsFeed = () => {
   const { user } = useContext(AuthContext);
   const [userPosts, setUserPosts] = useState([]); // State for user's posts
-  const [followerPosts, setFollowerPosts] = useState([]); // State for followers' posts
   const [postContent, setPostContent] = useState('');
 
   // Fetch user's posts
@@ -30,28 +29,6 @@ const NewsFeed = () => {
     };
     fetchUserPosts();
   }, [user]);
-
-  // Fetch followers' posts
-  useEffect(() => {
-    const fetchFollowerPosts = async () => {
-      try {
-        if (user) {
-          const response = await axios.get(`/api/posts/following/${user.user.id}`, {
-            headers: { Authorization: `Bearer ${user.token}` },
-          });
-          setFollowerPosts(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching follower posts:', error);
-      }
-    };
-    fetchFollowerPosts();
-  }, [user]);
-
-  // Combined posts
-  const combinedPosts = [...userPosts, ...followerPosts].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
 
   const handleUpload = async (postContent, image) => {
     const userId = user ? user.user.id : null;
@@ -141,18 +118,6 @@ const NewsFeed = () => {
             : post
         )
       );
-      setFollowerPosts(
-        followerPosts.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                likes: post.likes.includes(user.user.id)
-                  ? post.likes.filter((id) => id !== user.user.id)
-                  : [...post.likes, user.user.id],
-              }
-            : post
-        )
-      );
     } catch (error) {
       console.error('Error liking post:', error);
     }
@@ -178,13 +143,6 @@ const NewsFeed = () => {
             : post
         )
       );
-      setFollowerPosts(
-        followerPosts.map((post) =>
-          post._id === postId
-            ? { ...post, comments: [...post.comments, response.data] }
-            : post
-        )
-      );
     } catch (error) {
       console.error('Error adding comment:', error);
     }
@@ -204,13 +162,6 @@ const NewsFeed = () => {
             : post
         )
       );
-      setFollowerPosts(
-        followerPosts.map((post) =>
-          post._id === postId
-            ? { ...post, comments: post.comments.filter((c) => c._id !== commentId) }
-            : post
-        )
-      );
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
@@ -225,8 +176,8 @@ const NewsFeed = () => {
           setPostContent={setPostContent}
           handleUpload={handleUpload}
         />
-        {combinedPosts.length === 0 && <p>No posts to display</p>}
-        {combinedPosts.map((post, index) => (
+        {userPosts.length === 0 && <p>No posts to display</p>}
+        {userPosts.map((post, index) => (
           <Post
             key={index}
             user={post.userId?.nickname || 'Unknown User'}
