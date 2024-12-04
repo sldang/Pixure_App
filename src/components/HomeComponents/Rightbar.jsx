@@ -9,24 +9,26 @@ const Rightbar = () => {
 
   const BASE_URL = "https://pixure-server.onrender.com";
 
-  useEffect(() => {
+  const email = user?.user?.email || null;
+
+useEffect(() => {
     const fetchUserProfile = async () => {
-        if (!user || !user.user?.id) return;
+        if (!email) return;
 
         try {
-            const response = await axios.get(`${BASE_URL}/api/user/profile/${user.user.id}`, {
+            const response = await axios.get(`${BASE_URL}/api/user/profile/${email}`, {
                 headers: { Authorization: `Bearer ${user.token}` },
             });
-            setFollowersCount(response.data.followersCount);
-            setFollowingCount(response.data.followingCount);
+            const data = response.data;
+            setFollowersCount(data.followersCount);
+            setFollowingCount(data.followingCount);
         } catch (error) {
             console.error("Error fetching user profile:", error);
         }
     };
 
     fetchUserProfile();
-}, [user]);
-
+}, [email, user]);
 
   return (
     <div className="max-w-md mx-auto p-4">

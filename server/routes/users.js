@@ -29,11 +29,11 @@ const upload = multer({
     }
   },
 });
-router.get("/posts/following/:userId", async (req, res) => {
-  const userId = req.params.userId;
+router.get("/posts/following/:email", async (req, res) => {
+  const email = req.params.email;
 
   try {
-      const user = await User.findById(userId);
+      const user = await User.findOne({ email }); // Lookup user by email
       if (!user) {
           return res.status(404).json({ error: "User not found" });
       }
@@ -52,6 +52,7 @@ router.get("/posts/following/:userId", async (req, res) => {
       res.status(500).json({ error: "Error fetching posts from following", details: err.message });
   }
 });
+
 
 
 //update user
@@ -92,11 +93,11 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.get("/profile/:userId", async (req, res) => {
-  const userId = req.params.userId;
+router.get("/profile/:email", async (req, res) => {
+  const email = req.params.email; // Get email from route parameters
 
   try {
-      const user = await User.findOne({ _id: userId });
+      const user = await User.findOne({ email }); // Lookup user by email
       if (!user) {
           return res.status(404).json({ error: "User not found" });
       }
@@ -115,7 +116,6 @@ router.get("/profile/:userId", async (req, res) => {
       res.status(500).json({ error: "Error fetching user profile", details: err.message });
   }
 });
-
 
 module.exports = router;
 //get friends

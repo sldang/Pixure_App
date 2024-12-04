@@ -13,10 +13,11 @@ const Home2 = () => {
 
   useEffect(() => {
     const fetchFollowerPosts = async () => {
-        if (!user || !user.user?.id) return;
+        const email = user?.user?.email || null;
+        if (!email) return;
 
         try {
-            const response = await axios.get(`${BASE_URL}/api/posts/following/${user.user.id}`, {
+            const response = await axios.get(`${BASE_URL}/api/posts/following/${email}`, {
                 headers: { Authorization: `Bearer ${user.token}` },
             });
             setFollowerPosts(response.data);
@@ -27,6 +28,7 @@ const Home2 = () => {
 
     fetchFollowerPosts();
 }, [user]);
+
   return (
     <div className="flex">
       <Sidebar />
