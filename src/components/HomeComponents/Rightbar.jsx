@@ -11,17 +11,19 @@ const Rightbar = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!user || !user.user?.userId) {
+      // Safely extract `userId` from the logged-in user data
+      const userId = user?.userId;
+      if (!userId) {
         console.error("User ID not available");
         return;
       }
 
-      const userId = user.user.userId; // Fetch the `userId` from the logged-in user data
       console.log("Fetching profile for userId:", userId);
 
       try {
+        // Fetch profile data using the userId
         const response = await axios.get(`/api/profile/${userId}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
+          headers: { Authorization: `Bearer ${user?.token}` }, // Pass token for authorization
         });
 
         if (!response.data) {
@@ -31,6 +33,7 @@ const Rightbar = () => {
 
         console.log("Profile data fetched:", response.data);
 
+        // Update state with followers and following counts
         setFollowersCount(response.data.followersCount || 0);
         setFollowingCount(response.data.followingCount || 0);
       } catch (error) {
