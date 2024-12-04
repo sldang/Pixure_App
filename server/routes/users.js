@@ -98,21 +98,21 @@ router.delete("/:id", async (req, res) => {
     return res.status(403).json("You can delete only your account!");
   }
 });
-router.get("/profile/:email", async (req, res) => {
-  const email = req.params.email;
-  console.log("Request received for profile:", email);
+router.get("/profile/:id", async (req, res) => {
+  const userId = req.params.id; // Get userId from route parameters
+  console.log("Request received for profile:", userId);
 
   try {
-    const user = await User.findOne({ email }); // Check if the user exists
+    const user = await User.findById(userId); // Find user by ID
     if (!user) {
-      console.error("No user found for email:", email);
+      console.error("No user found for ID:", userId);
       return res.status(404).json({ error: "User not found" });
     }
 
     console.log("User found:", user);
 
-    const followers = await User.find({ email: { $in: user.followerList } }, "_id email");
-    const followings = await User.find({ email: { $in: user.followList } }, "_id email");
+    const followers = await User.find({ _id: { $in: user.followerList } }, "_id nickname");
+    const followings = await User.find({ _id: { $in: user.followList } }, "_id nickname");
     console.log("Followers count:", followers.length);
     console.log("Following count:", followings.length);
 
@@ -127,8 +127,6 @@ router.get("/profile/:email", async (req, res) => {
     res.status(500).json({ error: "Error fetching user profile", details: err.message });
   }
 });
-
-
 module.exports = router;
 //get friends
 router.get("/friends/:userId", async (req, res) => {

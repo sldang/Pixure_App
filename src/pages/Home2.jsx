@@ -14,7 +14,7 @@ const Home2 = () => {
 
   useEffect(() => {
     const fetchFollowerPosts = async () => {
-      if (!user || !user.user?.id) { // Use user ID
+      if (!user || !user.user?.id) { // Ensure user ID is available
         console.error("User ID not available", user);
         return;
       }
@@ -23,7 +23,7 @@ const Home2 = () => {
       console.log("Fetching follower posts for user ID:", userId);
     
       try {
-        const response = await axios.get(`/api/posts/following/${userId}`, { // Use user ID in the URL
+        const response = await axios.get(`/users/following/${userId}`, { // Update to new route
           headers: { Authorization: `Bearer ${user.token}` },
         });
     
@@ -41,6 +41,7 @@ const Home2 = () => {
         );
       }
     };
+    
     
     fetchFollowerPosts();
   }, [user]);
