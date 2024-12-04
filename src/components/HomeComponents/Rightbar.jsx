@@ -5,22 +5,22 @@ import { AuthContext } from '../../contexts/AuthContext';
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
 const Rightbar = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); // Retrieve the logged-in user's data
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!user || !user.user?.email) {
-        console.error("User email not available");
+      if (!user || !user.user?.userId) {
+        console.error("User ID not available");
         return;
       }
 
-      const email = user.user.email;
-      console.log("Fetching profile for email:", email);
+      const userId = user.user.userId; // Fetch the `userId` from the logged-in user data
+      console.log("Fetching profile for userId:", userId);
 
       try {
-        const response = await axios.get(`/api/user/profile/${email}`, {
+        const response = await axios.get(`/api/profile/${userId}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
 
