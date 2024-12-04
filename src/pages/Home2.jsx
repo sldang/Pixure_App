@@ -14,38 +14,40 @@ const Home2 = () => {
 
   useEffect(() => {
     const fetchFollowerPosts = async () => {
-      if (!user || !user.user?.id) { // Ensure user ID is available
+      if (!user || !user.user?.id) {
         console.error("User ID not available", user);
         return;
       }
-    
-      const userId = user.user.id; // Extract user ID
-      console.log("Fetching follower posts for user ID:", userId);
-    
+  
+      const userId = user.user.id; // Extract logged-in user's ID
+      console.log("Fetching posts for followed users using user ID:", userId);
+  
       try {
-        const response = await axios.get(`/users/following/${userId}`, { // Update to new route
+        const response = await axios.get(`/api/users/followed-posts/${userId}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-    
+  
         if (!response.data || response.data.length === 0) {
-          console.warn("No follower posts received:", response.data);
+          console.warn("No posts received from followed users:", response.data);
         } else {
-          console.log("Follower posts fetched:", response.data);
+          console.log("Posts from followed users fetched:", response.data);
         }
-    
+  
         setFollowerPosts(response.data || []);
       } catch (error) {
         console.error(
-          "Error fetching follower posts:",
+          "Error fetching posts from followed users:",
           error.response?.data || error.message
         );
       }
     };
-    
-    
+  
     fetchFollowerPosts();
   }, [user]);
   
+    
+    
+ 
   return (
     <div className="flex">
       <Sidebar />

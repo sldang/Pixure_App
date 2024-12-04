@@ -29,35 +29,46 @@ const upload = multer({
     }
   },
 });
-router.get("/users/following/:id", async (req, res) => {
+// Get posts of all followed users
+router.get('/users/followed-posts/:id', async (req, res) => {
   const userId = req.params.id;
-  console.log("User ID received in request:", userId);
 
   try {
-    // Find the logged-in user by ID
+    // Find the logged-in user
     const user = await User.findById(userId);
     if (!user) {
-      console.error("No user found for ID:", userId);
       return res.status(404).json({ error: "User not found" });
     }
 
-    console.log("User found:", user);
-
+    // Get the list of followed user IDs
     const followIds = user.followList || [];
-    console.log("Follow list (user IDs):", followIds);
+    if (followIds.length === 0) {
+      return res.status(200).json([]); // Return an empty array if no followed users
+    }
 
-    // Fetch posts from users in the follow list
-    const posts = await Post.find({ userId: { $in: followIds } })
-      .populate("userId", "nickname profilePicture")
-      .sort({ createdAt: -1 });
+    // Fetch posts for each followed user
+    const posts = await Promise.all(
+      followIds.map((followedUserId) => {
+        return Post.find({ userId: followedUserId })
+          .populate('userId', 'nickname profilePicture') // Populate user details
+          .populate('comments.userId', 'nickname') // Populate comment details
+          .sort({ createdAt: -1 }); // Sort posts by latest
+      })
+    );
 
-    console.log("Posts fetched:", posts.length);
-    res.status(200).json(posts);
+    // Flatten the array of arrays into a single array of posts
+    const allPosts = posts.flat();
+
+    // Sort combined posts by createdAt (latest first)
+    allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    res.status(200).json(allPosts);
   } catch (err) {
-    console.error("Error fetching posts from following:", err);
-    res.status(500).json({ error: "Error fetching posts from following", details: err.message });
+    console.error('Error fetching posts of followed users:', err);
+    res.status(500).json({ error: "Error fetching posts", details: err.message });
   }
 });
+
 
 //update user
 router.put("/:id", async (req, res) => {
