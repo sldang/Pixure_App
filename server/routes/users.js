@@ -153,7 +153,6 @@ router.get("/profile/:id", async (req, res) => {
     res.status(500).json({ error: "Error fetching user profile", details: err.message });
   }
 });
-module.exports = router;
 //get friends
 router.get("/friends/:userId", async (req, res) => {
   try {

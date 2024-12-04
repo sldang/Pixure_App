@@ -11,9 +11,7 @@ const Rightbar = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      // Use nested structure to retrieve userId
-      const userId = user ? user.user?.id : null; // Adjusted nesting to match the structure in Newsfeed.jsx
-
+      
       if (!userId) {
         console.error("User ID not available");
         return;
@@ -22,7 +20,8 @@ const Rightbar = () => {
       console.log("Fetching profile for userId:", userId);
 
       try {
-        const response = await axios.get(`/api/profile/${userId}`, {
+        
+        const response = await axios.get(`/api/profile/${user.user.id}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
 
