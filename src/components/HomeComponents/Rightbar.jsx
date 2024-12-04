@@ -11,15 +11,23 @@ const Rightbar = () => {
 
   const email = user?.user?.email || null;
 
-useEffect(() => {
+  useEffect(() => {
     const fetchUserProfile = async () => {
-        if (!email) return;
+        if (!user || !user.user?.email) {
+            console.error("User email not available");
+            return;
+        }
+
+        const email = user.user.email;
+        console.log("Fetching profile for email:", email);
 
         try {
             const response = await axios.get(`${BASE_URL}/api/user/profile/${email}`, {
                 headers: { Authorization: `Bearer ${user.token}` },
             });
             const data = response.data;
+            console.log("Profile data fetched:", data);
+
             setFollowersCount(data.followersCount);
             setFollowingCount(data.followingCount);
         } catch (error) {
@@ -28,7 +36,7 @@ useEffect(() => {
     };
 
     fetchUserProfile();
-}, [email, user]);
+}, [user]);
 
   return (
     <div className="max-w-md mx-auto p-4">

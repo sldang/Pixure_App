@@ -31,20 +31,27 @@ const upload = multer({
 });
 router.get("/posts/following/:email", async (req, res) => {
   const email = req.params.email;
+  console.log("Email received in request:", email);
 
   try {
       const user = await User.findOne({ email }); // Lookup user by email
       if (!user) {
+          console.error("No user found for email:", email);
           return res.status(404).json({ error: "User not found" });
       }
+      console.log("User found:", user);
 
       const followEmails = user.followList || [];
-      const followedUsers = await User.find({ email: { $in: followEmails } }, "_id");
+      console.log("Follow list (emails):", followEmails);
+
+      const followedUsers = await User.find({ email: { $in: followEmails } }, "_id email");
       const followedUserIds = followedUsers.map((u) => u._id);
+      console.log("Followed User IDs:", followedUserIds);
 
       const posts = await Post.find({ userId: { $in: followedUserIds } })
           .populate("userId", "nickname profilePicture")
           .sort({ createdAt: -1 });
+      console.log("Posts fetched:", posts.length);
 
       res.status(200).json(posts);
   } catch (err) {
@@ -95,15 +102,20 @@ router.delete("/:id", async (req, res) => {
 
 router.get("/profile/:email", async (req, res) => {
   const email = req.params.email; // Get email from route parameters
+  console.log("Email received in request:", email);
 
   try {
       const user = await User.findOne({ email }); // Lookup user by email
       if (!user) {
+          console.error("No user found for email:", email);
           return res.status(404).json({ error: "User not found" });
       }
+      console.log("User found:", user);
 
       const followers = await User.find({ email: { $in: user.followerList } }, "_id email");
       const followings = await User.find({ email: { $in: user.followList } }, "_id email");
+      console.log("Followers count:", followers.length);
+      console.log("Following count:", followings.length);
 
       res.status(200).json({
           nickname: user.nickname || "Unknown User",

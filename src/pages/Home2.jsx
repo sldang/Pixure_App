@@ -13,13 +13,20 @@ const Home2 = () => {
 
   useEffect(() => {
     const fetchFollowerPosts = async () => {
-        const email = user?.user?.email || null;
-        if (!email) return;
+        if (!user || !user.user?.email) {
+            console.error("User email not available");
+            return;
+        }
+
+        const email = user.user.email;
+        console.log("Fetching follower posts for email:", email);
 
         try {
             const response = await axios.get(`${BASE_URL}/api/posts/following/${email}`, {
                 headers: { Authorization: `Bearer ${user.token}` },
             });
+            console.log("Follower posts fetched:", response.data);
+
             setFollowerPosts(response.data);
         } catch (error) {
             console.error("Error fetching follower posts:", error);
@@ -28,6 +35,7 @@ const Home2 = () => {
 
     fetchFollowerPosts();
 }, [user]);
+
 
   return (
     <div className="flex">
