@@ -26,25 +26,56 @@ const Sidebar = () => {
   ]);
 
   const makeFriend = async (e) => {
-    console.log("makefriend")
+    console.log("makefriend");
     e.preventDefault();
-    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/follow`, {
-      method: "POST",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: userEmail,
-        followEmail: searchQuery
-      })
-    })
-    // Check response status and handle it as necessary
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Followed successfully:', data);
-    } else {
-      console.error('Failed to follow:', response.statusText);
+  
+    try {
+      // Get the logged-in user's ID from localStorage (nested structure)
+      const userData = JSON.parse(localStorage.getItem("user"));
+      const userId = userData?.user?.id; // Ensure we access the nested user ID safely
+  
+      if (!userId) {
+        console.error("User ID not found in localStorage");
+        return;
+      }
+  
+      // Fetch followee's user ID by email
+      const followeeResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/by-email`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: searchQuery }) // Send the search query as email
+      });
+  
+      if (!followeeResponse.ok) {
+        console.error("Failed to fetch followee ID");
+        return;
+      }
+  
+      const followeeData = await followeeResponse.json();
+      const followeeId = followeeData._id; // Retrieve followee's user ID
+  
+      // Send follow request with user IDs
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/follow`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          followerId: userId, // Logged-in user's ID
+          followeeId: followeeId // Followee's ID
+        })
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Followed successfully:", data);
+      } else {
+        console.error("Failed to follow:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error in makeFriend:", error);
     }
-  }
-
+  };
+  
+  
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
