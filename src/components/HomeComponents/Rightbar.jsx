@@ -11,14 +11,7 @@ const Rightbar = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      
-      if (!userId) {
-        console.error("User ID not available");
-        return;
-      }
-
-      console.log("Fetching profile for userId:", userId);
-
+   
       try {
         
         const response = await axios.get(`/api/profile/${user.user.id}`, {
