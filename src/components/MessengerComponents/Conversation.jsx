@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
 import "./Conversation.css"
 import axios from "axios";
+import React, { memo } from "react";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 //axios.defaults.baseURL = 'http://localhost:5000';
 
-export default function Conversation({conversation, currentUser}) {
+const Conversation = memo(function Conversation({ conversation, currentUser}){
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false)
@@ -19,7 +20,7 @@ export default function Conversation({conversation, currentUser}) {
     }
 
     const friendId = conversation.members.find((m) => m !== currentUser.user.id);
-    console.log("Friend ID: ", friendId);
+    //console.log("Friend ID: ", friendId);
 
     if(!friendId || hasError) {
       console.error("Friend ID is invalid:", friendId, hasError);
@@ -94,4 +95,6 @@ export default function Conversation({conversation, currentUser}) {
       <span className="conversationName">{user.nickname}</span>
     </div>
   );
-}
+});
+
+export default Conversation;
