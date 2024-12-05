@@ -62,6 +62,8 @@ const Home2 = () => {
                 img={post.imageData || null}
                 likes={post.likes}
                 comments={post.comments || []}
+                onLike={() => handleLike(post._id)} 
+                onComment={(commentContent) => handleComment(post._id, commentContent)}
               />
             ))
           )}

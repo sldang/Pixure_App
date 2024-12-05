@@ -1,30 +1,49 @@
-import React, { useState, useEffect, useContext } from 'react';
-const Post = ({ user, content, time, img, likes, comments, onLike, onComment, onDelete, onUpdate, onDeleteComment }) => {
+import React, { useState } from 'react';
+
+const Post = ({
+  user,
+  content,
+  time,
+  img,
+  likes,
+  comments = [], // Default to an empty array
+  onLike,
+  onComment,
+  onDelete,
+  onUpdate,
+  onDeleteComment,
+}) => {
   const [commentInput, setCommentInput] = useState("");
 
   const handleCommentSubmit = () => {
     if (commentInput.trim()) {
-      onComment(commentInput);
+      if (typeof onComment === "function") {
+        onComment(commentInput); // Call the parent function
+      } else {
+        console.error("onComment is not a function or is missing.");
+      }
       setCommentInput("");
     }
   };
 
   return (
-    <div className='w-full rounded-md shadow-lg mt-[30px] mb-[30px]'>
-      <div className='p-[10px]'>
-        <div className='flex items-center justify-between'>
+    <div className="w-full rounded-md shadow-lg mt-[30px] mb-[30px]">
+      <div className="p-[10px]">
+        <div className="flex items-center justify-between">
           <div>
-            <span className='font-bold ml-[10px] mr-[10px]'>{user}</span>
-            <span className='text-sm'>{time}</span>
+            <span className="font-bold ml-[10px] mr-[10px]">{user}</span>
+            <span className="text-sm">{time}</span>
           </div>
-          <div className='flex'>
-            <button onClick={onUpdate} className='text-blue-500 mr-2'>Update</button>
-            <button onClick={onDelete} className='text-red-500'>Delete</button>
-          </div>
+          {onUpdate && onDelete && (
+            <div className="flex">
+              <button onClick={onUpdate} className="text-blue-500 mr-2">Update</button>
+              <button onClick={onDelete} className="text-red-500">Delete</button>
+            </div>
+          )}
         </div>
       </div>
-      <div className='mt-[20px] mb-[20px]'>
-        {img && <img src={img} alt="Uploaded content" className='w-full h-auto mb-[10px]' />}
+      <div className="mt-[20px] mb-[20px]">
+        {img && <img src={img} alt="Uploaded content" className="w-full h-auto mb-[10px]" />}
         <span>{content}</span>
       </div>
       <div className="mt-[10px]">
@@ -39,20 +58,21 @@ const Post = ({ user, content, time, img, likes, comments, onLike, onComment, on
         />
         <button onClick={handleCommentSubmit}>Comment</button>
         <div className="mt-[10px]">
-        {comments.map((comment, index) => (
-  <div key={index} className="text-sm flex justify-between items-center">
-    <span>
-      <strong>{comment.userId?.nickname || "Unknown User"}:</strong> {comment.content}
-    </span>
-    <button
-      className="text-red-500 ml-2"
-      onClick={() => onDeleteComment(comment._id)}
-    >
-      Delete
-    </button>
-  </div>
-))}
-
+          {Array.isArray(comments) && comments.map((comment, index) => (
+            <div key={index} className="text-sm flex justify-between items-center">
+              <span>
+                <strong>{comment.userId?.nickname || "Unknown User"}:</strong> {comment.content}
+              </span>
+              {onDeleteComment && (
+                <button
+                  className="text-red-500 ml-2"
+                  onClick={() => onDeleteComment(comment._id)}
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
