@@ -125,42 +125,44 @@ router.delete("/:id", async (req, res) => {
     return res.status(403).json("You can delete only your account!");
   }
 });
-//get profile info
 router.get("/profile/:id", async (req, res) => {
-  const idOrEmail = req.params.id; // Get the ID or email from the request
-  console.log("Request received for profile:", idOrEmail);
+  const userId = req.params.id; // Get userId from route parameters
+  console.log("Request received for profile:", userId);
 
   try {
-    let user;
-
-    // Check if the value is a valid ObjectId
-    if (mongoose.Types.ObjectId.isValid(idOrEmail)) {
-      user = await User.findById(idOrEmail); // Query by ObjectId
-    } else {
-      user = await User.findOne({ email: idOrEmail }); // Query by email
-    }
-
+    // Fetch the user by their ObjectId
+    const user = await User.findById(userId); 
     if (!user) {
-      console.error("No user found for ID or email:", idOrEmail);
+      console.error("No user found for ID:", userId);
       return res.status(404).json({ error: "User not found" });
     }
 
     console.log("User found:", user);
 
-    const followers = await User.find({ _id: { $in: user.followerList } }, "_id nickname");
-    const followings = await User.find({ _id: { $in: user.followList } }, "_id nickname");
+    // Fetch followList emails
+    const followEmails = user.followList || [];
+    console.log("Followed Emails:", followEmails);
 
+    // Fetch corresponding userIds for the followList emails
+    const followedUsers = await User.find({ email: { $in: followEmails } }, "_id email");
+    const followedUserIds = followedUsers.map((user) => user._id);
+
+    console.log("Followed User IDs:", followedUserIds);
+
+    // Return the follow list and followed userIds
     res.status(200).json({
       nickname: user.nickname || "Unknown User",
-      followersCount: followers.length,
-      followingCount: followings.length,
+      followersCount: user.followerList?.length || 0,
+      followingCount: followEmails.length || 0,
       profilePicture: user.profilePicture,
+      followedUserIds, // Pass back the corresponding userIds for emails
     });
   } catch (err) {
     console.error("Error fetching user profile:", err);
     res.status(500).json({ error: "Error fetching user profile", details: err.message });
   }
 });
+
 
 //get friends
 router.get("/friends/:userId", async (req, res) => {

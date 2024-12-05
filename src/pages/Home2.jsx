@@ -14,40 +14,28 @@ const Home2 = () => {
   useEffect(() => {
     const fetchFollowerPosts = async () => {
       try {
-        // Check if followList is available
-        const followList = user?.user?.followList || [];
+        // Step 1: Fetch user profile to get followed user IDs
+        const profileResponse = await axios.get(`/api/users/profile/${user.user.id}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        const followedUserIds = profileResponse.data.followedUserIds;
 
-        // Fetch posts for each user in followList
-        const postsPromises = followList.map(async (email) => {
-          try {
-            // Fetch userId from email
-            const userResponse = await axios.post(
-              "/api/users/by-email",
-              { email },
-              { headers: { "Content-Type": "application/json" } }
-            );
-            const { _id: userId } = userResponse.data;
+        console.log("Followed User IDs:", followedUserIds);
 
-            // Fetch posts for the userId
-            const postsResponse = await axios.get(`/api/posts/profile/${userId}`, {
-              headers: { Authorization: `Bearer ${user.token}` },
-            });
-
-            return postsResponse.data;
-          } catch (err) {
-            console.error(`Error fetching data for email: ${email}`, err.message);
-            return [];
-          }
+        // Step 2: Fetch posts for each followed user ID
+        const postsPromises = followedUserIds.map(async (userId) => {
+          const postsResponse = await axios.get(`/api/posts/profile/${userId}`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          });
+          return postsResponse.data; // Return posts for this userId
         });
 
-        // Combine all posts into a single array
         const postsArray = await Promise.all(postsPromises);
         const combinedPosts = postsArray.flat();
 
-        // Sort posts by creation date in descending order
+        // Step 3: Sort combined posts by date (descending order)
         combinedPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-        // Update the state with sorted posts
         setFollowerPosts(combinedPosts);
       } catch (error) {
         console.error("Error fetching posts from followed users:", error.message);
