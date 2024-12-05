@@ -44,6 +44,61 @@ const Home2 = () => {
 
     fetchFollowerPosts();
   }, [user]);
+ // Define handleLike function
+ const handleLike = async (postId) => {
+  try {
+    await axios.put(
+      `/api/posts/${postId}/like`,
+      { userId: user.user.id },
+      {
+        headers: { Authorization: `Bearer ${user.token}` },
+      }
+    );
+
+    // Update the local state to reflect the like
+    setFollowerPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              likes: post.likes.includes(user.user.id)
+                ? post.likes.filter((id) => id !== user.user.id) // Unlike
+                : [...post.likes, user.user.id], // Like
+            }
+          : post
+      )
+    );
+  } catch (error) {
+    console.error("Error liking post:", error);
+  }
+};
+
+// Define handleComment function
+const handleComment = async (postId, commentContent) => {
+  try {
+    const response = await axios.post(
+      `/api/posts/${postId}/comments`,
+      {
+        userId: user.user.id,
+        content: commentContent,
+      },
+      {
+        headers: { Authorization: `Bearer ${user.token}` },
+      }
+    );
+
+    // Update the local state to reflect the new comment
+    setFollowerPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? { ...post, comments: [...post.comments, response.data] }
+          : post
+      )
+    );
+  } catch (error) {
+    console.error("Error adding comment:", error);
+  }
+};
 
   return (
     <div className="flex">
