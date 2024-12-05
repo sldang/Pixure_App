@@ -8,9 +8,22 @@ const Post = require('../models/Post');
 const express = require('express');
 const mongoose = require("mongoose");
 // CORS middleware setup
+
+const allowedOrigins = [
+  'http://localhost:3000', // Local development
+  'https://pixure-app-3h6l.onrender.com', // Production
+];
+
 router.use(
   cors({
-    origin: 'https://pixure-app-3h6l.onrender.com' ,
+    origin: function (origin, callback) {
+      if(!origin) return callback(null, true);
+      if(allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -30,6 +43,28 @@ const upload = multer({
     }
   },
 });
+
+ router.get("/", async (req, res) => {
+  const { userId } = req.query;
+  
+  if(!userId) {
+    return res.status(400).json({ error: "Missing userId query parameter" });
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error fetching user:", err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+ });
+
 router.post("/by-email", async (req, res) => {
   const { email } = req.body;
 
