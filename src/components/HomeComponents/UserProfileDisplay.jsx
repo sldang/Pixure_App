@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AuthContext } from "../../contexts/AuthContext";
-import axios from 'axios';
 
-axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
+const API_BASE_URL =  "https://pixure-new-server.onrender.com";
 
 const UserProfileDisplay = ({
   nickname,
@@ -40,7 +39,7 @@ const UserProfileDisplay = ({
         return;
       }
 
-      const response = await axios(`/api/users/${userId}/bio`, {
+      const response = await fetch(`http://localhost:5000/api/users/${userId}/bio`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +78,7 @@ const UserProfileDisplay = ({
     formData.append("profilePicture", file);
 
     try {
-      const response = await axios(`/api/users/${userId}/upload`, {
+      const response = await fetch(`https://pixure-server.onrender.com/api/users/${userId}/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -103,9 +102,9 @@ const UserProfileDisplay = ({
     const fetchProfileImage = async () => {
       try {
         const userId = user ? user.user.id : null;
-        const response = await axios(`/api/users/profile/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/api/users/profile/${userId}`);
         const data = await response.json();
-        setProfilePicture(data.profilePicture || `/api/placeholder/96/96`);
+        setProfilePicture(data.profilePicture || `${API_BASE_URL}/api/placeholder/96/96`);
       } catch (error) {
         console.error('Error fetching profile image:', error);
       }
@@ -117,7 +116,7 @@ const UserProfileDisplay = ({
 
         if(!userId) return;
 
-        const response = await axios(`/api/users/profile/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/api/users/profile/${userId}`);
         if(!response.ok){
           throw new Error("Failed to fetch user bio");
         }
