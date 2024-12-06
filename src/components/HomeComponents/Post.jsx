@@ -9,8 +9,8 @@ const Post = ({ user, time, content }) => {
                 <span className='text-sm'>{time}</span>
             </div>
         </div>
-        <div className='mt-[20px] mb-[20px]'>
-          <span>{content}</span>  
+        <div className='mt-[20px] mb-[20px] text-left'>
+          <span className='pl-[20px]'>{content}</span>  
         </div>
     </div>
   );
