@@ -4,11 +4,26 @@ const bcryptjs = require("bcryptjs");
 const cors = require('cors');
 const jwt = require("jsonwebtoken");
 const multer = require('multer');
-
+const Post = require('../models/Post');
+const express = require('express');
+const mongoose = require("mongoose");
 // CORS middleware setup
+
+const allowedOrigins = [
+  'http://localhost:3000', // Local development
+  'https://pixure-app-3h6l.onrender.com', // Production
+];
+
 router.use(
   cors({
-    origin: 'https://pixure-app-3h6l.onrender.com' ,
+    origin: function (origin, callback) {
+      if(!origin) return callback(null, true);
+      if(allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -28,6 +43,85 @@ const upload = multer({
     }
   },
 });
+
+ router.get("/", async (req, res) => {
+  const { userId } = req.query;
+  
+  if(!userId) {
+    return res.status(400).json({ error: "Missing userId query parameter" });
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error fetching user:", err.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+ });
+
+router.post("/by-email", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Return the user's ID and other necessary data
+    res.status(200).json({ _id: user._id, nickname: user.nickname });
+  } catch (err) {
+    console.error("Error fetching user by email:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+// Get posts of all followed users
+router.get("/users/followed-posts/:id", async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const followEmails = user.followList || [];
+    console.log("Followed Emails:", followEmails);
+
+    // Find userIds for all emails in the followList
+    const followedUsers = await User.find({ email: { $in: followEmails } }, "_id email");
+    const followedUserIds = followedUsers.map((user) => user._id);
+    console.log("Followed User IDs:", followedUserIds);
+
+    // Fetch posts for each followed userId
+    const posts = await Promise.all(
+      followedUserIds.map((id) =>
+        Post.find({ userId: id })
+          .populate("userId", "nickname")
+          .populate("comments.userId", "nickname")
+      )
+    );
+
+    // Flatten and sort all posts by creation date
+    const allPosts = posts.flat().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    console.log("Total Posts Fetched:", allPosts.length);
+
+    res.status(200).json(allPosts);
+  } catch (err) {
+    console.error("Error fetching posts of followed users:", err);
+    res.status(500).json({ error: "Error fetching posts of followed users", details: err.message });
+  }
+});
+
+
 
 //update user
 router.put("/:id", async (req, res) => {
@@ -66,41 +160,45 @@ router.delete("/:id", async (req, res) => {
     return res.status(403).json("You can delete only your account!");
   }
 });
-
-// Get a user profile with nickname and follower/following counts
-router.get("/profile/:userId", async (req, res) => {
-  const userId = req.params.userId; // Get userId from the request parameters
+router.get("/profile/:id", async (req, res) => {
+  const userId = req.params.id; // Get userId from route parameters
+  console.log("Request received for profile:", userId);
 
   try {
-    // Find the user by ID and populate the followerList and followList
-    const user = await User.findById(userId)
-      .populate('followerList', '_id')  // Only retrieve _id for count
-      .populate('followList', '_id');    // Only retrieve _id for count
-
+    // Fetch the user by their ObjectId
+    const user = await User.findById(userId); 
     if (!user) {
-      return res.status(404).json("User not found");
+      console.error("No user found for ID:", userId);
+      return res.status(404).json({ error: "User not found" });
     }
 
-    // Directly access the nickname from the user object
-    const nickname = user.nickname; // Assuming nickname is stored directly in the user document
+    console.log("User found:", user);
 
-    // Create the profile data response
-    const profileData = {
-      nickname: nickname || "Unknown User",  // Use nickname as the display name
-      postsCount: user.posts ? user.posts.length : 0,  // Count of posts
-      followersCount: user.followerList.length,  // Count of followers
-      followingCount: user.followList.length,     // Count of followings
-      profilePicture: user.profilePicture,  // get profile picture
-    };
+    // Fetch followList emails
+    const followEmails = user.followList || [];
+    console.log("Followed Emails:", followEmails);
 
-    res.status(200).json(profileData);
+    // Fetch corresponding userIds for the followList emails
+    const followedUsers = await User.find({ email: { $in: followEmails } }, "_id email");
+    const followedUserIds = followedUsers.map((user) => user._id);
+
+    console.log("Followed User IDs:", followedUserIds);
+
+    // Return the follow list and followed userIds
+    res.status(200).json({
+      nickname: user.nickname || "Unknown User",
+      followersCount: user.followerList?.length || 0,
+      followingCount: followEmails.length || 0,
+      profilePicture: user.profilePicture,
+      followedUserIds, // Pass back the corresponding userIds for emails
+    });
   } catch (err) {
     console.error("Error fetching user profile:", err);
-    res.status(500).json("An error occurred while fetching user profile");
+    res.status(500).json({ error: "Error fetching user profile", details: err.message });
   }
 });
 
-module.exports = router;
+
 //get friends
 router.get("/friends/:userId", async (req, res) => {
   try {
@@ -115,37 +213,42 @@ router.get("/friends/:userId", async (req, res) => {
       const { _id, username, profilePicture } = friend;
       friendList.push({ _id, username, profilePicture });
     });
-    res.status(200).json(friendList)
+    res.status(200).json(friendList);
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
-// Follow a user by email
 router.put("/follow", async (req, res) => {
-  const { email, followEmail } = req.body;
+  const { followerEmail, followeeEmail } = req.body;
 
-  if (email === followEmail) {
+  if (followerEmail === followeeEmail) {
     return res.status(403).json("You cannot follow yourself");
   }
 
   try {
-    // Find the target user (to be followed) and the current user by email
-    const user = await User.findOne({ email: followEmail });
-    const currentUser = await User.findOne({ email: email });
+    // Convert emails to user IDs
+    const follower = await User.findOne({ email: followerEmail });
+    const followee = await User.findOne({ email: followeeEmail });
 
-    // Check if users exist
-    if (!user || !currentUser) {
+    if (!follower || !followee) {
       return res.status(404).json("User not found");
     }
 
+    const followerId = follower._id;
+    const followeeId = followee._id;
+
     // Check if already following
-    if (!user.followers.includes(currentUser._id)) {
-      await user.updateOne({ $push: { followers: currentUser._id } });
-      await currentUser.updateOne({ $push: { followings: user._id } });
-      res.status(200).json("User has been followed");
+    if (!followee.followers.includes(followerId)) {
+      // Add follower ID to followee's followers list
+      await followee.updateOne({ $addToSet: { followers: followerId } });
+
+      // Add followee email to follower's followList
+      await follower.updateOne({ $addToSet: { followList: followeeEmail } });
+
+      return res.status(200).json("User has been followed");
     } else {
-      res.status(409).json("You already follow this user");
+      return res.status(409).json("You already follow this user");
     }
   } catch (err) {
     console.error("Error following user:", err);
@@ -153,7 +256,6 @@ router.put("/follow", async (req, res) => {
   }
 });
 
-//unfollow a user
 
 router.put("/:id/unfollow", async (req, res) => {
   if (req.body.userId !== req.params.id) {
@@ -162,16 +264,16 @@ router.put("/:id/unfollow", async (req, res) => {
       const currentUser = await User.findById(req.body.userId);
       if (user.followers.includes(req.body.userId)) {
         await user.updateOne({ $pull: { followers: req.body.userId } });
-        await currentUser.updateOne({ $pull: { followings: req.params.id } });
-        res.status(200).json("user has been unfollowed");
+        await currentUser.updateOne({ $pull: { followList: req.params.id } });
+        res.status(200).json("User has been unfollowed");
       } else {
-        res.status(403).json("you dont follow this user");
+        res.status(403).json("You don't follow this user");
       }
     } catch (err) {
       res.status(500).json(err);
     }
   } else {
-    res.status(403).json("you cant unfollow yourself");
+    res.status(403).json("You can't unfollow yourself");
   }
 });
 
