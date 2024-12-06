@@ -10,7 +10,7 @@ router.use(cors({
     credentials: true // Enable sending cookies with requests if needed
 }));
 
-router.post("/createCommunity", async (req, res) => {
+router.post("/api/createCommunity", async (req, res) => {
     console.log("Create community request recieved");
     try{
         const{ name, communityPosts, communityMembers,  } = req.body;
@@ -35,7 +35,7 @@ router.post("/createCommunity", async (req, res) => {
     }
 });
 
-router.post("/followCommunity", async (req, res) => {
+router.post("/api/followCommunity", async (req, res) => {
     console.log("Follow request received");
     try {
         const { email, communityName } = req.body; // The email of the user making the follow request and the email to follow
