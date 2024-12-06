@@ -13,7 +13,7 @@ router.use(cors({
 router.post("/api/createCommunity", async (req, res) => {
     console.log("Create community request recieved");
     try{
-        const{ name, communityPosts, communityMembers,  } = req.body;
+        const{ name, communityPosts, communityMembers, description, restriction, image  } = req.body;
         if (!name) {
             return res.status(400).json({ error: "name is required" });
         }
