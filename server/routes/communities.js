@@ -10,30 +10,30 @@ router.use(cors({
     credentials: true // Enable sending cookies with requests if needed
 }));
 
-router.post("/api/createCommunity", async (req, res) => {
-    console.log("Create community request recieved");
-    try{
-        const{ name, communityPosts, communityMembers, description, restriction, image  } = req.body;
-        if (!name) {
-            return res.status(400).json({ error: "name is required" });
-        }
-        const newCommunity = new Community({
-            name,
-            communityPosts,
-            communityMembers,
-            description, 
-            restriction,
-            image,
+// app.post("/api/createCommunity", async (req, res) => {
+//     console.log("Create community request recieved");
+//     try{
+//         const{ name, communityPosts, communityMembers, description, restriction, image  } = req.body;
+//         if (!name) {
+//             return res.status(400).json({ error: "name is required" });
+//         }
+//         const newCommunity = new Community({
+//             name,
+//             communityPosts,
+//             communityMembers,
+//             description, 
+//             restriction,
+//             image,
 
-        });
+//         });
 
-        await newCommunity.save();
-        res.status(201).json({message: "Community created successfully"});
-    } catch(error){
-        console.error("error creating community:", error);
-        res.status(500).json({error:"an error occured while creating community"})
-    }
-});
+//         await newCommunity.save();
+//         res.status(201).json({message: "Community created successfully"});
+//     } catch(error){
+//         console.error("error creating community:", error);
+//         res.status(500).json({error:"an error occured while creating community"})
+//     }
+// });
 
 router.post("/api/followCommunity", async (req, res) => {
     console.log("Follow request received");

@@ -4,7 +4,11 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     firstName: { type: String },
     lastName: { type: String },
-    nickname: { type: String },
+    nickname: { 
+        type: String,
+        unique: true,
+
+    },
     email: {
         type: String,
         required: true, // Enforce email requirement
