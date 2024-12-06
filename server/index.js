@@ -247,6 +247,8 @@ app.get("/api/login", async (req, res) => {
     res.json("test")
 })
 
+
+
 // Login endpoint
 app.post("/api/login", async (req, res) => {
     console.log("Login request received:", req.body); // Log incoming request data
@@ -285,6 +287,30 @@ app.post("/api/login", async (req, res) => {
     }
 });
 
+//get bio
+app.get("/api/bio", async (req, res) => {
+    console.log("get bio");
+    const email = req.query.email;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.status(200).json({ username: user.personalBio });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+app.post("/api/bio", async (req, res) => {
+    console.log("post bio")
+    const { email, bio } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        user.personalBio = bio;
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
 
 app.post("/api/follow", async (req, res) => {
     console.log("Follow request received");

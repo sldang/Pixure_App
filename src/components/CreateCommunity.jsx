@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCommunityContext } from "../contexts/CommunityContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const CreateCommunity = () => {
   const navigate = useNavigate();
-  const { dispatch } = useCommunityContext();
-
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     imageUrl: "",
     communityType: "General (No Age Restriction)", // Default community type
   });
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Handle form field changes
   const handleChange = (e) => {
@@ -37,22 +37,57 @@ const CreateCommunity = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(""); // Clear previous errors
+    setSuccessMessage(""); // Clear previous success messages
+    setLoading(true); // Show loading spinner during the process
 
-    if (!formData.name || !formData.description) {
-      toast.error("Please fill out all required fields!");
-      return;
+    try {
+      // Determine restriction based on communityType
+      const restrict =
+        formData.communityType === "General (No Age Restriction)" ? false : true;
+
+      // Make API request to create community
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/createCommunity`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.name,
+            communityPosts: [],
+            communityMembers: [],
+            description: formData.description,
+            restriction: restrict,
+            imageString: formData.imageUrl,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        setSuccessMessage("Community created successfully!"); // Show success message
+        setFormData({
+          name: "",
+          description: "",
+          imageUrl: "",
+          communityType: "General (No Age Restriction)",
+        }); // Reset form fields
+        setTimeout(() => navigate("/explore"), 2000);
+      } else {
+        const errorData = await response.json(); // Parse server error
+        setErrorMessage(
+          errorData.error || "Community creation failed. Please try again."
+        ); // Set error message
+      }
+    } catch (error) {
+      setErrorMessage(
+        "An error occurred during community creation. Please try again."
+      ); // Catch network errors
+      console.error("Community creation error:", error); // Log error for debugging
+    } finally {
+      setLoading(false); // Stop loading spinner
     }
-
-    const newCommunity = {
-      ...formData,
-      members: 0,
-    };
-
-    dispatch({ type: "ADD_COMMUNITY", payload: newCommunity });
-    toast.success(`Community "${formData.name}" has been created!`);
-    setTimeout(() => navigate("/explore"), 2000);
   };
 
   return (
@@ -73,6 +108,7 @@ const CreateCommunity = () => {
               onChange={handleChange}
               style={styles.input}
               placeholder="Enter a community name"
+              required
             />
           </div>
 
@@ -88,6 +124,7 @@ const CreateCommunity = () => {
               onChange={handleChange}
               style={styles.textarea}
               placeholder="Briefly describe your community"
+              required
             />
           </div>
 
@@ -127,8 +164,12 @@ const CreateCommunity = () => {
 
           {/* Action Buttons */}
           <div style={styles.buttonGroup}>
-            <button type="submit" style={styles.createButton}>
-              Create Community
+            <button
+              type="submit"
+              style={styles.createButton}
+              disabled={loading}
+            >
+              {loading ? "Creating..." : "Create Community"}
             </button>
             <button
               type="button"
@@ -138,12 +179,18 @@ const CreateCommunity = () => {
               Cancel
             </button>
           </div>
+
+          {/* Display Error or Success Messages */}
+          {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+          {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
         </form>
       </div>
       <ToastContainer />
     </div>
   );
 };
+
+
 
 // Styles for the component
 const styles = {

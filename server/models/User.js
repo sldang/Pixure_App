@@ -24,10 +24,12 @@ const userSchema = new Schema({
         type: String,
         default: 'https://via.placeholder.com/150', // Default profile picture
     },
+
     parentAccount: { type: String, default: '' },
     parentAccountID: { type: String },
     childAccount: { type: String },
     childAccountID: { type: String },
+
 });
 
 module.exports = mongoose.model("User", userSchema, "User");
