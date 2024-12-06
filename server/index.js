@@ -405,7 +405,7 @@ app.get('/api/user/:userEmail/follow-stats', async (req, res) => {
 app.post("/api/createCommunity", async (req, res) => {
     console.log("Create community request recieved");
     try{
-        const{ name, communityPosts, communityMembers,  } = req.body;
+        const{ name, communityPosts, communityMembers, description, restriction, image  } = req.body;
         if (!name) {
             return res.status(400).json({ error: "name is required" });
         }
