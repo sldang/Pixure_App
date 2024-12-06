@@ -42,9 +42,9 @@ const Post = ({
           )}
         </div>
       </div>
-      <div className="mt-[20px] mb-[20px] pl-[30px]">
+      <div className="mt-[20px] mb-[20px] text-left">
         {img && <img src={img} alt="Uploaded content" className="w-full h-auto mb-[10px]" />}
-        <span>{content}</span>
+        <span className="pl-[20px]">{content}</span>
       </div>
       <div className="mt-[10px]">
         <button onClick={onLike}>❤️ {likes?.length || 0}</button>
