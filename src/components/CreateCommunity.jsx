@@ -39,6 +39,7 @@ const CreateCommunity = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("attmept");
     setErrorMessage(""); // Clear previous errors
     setSuccessMessage(""); // Clear previous success messages
     setLoading(true); // Show loading spinner during the process
@@ -66,7 +67,7 @@ const CreateCommunity = () => {
       );
 
       if (response.ok) {
-        setSuccessMessage("Community created successfully!"); // Show success message
+        setSuccessMessage("Community created !"); // Show success message
         setFormData({
           name: "",
           description: "",
