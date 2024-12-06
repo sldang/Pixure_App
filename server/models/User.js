@@ -28,6 +28,7 @@ const userSchema = new Schema({
     parentAccountID: { type: String },
     childAccount: { type: String },
     childAccountID: { type: String },
+    bio: { type: String, default: "Everyone has a story to tell. I'm gonna tell you mine."},
 });
 
 module.exports = mongoose.model("User", userSchema, "User");

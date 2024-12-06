@@ -343,6 +343,36 @@ router.post('/:id/upload', upload.single('profilePicture'), async (req, res) => 
   }
 });
 
+router.put('/:id/bio', async (req, res) => {
+  const userId = req.params.id;
+  const { bio } = req.body;
+
+  if(!bio) {
+    return res.status(400).json({ error: "Bio is required" });
+  }
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { bio },
+      { new: true },
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({
+      message: "Bio updated successfully",
+      bio: user.bio,
+    });
+
+  } catch (err) {
+    console.error("Error updating bio:", err);
+    res.status(500).json({ error: "Error updating bio", details: err.message });
+  }
+});
+
 router.use((req, res, next) => {
   res.on('finish', () => {
     console.log(`Response: ${res.statusCode}, Content-Type: ${res.get('Content-Type')}`);
