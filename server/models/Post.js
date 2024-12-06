@@ -1,4 +1,12 @@
-const mongoose = require("mongoose");
+
+
+const mongoose = require('mongoose');
+
+const commentSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  content: String,
+  createdAt: { type: Date, default: Date.now },
+});
 
 const postSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -6,7 +14,9 @@ const postSchema = new mongoose.Schema({
   img: String,
   imageData: String,
   likes: { type: Array, default: [] },
-  
-}, { timestamps: true }); 
+
+  comments: [commentSchema], // Nested comments schema
+}, { timestamps: true });
+
 
 module.exports = mongoose.model("Post", postSchema, 'Post');

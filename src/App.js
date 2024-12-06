@@ -1,17 +1,15 @@
-// src/App.js
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import SignupPage from './pages/Signup';
 import LoginPage from './pages/Login';
-import HomePage from './pages/Home';
+import HomePage from './pages/Home'; // Correctly use HomePage here
 import MessengerPage from './pages/Messenger';
-import FriendPage from './components/FriendPost';
 import ExplorePage from './pages/Explore';
 import CommunitiesPage from './pages/Communities';
 import CreateCommunity from './components/CreateCommunity';
 import Sidebar from './components/HomeComponents/Sidebar';
 import EditProfile from './components/EditProfile';
-
+import Home2 from './pages/Home2';
 import { useContext } from 'react';
 import { AuthContext } from './contexts/AuthContext';
 import { CommunityProvider } from './contexts/CommunityContext';
@@ -36,14 +34,14 @@ function App() {
               <Route path="/login" element={user ? <Navigate to="/home" /> : <LoginPage />} />
 
               {/* Protected Routes */}
-              <Route path="/" element={<ProtectedRoute user={user}><FriendPage /></ProtectedRoute>} />
-              <Route path="/home" element={<ProtectedRoute user={user}><FriendPage /></ProtectedRoute>} />
+              <Route path="/" element={<ProtectedRoute user={user}><HomePage /></ProtectedRoute>} /> {/* Corrected */}
+              <Route path="/home" element={<ProtectedRoute user={user}><Home2 /></ProtectedRoute>} />
               <Route path="/messenger" element={<ProtectedRoute user={user}><MessengerPage /></ProtectedRoute>} />
               <Route path="/explore" element={<ProtectedRoute user={user}><ExplorePage /></ProtectedRoute>} />
               <Route path="/communities" element={<ProtectedRoute user={user}><CommunitiesPage /></ProtectedRoute>} />
               <Route path="/create-community" element={<ProtectedRoute user={user}><CreateCommunity /></ProtectedRoute>} />
               <Route path="/editprofile" element={<ProtectedRoute user={user}><EditProfile /></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute user={user}><HomePage /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute user={user}><HomePage /></ProtectedRoute>} /> {/* Optional: Adjust route */}
             </Routes>
           </CommunityProvider>
         </div>

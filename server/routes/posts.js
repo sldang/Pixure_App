@@ -8,12 +8,13 @@ const multer = require('multer');
 // CORS middleware setup
 router.use(
   cors({
-    origin: 'https://pixure-app-3h6l.onrender.com' ,
+    origin: 'https://pixure-app-3h6l.onrender.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   })
 );
+
 // Set up memory storage for multer to handle image uploads in memory
 const storage = multer.memoryStorage();
 const fileFilter = (req, file, cb) => {
@@ -57,18 +58,7 @@ router.post('/', upload.single('img'), async (req, res) => {
   }
 });
 
-module.exports = router;
-// Handle preflight requests (OPTIONS)
-router.options('*', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https:pixure-app-3h6l.onrender.com');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(204); // No content
-});
-
-
-// update a post
+// Update a post
 router.put('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -89,7 +79,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// delete a post
+// Delete a post
 router.delete('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -110,11 +100,11 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// like/dislike posts
+// Like/dislike posts
 router.put('/:id/like', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if(!post.likes.includes(req.body.userId)) {
+    if (!post.likes.includes(req.body.userId)) {
       await post.updateOne({ $push: { likes: req.body.userId } });
       res.status(200).json("Post liked!");
     } else {
@@ -125,12 +115,14 @@ router.put('/:id/like', async (req, res) => {
     console.error('Error liking/disliking post: ', err);
     res.status(500).json(err);
   }
-})
+});
 
 // Get all posts of user with userId
 router.get('/profile/:userId', async (req, res) => {
   try {
-    const posts = await Post.find({ userId: req.params.userId }).populate('userId', 'nickname'); // Populate nickname
+    const posts = await Post.find({ userId: req.params.userId })
+      .populate('userId', 'nickname')  // Populate nickname for post userId
+      .populate('comments.userId', 'nickname'); // Populate nickname for comments
     res.status(200).json(posts);
   } catch (err) {
     console.error('Error fetching user posts:', err);
@@ -142,10 +134,14 @@ router.get('/profile/:userId', async (req, res) => {
 router.get('/timeline/:userId', async (req, res) => {
   try {
     const currentUser = await User.findById(req.params.userId);
-    const userPosts = await Post.find({ userId: currentUser._id });
+    const userPosts = await Post.find({ userId: currentUser._id })
+      .populate('userId', 'nickname') // Populate nickname for post userId
+      .populate('comments.userId', 'nickname'); // Populate nickname for comments
     const friendPosts = await Promise.all(
       currentUser.followList.map((friendId) => {
-        return Post.find({ userId: friendId });
+        return Post.find({ userId: friendId })
+          .populate('userId', 'nickname') // Populate nickname for post userId
+          .populate('comments.userId', 'nickname'); // Populate nickname for comments
       })
     );
     res.status(200).json(userPosts.concat(...friendPosts));
@@ -153,21 +149,94 @@ router.get('/timeline/:userId', async (req, res) => {
     console.error('Error fetching timeline: ', err);
     res.status(500).json(err);
   }
-})
+});
 
-// Get all posts of user with userid
-router.get('/profile/:userId', async (req, res) => {
+// Add a comment to a post
+router.post('/:id/comments', async (req, res) => {
   try {
-    const posts = await Post.find({ userId: req.params.userId }).populate('userId', 'username profilePicture'); // Only pull specific fields
-    res.status(200).json(posts);
+    const { userId, content } = req.body;
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    const comment = { userId, content };
+    post.comments.push(comment);
+    await post.save();
+
+    // Populate the new comment with the userId's nickname
+    const newComment = post.comments[post.comments.length - 1];
+    const populatedComment = await Post.populate(newComment, { path: 'userId', select: 'nickname' });
+
+    res.status(201).json(populatedComment);
   } catch (err) {
-    console.error('Error fetching user posts:', err);
-    res.status(500).json(err);
+    console.error('Error adding comment:', err);
+    res.status(500).json({ error: "Error adding comment", details: err.message });
   }
 });
+
+
+// Get all comments for a post
+router.get('/:id/comments', async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id).populate('comments.userId', 'nickname');
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    res.status(200).json(post.comments);
+  } catch (err) {
+    console.error('Error fetching comments:', err);
+    res.status(500).json({ error: "Error fetching comments", details: err.message });
+  }
+});
+
 // Error handling middleware
 router.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({ error: "Unhandled error", details: err.message });
 });
+router.delete('/:postId/comments/:commentId', async (req, res) => {
+  try {
+    const { userId } = req.body; // Extract userId from the request body
+    const { postId, commentId } = req.params;
+
+    console.log("Request received - Post ID:", postId);
+    console.log("Request received - Comment ID:", commentId);
+    console.log("Request received - User ID:", userId);
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      console.error("Post not found");
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    console.log("Post found:", post);
+
+    // Check if the user is the post owner
+    const isPostOwner = String(post.userId) === userId;
+
+    // Find the comment index
+    const commentIndex = post.comments.findIndex((comment) => String(comment._id) === commentId);
+    if (commentIndex === -1) {
+      console.error("Comment not found");
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    console.log("Comment found at index:", commentIndex);
+
+    // Check if the user is the comment owner
+    const isCommentOwner = String(post.comments[commentIndex].userId) === userId;
+
+    // Allow deletion only if the user is the post owner or the comment owner
+    if (isPostOwner || isCommentOwner) {
+      post.comments.splice(commentIndex, 1); // Remove the comment from the array
+      await post.save(); // Save the updated post
+      return res.status(200).json({ message: "Comment deleted successfully." });
+    }
+
+    console.error("User not authorized to delete this comment");
+    return res.status(403).json({ error: "You are not authorized to delete this comment." });
+  } catch (err) {
+    console.error('Error deleting comment:', err);
+    res.status(500).json({ error: "Error deleting comment", details: err.message });
+  }
+});
+
 module.exports = router;

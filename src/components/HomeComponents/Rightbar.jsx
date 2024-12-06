@@ -1,71 +1,74 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { AuthContext } from "../../contexts/AuthContext";
+
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
 const Rightbar = () => {
-    const [followers, setFollowers] = useState([]);
-    const [followList, setFollowList] = useState([]);
+  const { user } = useContext(AuthContext); // Retrieve the logged-in user's data
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [profilePicture, setProfilePicture] = useState(null); // Add profile picture state
+  const [nickname, setNickname] = useState(""); // Add nickname state
 
-    const parsedData = JSON.parse(localStorage.getItem('user'));
-    const userEmail = parsedData && parsedData.user ? parsedData.user.email : null;
-
-    useEffect(() => {
-        const fetchFollowList = async () => {
-            if (!userEmail) return;
-            console.log(userEmail)
-
-            try {
-                // Get the followList from the backend if it isn't available in local storage
-                const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/getUserFollowers?email=${userEmail}`);
-                const data = await response.json();
-                setFollowList(data.followList || []);
-            } catch (error) {
-                console.error('Error fetching follow list:', error);
-            }
-        };
-
-        if (!parsedData.user.followList) {
-            fetchFollowList();
-        } else {
-            setFollowList(parsedData.user.followList);
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!user || !user.user?.id) {
+        console.error("User ID not available in AuthContext.");
+        return;
+      }
+    
+      console.log("Fetching profile for user ID:", user.user.id);
+    
+      try {
+        const response = await axios.get(`/api/users/profile/${user.user.id}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+    
+        if (!response.data) {
+          console.error("No data received from profile endpoint.");
+          return;
         }
-    }, [userEmail]);
+    
+        console.log("Profile data fetched:", response.data);
+    
+        setFollowersCount(response.data.followersCount || 0);
+        setFollowingCount(response.data.followingCount || 0);
+      } catch (error) {
+        console.error(
+          "Error fetching user profile:",
+          error.response?.data || error.message
+        );
+        alert("Failed to fetch profile data. Please try again.");
+      }
+    };
+    
+    fetchUserProfile();
+  }, [user]);
 
-    useEffect(() => {
-        const fetchFollowers = async () => {
-            if (followList.length === 0) return;
+  const defaultProfilePicture = "https://via.placeholder.com/150"; // Placeholder image
 
-            try {
-                const promises = followList.map((email) =>
-                    fetch(`${process.env.REACT_APP_SERVER_URL}/api/getUserByEmail?email=${email}`)
-                );
-
-                const responses = await Promise.all(promises);
-                const followersData = await Promise.all(responses.map(res => res.json()));
-                setFollowers(followersData);
-            } catch (error) {
-                console.error('Error fetching followers:', error);
-            }
-        };
-
-        fetchFollowers();
-    }, [followList]);
-
-    return (
-        <div className="max-w-md mx-auto p-4">
-            <h2 className="text-lg font-bold mb-4">Followers</h2>
-            {followers.map((follower, index) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b border-gray-200">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-full bg-gray-300"></div>
-                        <div>
-                            <p className="font-bold text-sm">{follower.username}</p>
-                        </div>
-                    </div>
-                    <button className="text-blue-500 text-sm font-semibold pl-4"> Message</button>
-                </div>
-            ))}
-            {followers.length === 0 && <p>No followers found.</p>}
-        </div>
-    );
+  return (
+    <div className="max-w-md mx-auto p-4">
+      <h2 className="text-lg font-bold mb-4">Profile Stats</h2>
+      <div className="flex justify-between py-2 border-b border-gray-200">
+        <p>Followers:</p>
+        <p>{followersCount}</p>
+      </div>
+      <div className="flex justify-between py-2 border-b border-gray-200">
+        <p>Following:</p>
+        <p>{followingCount}</p>
+      </div>
+      <div className="flex items-center mt-4">
+        <img
+          src={profilePicture || defaultProfilePicture}
+          alt="Profile"
+          className="w-16 h-16 rounded-full object-cover"
+        />
+        <p className="ml-4 font-medium">{nickname}</p>
+      </div>
+    </div>
+  );
 };
 
 export default Rightbar;
