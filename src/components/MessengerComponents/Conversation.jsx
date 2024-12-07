@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./Conversation.css";
 import axios from "axios";
 import React, { memo } from "react";
@@ -9,6 +9,7 @@ const Conversation = memo(function Conversation({ conversation, currentUser }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const userCache = useRef({}); // Cache for user data
 
   useEffect(() => {
     if (!conversation || !currentUser || !currentUser.user || !conversation.members) {
@@ -24,6 +25,13 @@ const Conversation = memo(function Conversation({ conversation, currentUser }) {
       return;
     }
 
+    // Check cache before making an API call
+    if (userCache.current[friendId]) {
+      setUser(userCache.current[friendId]);
+      setIsLoading(false);
+      return;
+    }
+
     const getUser = async () => {
       setIsLoading(true);
       setHasError(false);
@@ -33,6 +41,7 @@ const Conversation = memo(function Conversation({ conversation, currentUser }) {
         if (!res.data) {
           throw new Error("No user data returned");
         }
+        userCache.current[friendId] = res.data; // Store in cache
         setUser(res.data);
       } catch (err) {
         console.error("Error fetching user data:", err.response?.data || err.message);
@@ -64,6 +73,7 @@ const Conversation = memo(function Conversation({ conversation, currentUser }) {
 });
 
 export default Conversation;
+
 
 
 
