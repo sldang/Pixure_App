@@ -40,7 +40,7 @@ const UserProfileDisplay = ({
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/api/users/${userId}/bio`, {
+      const response = await fetch(`https://pixure-new-server.onrender.com/api/users/${userId}/bio`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
