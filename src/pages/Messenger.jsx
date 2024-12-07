@@ -9,6 +9,7 @@ import useSocket from "../hooks/useSocket";
 import useConversations from "../hooks/useConversations";
 import useMessages from "../hooks/useMessages";
 import axios from "axios";
+import socket from "../socket";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
@@ -91,6 +92,23 @@ useEffect(() => {
       }
   }
 }, [currentChat, fetchMessages, messageCache, handleNewMessage]);
+
+useEffect(() => {
+  if (!socket) return; // Ensure socket connection exists
+
+  const handleMessage = (newMessage) => {
+      // Only handle messages for the current chat
+      if (newMessage.conversationId === currentChat?._id) {
+          setMessages((prev) => [...prev, newMessage]);
+      }
+  };
+
+  socket.on("message", handleMessage); // Listen for new messages
+
+  return () => {
+      socket.off("message", handleMessage); // Clean up listener on unmount or dependency change
+  };
+}, [socket, currentChat, setMessages]);
 
   // Function to create a new chat
   const makeChat = async (e) => {
