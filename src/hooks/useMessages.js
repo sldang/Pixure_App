@@ -41,6 +41,7 @@ const handleNewMessage = (message) => {
     fetchMessages,
     handleNewMessage,
     addMessage,
+    setMessages
   };
 };
 

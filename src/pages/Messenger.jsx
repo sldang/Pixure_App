@@ -27,6 +27,7 @@ export default function Messenger() {
   const { conversations, fetchConversations, addConversation } = useConversations(userId);
   const {
     messages,
+    setMessages,
     newMessage,
     setNewMessage,
     handleNewMessage,
