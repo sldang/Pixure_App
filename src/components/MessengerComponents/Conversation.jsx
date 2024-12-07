@@ -1,120 +1,102 @@
-import React, { memo, useMemo, useCallback } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
+import "./Conversation.css"
 import axios from "axios";
-import "./Conversation.css";
+import React, { memo } from "react";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
+//axios.defaults.baseURL = 'http://localhost:5000';
 
-// Define a more specific type for the user
-interface User {
-  id: string;
-  nickname: string;
-  // Add other user properties as needed
-  [key: string]: any; // Allow additional properties
-}
-
-interface ConversationProps {
-  conversation: {
-    members: string[];
-    // other conversation properties
-  };
-  currentUser: {
-    user: {
-      id: string;
-      // other user properties
-    };
-  };
-}
-
-const Conversation: React.FC<ConversationProps> = memo(({ conversation, currentUser }) => {
-  // Use the User type here
-  const [user, setUser] = useState<User | null>(null);
+const Conversation = memo(function Conversation({ conversation, currentUser}){
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  const [hasError, setHasError] = useState(false)
 
-  // Memoize friendId to prevent unnecessary re-computations
-  const friendId = useMemo(() => {
-    if (!conversation || !currentUser || !conversation.members) return null;
-    return conversation.members.find((m) => m !== currentUser.user.id);
-  }, [conversation, currentUser]);
-
-  // Memoize the user fetching function
-  const getUser = useCallback(async () => {
-    if (!friendId) {
+  useEffect(()=>{
+    if (!conversation || !currentUser || !currentUser.user || !conversation.members) {
+      console.error("Invalid conversation or currentUser data");
       setHasError(true);
       setIsLoading(false);
       return;
     }
 
-    try {
-      setIsLoading(true);
-      const res = await axios.get(`/api/users?userId=${friendId}`);
-      
-      if (!res.data) {
-        throw new Error("No user data returned");
-      }
-      
-      setUser(res.data);
-      setHasError(false);
-    } catch (err) {
-      console.error("Error fetching user data:", err);
-      setHasError(true);
-    } finally {
+    const friendId = conversation.members.find((m) => m !== currentUser.user.id);
+    //console.log("Friend ID: ", friendId);
+
+    if(!friendId || hasError) {
+      console.error("Friend ID is invalid:", friendId, hasError);
       setIsLoading(false);
+      setHasError(true);
+      return; // Exit early to prevent unnecessary API calls
     }
-  }, [friendId]);
 
-  // Use useEffect to fetch user only when friendId changes
-  useEffect(() => {
+    const getUser = async () => {
+      try{
+        const res = await axios.get(`/api/users?userId=${friendId}`);
+        if (!res.data) {
+          throw new Error("No user data returned");
+        }
+        setUser(res.data);
+      }catch(err){
+        console.log("Error fetching user data:", err.response?.data || err.message);
+        setHasError(true)
+        setIsLoading(false)
+      } finally {
+        setIsLoading(false);
+      }
+    }; 
     getUser();
-  }, [getUser]);
-
-  // Render content based on loading and error states
-  const renderContent = () => {
-    const defaultAvatar = "https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0=";
-
-    if (isLoading) {
-      return (
-        <div className="conversation">
-          <img
-            className="conversationImg"
-            src={defaultAvatar}
-            alt="Loading Profile"
-          />
-          <span className="conversationName">Loading...</span>
-        </div>
-      );
-    }
-
-    if (hasError || !user) {
-      return (
-        <div className="conversation">
-          <img
-            className="conversationImg"
-            src={defaultAvatar}
-            alt="Error Profile"
-          />
-          <span className="conversationName">Error fetching user</span>
-        </div>
-      );
-    }
-
+  }, [currentUser, conversation, hasError])
+  
+  /*
+  return (
+    <div className="conversation">
+        <img className="conversationImg" 
+        src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+        />
+        <span className="conversationName">
+          {isLoading ? "Loading..." : user.nickname}
+        </span>
+    </div>
+  )
+  */
+  if (isLoading) {
     return (
       <div className="conversation">
         <img
           className="conversationImg"
-          src={defaultAvatar}
-          alt="User Profile"
+          src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+          alt="Profile"
         />
-        <span className="conversationName">{user.nickname}</span>
+        <span className="conversationName">Loading...</span>
       </div>
     );
-  };
+  }
 
-  return renderContent();
+  if (hasError || !user) {
+    return (
+      <div className="conversation">
+        <img
+          className="conversationImg"
+          src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+          alt="Profile"
+        />
+        <span className="conversationName">Error fetching user</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="conversation">
+      <img
+        className="conversationImg"
+        src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+        alt="Profile"
+      />
+      <span className="conversationName">{user.nickname}</span>
+    </div>
+  );
 });
 
-Conversation.displayName = 'Conversation';
 export default Conversation;
 
 
