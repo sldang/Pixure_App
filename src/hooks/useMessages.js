@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 const useMessages = (currentChat, userId) => {
@@ -6,23 +6,23 @@ const useMessages = (currentChat, userId) => {
   const [newMessage, setNewMessage] = useState("");
   const [processedMessageIds, setProcessedMessageIds] = useState(new Set());
 
-  const fetchMessages = useCallback(async () => {
+  const fetchMessages = async () => {
     try {
-        if (currentChat?._id) {
-            const res = await axios.get(`/api/messages/${currentChat._id}`);
-            setMessages(res.data);
-        }
+      if (currentChat?._id) {
+        const res = await axios.get(`/api/messages/${currentChat._id}`);
+        setMessages(res.data);
+      }
     } catch (err) {
-        console.error("Error fetching messages:", err);
-    }
-  }, [currentChat]); // Dependency only on currentChat
-
-  const handleNewMessage = (message) => {
-    if (!processedMessageIds.has(message._id)) {
-        setMessages((prev) => [...prev, message]);
-        setProcessedMessageIds((prev) => new Set(prev).add(message._id));
+      console.error("Error fetching messages:", err);
     }
   };
+
+const handleNewMessage = (message) => {
+    if (!processedMessageIds.has(message.id)) {
+        setMessages((prev) => [...prev, message]);
+        setProcessedMessageIds((prev) => new Set(prev).add(message.id));
+    }
+};
 
   const addMessage = async (messageData) => {
     try {
