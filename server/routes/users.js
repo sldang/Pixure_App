@@ -190,6 +190,7 @@ router.get("/profile/:id", async (req, res) => {
       followersCount: user.followerList?.length || 0,
       followingCount: followEmails.length || 0,
       profilePicture: user.profilePicture,
+      bio: user.bio,
       followedUserIds, // Pass back the corresponding userIds for emails
     });
   } catch (err) {

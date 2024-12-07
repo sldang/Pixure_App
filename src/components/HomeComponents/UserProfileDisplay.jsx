@@ -3,6 +3,7 @@ import { FaEdit } from "react-icons/fa";
 import { AuthContext } from "../../contexts/AuthContext";
 
 const API_BASE_URL =  "https://pixure-new-server.onrender.com";
+//const API_BASE_URL = "http://localhost:5000";
 
 const UserProfileDisplay = ({
   nickname,
@@ -110,6 +111,10 @@ const UserProfileDisplay = ({
       }
     };
 
+    fetchProfileImage();
+  }, [user]);
+
+  useEffect(() => {
     const fetchUserBio = async () => {
       try {
         const userId = user ? user.user.id : null;
@@ -128,9 +133,8 @@ const UserProfileDisplay = ({
       }
     };
 
-    fetchProfileImage();
     fetchUserBio();
-  }, [user, tempBio]);
+  }, [user]);
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
