@@ -5,6 +5,14 @@ import "./Conversation.css";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
+// Define a more specific type for the user
+interface User {
+  id: string;
+  nickname: string;
+  // Add other user properties as needed
+  [key: string]: any; // Allow additional properties
+}
+
 interface ConversationProps {
   conversation: {
     members: string[];
@@ -19,7 +27,8 @@ interface ConversationProps {
 }
 
 const Conversation: React.FC<ConversationProps> = memo(({ conversation, currentUser }) => {
-  const [user, setUser] = useState<any | null>(null);
+  // Use the User type here
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
