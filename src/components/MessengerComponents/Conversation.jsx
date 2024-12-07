@@ -1,78 +1,102 @@
-import { useEffect, useState, useTransition } from "react";
-import "./Conversation.css";
+import { useEffect, useState } from "react"
+import "./Conversation.css"
 import axios from "axios";
 import React, { memo } from "react";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
+//axios.defaults.baseURL = 'http://localhost:5000';
 
-const Conversation = memo(function Conversation({ conversation, currentUser }) {
+const Conversation = memo(function Conversation({ conversation, currentUser}){
   const [user, setUser] = useState(null);
-  const [previousUser, setPreviousUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false)
 
-  useEffect(() => {
+  useEffect(()=>{
     if (!conversation || !currentUser || !currentUser.user || !conversation.members) {
       console.error("Invalid conversation or currentUser data");
       setHasError(true);
+      setIsLoading(false);
       return;
     }
 
     const friendId = conversation.members.find((m) => m !== currentUser.user.id);
-    if (!friendId) {
-      console.error("Friend ID is invalid");
+    //console.log("Friend ID: ", friendId);
+
+    if(!friendId || hasError) {
+      console.error("Friend ID is invalid:", friendId, hasError);
+      setIsLoading(false);
       setHasError(true);
-      return;
+      return; // Exit early to prevent unnecessary API calls
     }
 
-    setHasError(false); // Reset error state for a new fetch
-
-    // Start fade-out animation
-    setIsVisible(false);
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-
+    const getUser = async () => {
+      try{
         const res = await axios.get(`/api/users?userId=${friendId}`);
         if (!res.data) {
           throw new Error("No user data returned");
         }
-
-        // Update user state
-        setPreviousUser(user); // Keep the current user while loading
-        startTransition(() => setUser(res.data));
-      } catch (err) {
-        console.error("Error fetching user data:", err.response?.data || err.message);
-        setHasError(true);
+        setUser(res.data);
+      }catch(err){
+        console.log("Error fetching user data:", err.response?.data || err.message);
+        setHasError(true)
+        setIsLoading(false)
       } finally {
         setIsLoading(false);
-        setIsVisible(true); // Trigger fade-in after data is loaded
       }
-    };
+    }; 
+    getUser();
+  }, [currentUser, conversation, hasError])
+  
+  /*
+  return (
+    <div className="conversation">
+        <img className="conversationImg" 
+        src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+        />
+        <span className="conversationName">
+          {isLoading ? "Loading..." : user.nickname}
+        </span>
+    </div>
+  )
+  */
+  if (isLoading) {
+    return (
+      <div className="conversation">
+        <img
+          className="conversationImg"
+          src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+          alt="Profile"
+        />
+        <span className="conversationName">Loading...</span>
+      </div>
+    );
+  }
 
-    fetchData();
-  }, [conversation, currentUser, user]);
+  if (hasError || !user) {
+    return (
+      <div className="conversation">
+        <img
+          className="conversationImg"
+          src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+          alt="Profile"
+        />
+        <span className="conversationName">Error fetching user</span>
+      </div>
+    );
+  }
 
   return (
-    <div className={`conversation ${!isVisible ? "hidden" : ""}`}>
+    <div className="conversation">
       <img
         className="conversationImg"
-        src={
-          user?.profilePicture ||
-          "https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
-        }
+        src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
         alt="Profile"
       />
-      <span className="conversationName">
-        {isLoading
-          ? previousUser?.nickname || "Loading..."
-          : user?.nickname || "Error fetching user"}
-      </span>
+      <span className="conversationName">{user.nickname}</span>
     </div>
   );
 });
 
 export default Conversation;
+
 
