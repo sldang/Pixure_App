@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useLayoutEffect, useState } from "react"
 import "./Conversation.css"
 import axios from "axios";
 import React, { memo } from "react";
@@ -11,7 +11,7 @@ const Conversation = memo(function Conversation({ conversation, currentUser}){
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false)
 
-  useEffect(()=>{
+  useLayoutEffect(()=>{
     if (!conversation || !currentUser || !currentUser.user || !conversation.members) {
       console.error("Invalid conversation or currentUser data");
       setHasError(true);
