@@ -1,3 +1,4 @@
+import React from 'react';
 import './Message.css'
 import {format} from 'timeago.js'
 
