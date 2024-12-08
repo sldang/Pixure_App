@@ -1,62 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCommunityContext } from '../contexts/CommunityContext';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const Explore = () => {
   const { state, dispatch } = useCommunityContext(); // Access context state and dispatch
   const navigate = useNavigate();
-  const [communities] = useState(initialCommunities);
-  const [initialCommunities, setInitialCommunities] = useState([]);
+  const [communities, setCommunities] = useState([]); // Corrected state variable
 
+  // Fetch communities from the backend
   useEffect(() => {
-    // Fetch communities from the backend
     fetch(`${process.env.REACT_APP_SERVER_URL}/api/communities`)
       .then((response) => response.json())
       .then((data) => {
-        // Map the fetched data to match the initialCommunities structure
+        // Map the fetched data to match the expected structure
         const formattedData = data.map((community) => ({
           name: community.name,
           description: community.description,
           imageUrl: community.imageUrl || 'https://via.placeholder.com/100x100',
           members: community.communityMembers.length || 0,
         }));
-
-        setInitialCommunities(formattedData);
+        setCommunities(formattedData); // Update state
       })
       .catch((error) => console.error('Error fetching communities:', error));
   }, []);
-// Placeholder communities list
-// const initialCommunities = [
-//   {
-//     name: 'Photography Enthusiasts',
-//     description: 'A vibrant community for sharing tips, tricks, and stunning photos.',
-//     imageUrl: 'https://via.placeholder.com/100x100',
-//     members: 134,
-//   },
-//   {
-//     name: 'Travel Lovers',
-//     description: 'Inspire and be inspired by incredible travel stories and destinations!',
-//     imageUrl: 'https://via.placeholder.com/100x100',
-//     members: 72,
-//   },
-//   {
-//     name: 'Book Club',
-//     description: 'Dive into exciting discussions about the latest and greatest books.',
-//     imageUrl: 'https://via.placeholder.com/100x100',
-//     members: 200,
-//   },
-//   {
-//     name: 'Fitness',
-//     description: 'Let’s achieve our fitness goals together and share the journey.',
-//     imageUrl: 'https://via.placeholder.com/100x100',
-//     members: 310,
-//   },
-// ];
-
-
 
   // Function to handle joining a community
   const joinCommunity = (community) => {
@@ -94,7 +62,7 @@ const Explore = () => {
 
       {/* Grid layout for displaying communities */}
       <div style={styles.communityGrid}>
-        {[...communities, ...state.allCommunities].map((community, index) => (
+        {communities.map((community, index) => (
           <div
             key={index}
             style={styles.communityCard}
