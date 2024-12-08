@@ -5,7 +5,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-
+const Explore = () => {
+  const { state, dispatch } = useCommunityContext(); // Access context state and dispatch
+  const navigate = useNavigate();
+  const [communities] = useState(initialCommunities);
   const [initialCommunities, setInitialCommunities] = useState([]);
 
   useEffect(() => {
@@ -53,10 +56,7 @@ import 'react-toastify/dist/ReactToastify.css';
 //   },
 // ];
 
-const Explore = () => {
-  const { state, dispatch } = useCommunityContext(); // Access context state and dispatch
-  const navigate = useNavigate();
-  const [communities] = useState(initialCommunities);
+
 
   // Function to handle joining a community
   const joinCommunity = (community) => {
