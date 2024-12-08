@@ -73,7 +73,7 @@ export default function Signup() {
             setErrorMessage("An error occurred during account creation. Please try again."); // catch network errors
             console.error("Account creation error:", error); // log error for debugging
         }
-    };
+    }   ;
 
     return (
         <div className="signup-card">

@@ -4,7 +4,11 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     firstName: { type: String },
     lastName: { type: String },
-    nickname: { type: String },
+    nickname: { 
+        type: String,
+        unique: true,
+
+    },
     email: {
         type: String,
         required: true, // Enforce email requirement
@@ -24,11 +28,14 @@ const userSchema = new Schema({
         type: String,
         default: 'https://via.placeholder.com/150', // Default profile picture
     },
+
     parentAccount: { type: String, default: '' },
     parentAccountID: { type: String },
     childAccount: { type: String },
     childAccountID: { type: String },
+
     bio: { type: String, default: "Everyone has a story to tell. I'm gonna tell you mine."},
+
 });
 
 module.exports = mongoose.model("User", userSchema, "User");
