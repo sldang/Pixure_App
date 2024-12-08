@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import axios from "axios";
 
 const useMessages = (currentChat, userId) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [processedMessageIds, setProcessedMessageIds] = useState(new Set());
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       if (currentChat?._id) {
         const res = await axios.get(`/api/messages/${currentChat._id}`);
@@ -14,11 +15,14 @@ const useMessages = (currentChat, userId) => {
     } catch (err) {
       console.error("Error fetching messages:", err);
     }
-  };
+  }, [currentChat]);
 
-  const handleNewMessage = (message) => {
-    setMessages((prev) => [...prev, message]);
-  };
+const handleNewMessage = (message) => {
+    if (!processedMessageIds.has(message._id)) {
+        setMessages((prev) => [...prev, message]);
+        setProcessedMessageIds((prev) => new Set(prev).add(message._id));
+    }
+};
 
   const addMessage = async (messageData) => {
     try {
@@ -37,6 +41,7 @@ const useMessages = (currentChat, userId) => {
     fetchMessages,
     handleNewMessage,
     addMessage,
+    setMessages
   };
 };
 

@@ -9,6 +9,7 @@ import useSocket from "../hooks/useSocket";
 import useConversations from "../hooks/useConversations";
 import useMessages from "../hooks/useMessages";
 import axios from "axios";
+import socket from "../socket";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
@@ -20,11 +21,13 @@ export default function Messenger() {
   // States
   const [currentChat, setCurrentChat] = useState(null);
   const [chatMenuInput, setChatMenuInput] = useState("");
+  const [messageCache, setMessageCache] = useState({});
 
   // Hooks
   const { conversations, fetchConversations, addConversation } = useConversations(userId);
   const {
     messages,
+    setMessages,
     newMessage,
     setNewMessage,
     handleNewMessage,
@@ -46,6 +49,7 @@ export default function Messenger() {
   // Update messages when a new message arrives
   useEffect(() => {
     if (arrivalMessage && currentChat?.members.includes(arrivalMessage.sender)) {
+      console.log("Processing arrivalMessage:", arrivalMessage);
       handleNewMessage(arrivalMessage);
     }
   }, [arrivalMessage, currentChat, handleNewMessage]);
@@ -61,6 +65,51 @@ export default function Messenger() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+        if (currentChat?._id) {
+            fetchMessages(); // Function from useMessages hook
+        }
+    }, 5000); // Fetch messages every 5 seconds
+
+    return () => clearInterval(intervalId); // Clear interval when component unmounts
+}, [currentChat, fetchMessages]);
+
+useEffect(() => {
+  if (currentChat?._id) {
+      // If cached, use the cache
+      if (messageCache[currentChat._id]) {
+          handleNewMessage([...messageCache[currentChat._id]]); // Update messages with cache
+      } else {
+          // Otherwise, fetch from server
+          fetchMessages().then((fetchedMessages) => {
+              handleNewMessage(fetchedMessages); // Update messages state
+              setMessageCache((prev) => ({
+                  ...prev,
+                  [currentChat._id]: fetchedMessages,
+              }));
+          });
+      }
+  }
+}, [currentChat, fetchMessages, messageCache, handleNewMessage]);
+
+useEffect(() => {
+  if (!socket) return; // Ensure socket connection exists
+
+  const handleMessage = (newMessage) => {
+      // Only handle messages for the current chat
+      if (newMessage.conversationId === currentChat?._id) {
+          setMessages((prev) => [...prev, newMessage]);
+      }
+  };
+
+  socket.on("message", handleMessage); // Listen for new messages
+
+  return () => {
+      socket.off("message", handleMessage); // Clean up listener on unmount or dependency change
+  };
+}, [socket, currentChat, setMessages]);
 
   // Function to create a new chat
   const makeChat = async (e) => {
