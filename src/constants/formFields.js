@@ -91,7 +91,18 @@ const signupFields=[
         autoComplete:"confirm-password",
         isRequired:true,
         placeholder:"Confirm Password"   
-    }
+    },
+    /*{
+        labelText:"personalBio",
+        labelFor:"personalBio",
+        id:"personalBio",
+        name:"personalBio",
+        type:"personalBio",
+        autoComplete:"current-personalBio",
+        isRequired:true,
+        placeholder:"personalBio"   
+    },
+    */
 ]
 
 export {loginFields,signupFields}

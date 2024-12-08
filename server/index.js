@@ -247,6 +247,8 @@ app.get("/api/login", async (req, res) => {
     res.json("test")
 })
 
+
+
 // Login endpoint
 app.post("/api/login", async (req, res) => {
     console.log("Login request received:", req.body); // Log incoming request data
@@ -285,6 +287,30 @@ app.post("/api/login", async (req, res) => {
     }
 });
 
+//get bio
+app.get("/api/bio", async (req, res) => {
+    console.log("get bio");
+    const email = req.query.email;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.status(200).json({ username: user.personalBio });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+app.post("/api/bio", async (req, res) => {
+    console.log("post bio")
+    const { email, bio } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        user.personalBio = bio;
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
 
 app.post("/api/follow", async (req, res) => {
     console.log("Follow request received");
@@ -373,6 +399,31 @@ app.get('/api/user/:userEmail/follow-stats', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
+    }
+});
+
+app.post("/api/createCommunity", async (req, res) => {
+    console.log("Create community request recieved");
+    try{
+        const{ name, communityPosts, communityMembers, description, restriction, image  } = req.body;
+        if (!name) {
+            return res.status(400).json({ error: "name is required" });
+        }
+        const newCommunity = new Community({
+            name,
+            communityPosts,
+            communityMembers,
+            description, 
+            restriction,
+            image,
+
+        });
+
+        await newCommunity.save();
+        res.status(201).json({message: "Community created successfully"});
+    } catch(error){
+        console.error("error creating community:", error);
+        res.status(500).json({error:"an error occured while creating community"})
     }
 });
 
