@@ -3,7 +3,14 @@
   align-items: center;
   padding: 10px;
   cursor: pointer;
-  transition: opacity 0.3s ease-in-out;
+  opacity: 1; /* Ensure default opacity is set */
+  transition: opacity 0.3s ease-in-out; /* Smooth transition for visibility */
+}
+
+.conversation.hidden {
+  opacity: 0; /* Hidden state */
+  visibility: hidden; /* Prevents interaction when hidden */
+  pointer-events: none; /* Disables click events */
 }
 
 .conversationImg {
@@ -12,15 +19,14 @@
   border-radius: 50%;
   object-fit: cover;
   margin-right: 10px;
-  transition: opacity 0.3s ease-in-out;
+  opacity: 1; /* Ensure no unexpected default opacity */
+  transition: opacity 0.3s ease-in-out; /* Smooth image fade */
 }
 
 .conversationName {
   font-size: 14px;
   font-weight: 500;
-  transition: opacity 0.3s ease-in-out;
+  opacity: 1; /* Default visibility */
+  transition: opacity 0.3s ease-in-out; /* Smooth text fade */
 }
 
-.conversation.hidden {
-  opacity: 0;
-}
