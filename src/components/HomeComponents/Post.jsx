@@ -42,7 +42,9 @@ const Post = ({
           )}
         </div>
       </div>
-      <div className="mt-[20px] mb-[20px] text-left">
+
+      <div className="mt-[20px] mb-[20px]  text-left">
+
         {img && <img src={img} alt="Uploaded content" className="w-full h-auto mb-[10px]" />}
         <span className="pl-[20px]">{content}</span>
       </div>

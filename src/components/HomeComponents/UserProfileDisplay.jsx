@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AuthContext } from "../../contexts/AuthContext";
 
-const API_BASE_URL =  "https://pixure-server.onrender.com";
+const API_BASE_URL =  "https://pixure-new-server.onrender.com";
+//const API_BASE_URL = "http://localhost:5000";
 
 const UserProfileDisplay = ({
   nickname,
@@ -30,9 +31,37 @@ const UserProfileDisplay = ({
   };
 
   // Handlers for editing the bio
-  const handleBioSave = () => {
-    setBio(tempBio);
-    setIsEditingBio(false);
+  const handleBioSave = async () => {
+    try {
+      const userId = user ? user.user.id: null;
+
+      if(!userId) {
+        console.error("User not logged in");
+        return;
+      }
+
+      const response = await fetch(`https://pixure-new-server.onrender.com/api/users/${userId}/bio`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ bio: tempBio }),
+      });
+
+      if(!response.ok){
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update bio");
+      }
+
+      const data = await response.json();
+      console.log("Bio updated successfully: ", data);
+
+      setBio(tempBio);
+      setIsEditingBio(false);
+
+    } catch (error) {
+      console.error("Error saving bio: ", error);
+    }
   };
 
   const handleBioCancel = () => {
@@ -50,7 +79,7 @@ const UserProfileDisplay = ({
     formData.append("profilePicture", file);
 
     try {
-      const response = await fetch(`https://pixure-server.onrender.com/api/users/${userId}/upload`, {
+      const response = await fetch(`https://pixure-new-server.onrender.com/api/users/${userId}/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -83,6 +112,28 @@ const UserProfileDisplay = ({
     };
 
     fetchProfileImage();
+  }, [user]);
+
+  useEffect(() => {
+    const fetchUserBio = async () => {
+      try {
+        const userId = user ? user.user.id : null;
+
+        if(!userId) return;
+
+        const response = await fetch(`${API_BASE_URL}/api/users/profile/${userId}`);
+        if(!response.ok){
+          throw new Error("Failed to fetch user bio");
+        }
+
+        const data = await response.json();
+        setBio(data.bio || tempBio);
+      } catch (error) {
+        console.error("Error fetching user bio: ", error);
+      }
+    };
+
+    fetchUserBio();
   }, [user]);
 
   return (
