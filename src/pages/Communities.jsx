@@ -4,7 +4,7 @@ import CommunityModal from './CommunityModal';
 
 const Communities = () => {
   const { state } = useCommunityContext(); // Access state from the context
-  const [ joinedCommunities, setJoinedCommunities ] = state; // Destructure joined communities
+  const { joinedCommunities } = state; // Destructure joined communities
 
   const [selectedCommunity, setSelectedCommunity] = useState(null); // Track the selected community for the modal
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
