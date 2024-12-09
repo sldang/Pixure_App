@@ -8,6 +8,8 @@ const Explore = () => {
   const { state, dispatch } = useCommunityContext(); // Access context state and dispatch
   const navigate = useNavigate();
   const [communities, setCommunities] = useState([]); // Corrected state variable
+  const parsedData = JSON.parse(localStorage.getItem('user'));
+  const userid = parsedData && parsedData.user ? parsedData.user.id : null;
 
   // Fetch communities from the backend
   useEffect(() => {
@@ -27,20 +29,36 @@ const Explore = () => {
   }, []);
 
   // Function to handle joining a community
-  const joinCommunity = (community) => {
-    const isAlreadyJoined = state.joinedCommunities.some(
-      (joinedCommunity) => joinedCommunity.name === community.name
-    );
+  const joinCommunity = async (community) => {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/joinCommunity`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                userId: userid, // Pass the user ID
+                communityName: community.name, // Pass the community name
+            }),
+        });
 
-    if (isAlreadyJoined) {
-      toast.error(`You already joined "${community.name}".`, { autoClose: 2000 });
-      return;
+        if (!response.ok) {
+            throw new Error('Failed to join the community.');
+        }
+
+        const data = await response.json();
+
+        // Check if the response indicates success
+        if (data.success) {
+            dispatch({ type: 'JOIN_COMMUNITY', payload: community });
+            toast.success(`Welcome to "${community.name}"!`, { autoClose: 2000 });
+            setTimeout(() => navigate('/communities'), 2000); // Redirect to Communities page
+        } else {
+            throw new Error(data.message || 'Failed to join community.');
+        }
+    } catch (error) {
+        console.error('Error joining community:', error);
+        toast.error(error.message || 'Something went wrong.', { autoClose: 2000 });
     }
-
-    dispatch({ type: 'JOIN_COMMUNITY', payload: community });
-    toast.success(`Welcome to "${community.name}"!`, { autoClose: 2000 });
-    setTimeout(() => navigate('/communities'), 2000); // Redirect to Communities page
-  };
+};
 
   // Navigate to the Create Community page
   const navigateToCreateCommunity = () => {

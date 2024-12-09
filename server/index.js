@@ -436,6 +436,7 @@ app.get('/api/communities', async (req, res) => {
     }
 });
 
+
 // Catch-all route for undefined endpoints
 app.get("*", (req, res) => {
     res.sendStatus(404);
@@ -457,6 +458,46 @@ app.get('/api/communities/:nickname', async (req, res) => {
     } catch (error) {
         console.error('Error fetching communities for member:', error);
         res.status(500).json({ message: 'Internal server error', error });
+    }
+});
+
+app.post('/api/joinCommunity', async (req, res) =>{
+    console.log("Join community request received");
+
+    try{
+        const {userId, communityName } = req.body;
+        console.log("id", userId);
+        console.log(communityName);
+        
+        const user = await User.findOne({ id_: userId });
+        const community = await Community.findOne({ name: communityName });
+
+        if (!user) {
+            console.log("user not found");
+            return res.status(404).json({ message: "user not found" });
+        }
+
+        // Check if the user to be followed exists
+        if (!community) {
+            console.log("community to follow not found");
+            return res.status(404).json({ message: "community to follow not found" });
+        }
+
+        if(!user.communitiesIDs.includes(community.id_)){
+            user.communityIDs.push(community.id_);
+            community.communityMembers.push(user.nickname);
+            await user.save();
+            await community.save();
+            console.log("Successfully joined");
+            return res.status(200).json({ message: "Joined community"});
+        }else{
+            console.log("Already in the community");
+            return res.status(400).json({message:"Already in the community" });
+
+        }
+    }catch(error){
+        console.log("Error joining community", error)
+        return res.status(500).json({ message: "Internal server error"});
     }
 })
 
