@@ -484,7 +484,7 @@ app.post('/api/joinCommunity', async (req, res) =>{
         }
 
         if(!user.communityIDs.includes(community._id)){
-            user.communityIDs.push(community.id_);
+            user.communityIDs.push(community._id);
             community.communityMembers.push(user.nickname);
             await user.save();
             await community.save();
