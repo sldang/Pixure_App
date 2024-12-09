@@ -469,7 +469,7 @@ app.post('/api/joinCommunity', async (req, res) =>{
         console.log("id", userId);
         console.log(communityName);
         
-        const user = await User.findOne({ id_: userId });
+        const user = await User.findOne({ _id: userId });
         const community = await Community.findOne({ name: communityName });
 
         if (!user) {
@@ -483,7 +483,7 @@ app.post('/api/joinCommunity', async (req, res) =>{
             return res.status(404).json({ message: "community to follow not found" });
         }
 
-        if(!user.communitiesIDs.includes(community.id_)){
+        if(!user.communitiesIDs.includes(community._id)){
             user.communityIDs.push(community.id_);
             community.communityMembers.push(user.nickname);
             await user.save();
