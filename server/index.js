@@ -429,16 +429,36 @@ app.post("/api/createCommunity", async (req, res) => {
 
 app.get('/api/communities', async (req, res) => {
     try {
-      const communities = await Community.find(); // Fetch all communities
-      res.status(200).json(communities); // Send raw data to the frontend
+        const communities = await Community.find(); // Fetch all communities
+        res.status(200).json(communities); // Send raw data to the frontend
     } catch (error) {
-      res.status(500).json({ message: 'Error fetching communities', error });
+        res.status(500).json({ message: 'Error fetching communities', error });
     }
-  });
+});
+
 // Catch-all route for undefined endpoints
 app.get("*", (req, res) => {
     res.sendStatus(404);
 });
+
+app.get('/api/communities/:nickname', async (req, res) => {
+    const { nickname } = req.params.nickname;
+
+    try {
+        const user = await User.findById(nickname);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        const communities = await Community.find({ communityMembers: nickname });
+        if (!communities.length) {
+            return res.status(404).json({ message: 'No communities found for this member.' });
+        }
+        res.status(200).json(communities);
+    } catch (error) {
+        console.error('Error fetching communities for member:', error);
+        res.status(500).json({ message: 'Internal server error', error });
+    }
+})
 
 require('dotenv').config();
 const http = require('http'); // Import HTTP module
