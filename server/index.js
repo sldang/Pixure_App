@@ -483,7 +483,7 @@ app.post('/api/joinCommunity', async (req, res) =>{
             return res.status(404).json({ message: "community to follow not found" });
         }
 
-        if(!user.communitiesIDs.includes(community._id)){
+        if(!user.communityIDs.includes(community._id)){
             user.communityIDs.push(community.id_);
             community.communityMembers.push(user.nickname);
             await user.save();
