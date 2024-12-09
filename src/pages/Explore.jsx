@@ -31,12 +31,13 @@ const Explore = () => {
   // Function to handle joining a community
   const joinCommunity = async (community) => {
     try {
+        console.log('Joining community:', community.name);
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/joinCommunity`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
-                userId: userid, // Pass the user ID
-                communityName: community.name, // Pass the community name
+                userId: userid, 
+                communityName: community.name,
             }),
         });
 
@@ -46,19 +47,19 @@ const Explore = () => {
 
         const data = await response.json();
 
-        // Check if the response indicates success
         if (data.success) {
             dispatch({ type: 'JOIN_COMMUNITY', payload: community });
             toast.success(`Welcome to "${community.name}"!`, { autoClose: 2000 });
-            setTimeout(() => navigate('/communities'), 2000); // Redirect to Communities page
+            setTimeout(() => navigate('/communities'), 2000);
         } else {
-            throw new Error(data.message || 'Failed to join community.');
+            toast.error(data.message || 'Failed to join community.', { autoClose: 2000 });
         }
     } catch (error) {
         console.error('Error joining community:', error);
         toast.error(error.message || 'Something went wrong.', { autoClose: 2000 });
     }
 };
+
 
   // Navigate to the Create Community page
   const navigateToCreateCommunity = () => {
