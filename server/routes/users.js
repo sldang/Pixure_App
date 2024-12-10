@@ -64,6 +64,44 @@ const upload = multer({
     res.status(500).json({ error: "Internal Server Error" });
   }
  });
+ router.put("/follow", async (req, res) => {
+  const { followerEmail, followeeEmail } = req.body;
+
+  if (!followerEmail || !followeeEmail) {
+    return res.status(400).json("Follower email and followee email are required");
+  }
+
+  if (followerEmail.toLowerCase() === followeeEmail.toLowerCase()) {
+    return res.status(403).json("You cannot follow yourself");
+  }
+
+  try {
+    // Find users by email
+    const follower = await User.findOne({ email: followerEmail.toLowerCase() });
+    const followee = await User.findOne({ email: followeeEmail.toLowerCase() });
+
+    if (!follower || !followee) {
+      return res.status(404).json("User not found");
+    }
+
+    // Add followeeEmail to follower's followList
+    if (!follower.followList.includes(followeeEmail.toLowerCase())) {
+      follower.followList.push(followeeEmail.toLowerCase());
+      await follower.save();
+    }
+
+    // Add followerEmail to followee's followerList
+    if (!followee.followerList.includes(followerEmail.toLowerCase())) {
+      followee.followerList.push(followerEmail.toLowerCase());
+      await followee.save();
+    }
+
+    return res.status(200).json("Successfully followed the user");
+  } catch (err) {
+    console.error("Error following user:", err.message);
+    res.status(500).json("An error occurred while trying to follow the user");
+  }
+});
 
 router.post("/by-email", async (req, res) => {
   const { email } = req.body;
@@ -220,44 +258,6 @@ router.get("/friends/:userId", async (req, res) => {
   }
 });
 
-router.put("/follow", async (req, res) => {
-  const { followerEmail, followeeEmail } = req.body;
-
-  if (!followerEmail || !followeeEmail) {
-    return res.status(400).json("Follower email and followee email are required");
-  }
-
-  if (followerEmail.toLowerCase() === followeeEmail.toLowerCase()) {
-    return res.status(403).json("You cannot follow yourself");
-  }
-
-  try {
-    // Find users by email
-    const follower = await User.findOne({ email: followerEmail.toLowerCase() });
-    const followee = await User.findOne({ email: followeeEmail.toLowerCase() });
-
-    if (!follower || !followee) {
-      return res.status(404).json("User not found");
-    }
-
-    // Add followeeEmail to follower's followList
-    if (!follower.followList.includes(followeeEmail.toLowerCase())) {
-      follower.followList.push(followeeEmail.toLowerCase());
-      await follower.save();
-    }
-
-    // Add followerEmail to followee's followerList
-    if (!followee.followerList.includes(followerEmail.toLowerCase())) {
-      followee.followerList.push(followerEmail.toLowerCase());
-      await followee.save();
-    }
-
-    return res.status(200).json("Successfully followed the user");
-  } catch (err) {
-    console.error("Error following user:", err.message);
-    res.status(500).json("An error occurred while trying to follow the user");
-  }
-});
 
 
 
