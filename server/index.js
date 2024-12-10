@@ -446,18 +446,22 @@ app.get('/api/communities/nickname', async (req, res) => {
     const { nickname } = req.query;
 
     try {
-        const user = await User.findOne(nickname);
+        if (!nickname) {
+            return res.status(400).json({ error: 'Nickname is required' });
+        }
+
+        console.log('Received nickname:', nickname); // Debugging log
+
+        const user = await User.findOne({ nickname });
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ error: 'User not found' });
         }
+
         const communities = await Community.find({ communityMembers: nickname });
-        if (!communities.length) {
-            return res.status(404).json({ message: 'No communities found for this member.' });
-        }
         res.status(200).json(communities);
     } catch (error) {
-        console.error('Error fetching communities for member:', error);
-        res.status(500).json({ message: 'Internal server error', error });
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
