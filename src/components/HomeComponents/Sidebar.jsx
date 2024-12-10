@@ -4,7 +4,7 @@ import { FaHome, FaSearch, FaCompass, FaEnvelope, FaBell, FaUser, FaUsers, FaSig
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/useLogout';
 import socket from '../../socket';
-
+import axios from 'axios';
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 const Sidebar = () => {
   const navigate = useNavigate();
