@@ -232,7 +232,7 @@ router.put("/follow", async (req, res) => {
   }
 
   try {
-    // Retrieve follower and followee users
+    // Retrieve users
     const follower = await User.findById(followerId);
     const followee = await User.findById(followeeId);
 
@@ -242,13 +242,9 @@ router.put("/follow", async (req, res) => {
 
     // Check if already following
     if (!followee.followers.includes(followerId)) {
-      // Add follower to followee's `followers` list
       followee.followers.push(followerId);
-
-      // Add followee to follower's `followList`
       follower.followList.push(followeeId);
 
-      // Save both updated users
       await followee.save();
       await follower.save();
 

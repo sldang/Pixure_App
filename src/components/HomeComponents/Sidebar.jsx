@@ -30,19 +30,21 @@ const Sidebar = () => {
   
     try {
       const userData = JSON.parse(localStorage.getItem("user"));
-      const followerId = userData?.user?.id; // Get the logged-in user's ID from local storage
+      const followerId = userData?.user?.id; // Get the logged-in user's ID
+      const token = userData?.token;
   
       if (!followerId) {
         console.error("User ID not found in localStorage");
         return;
       }
   
-      console.log("Follower ID:", followerId);
-  
-      // Fetch followee's ID using their email from the search query
+      // Fetch followee's ID using their email
       const followeeResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/by-email`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ email: searchQuery }),
       });
   
@@ -54,15 +56,17 @@ const Sidebar = () => {
       }
   
       const { _id: followeeId } = await followeeResponse.json();
-      console.log("Followee ID:", followeeId);
   
-      // Send follow request with IDs
+      // Send follow request
       const followResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           followerId, // Logged-in user's ID
-          followeeId, // ID of the user to follow
+          followeeId, // Followee's ID
         }),
       });
   
