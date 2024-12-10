@@ -28,30 +28,38 @@ const Sidebar = () => {
   const makeFriend = async (e) => {
     e.preventDefault();
   
+    if (!searchQuery.trim()) {
+      alert("Please enter a valid email to follow.");
+      return;
+    }
+  
     try {
       if (!userEmail) {
         console.error("User email not found in localStorage");
         return;
       }
   
-      // Send follow request with emails
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
-        method: "POST",
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/follow`, {
+        method: "PUT", // Correct HTTP method
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          followerEmail: userEmail, // Logged-in user's email
-          followeeEmail: searchQuery, // Email of the user being followed
+          followerEmail: userEmail.toLowerCase(), // Logged-in user's email
+          followeeEmail: searchQuery.toLowerCase(), // Email of the user being followed
         }),
       });
   
       if (response.ok) {
         const data = await response.json();
         console.log("Followed successfully:", data);
+        alert(data);
       } else {
-        console.error("Failed to follow:", await response.text());
+        const errorMessage = await response.text();
+        console.error("Failed to follow:", errorMessage);
+        alert(`Failed to follow: ${errorMessage}`);
       }
     } catch (error) {
       console.error("Error in makeFriend:", error);
+      alert("An error occurred. Please try again.");
     }
   };
   
