@@ -26,42 +26,36 @@ const Sidebar = () => {
   ]);
 
   const makeFriend = async (e) => {
-    console.log("makefriend");
     e.preventDefault();
-  
     try {
-      // Get the logged-in user's ID from localStorage (nested structure)
-      const userData = JSON.parse(localStorage.getItem("user"));
-      const userId = userData?.user?.id; // Ensure we access the nested user ID safely
-  
-      if (!userId) {
-        console.error("User ID not found in localStorage");
+      if (!userEmail) {
+        console.error("User email not found in localStorage");
         return;
       }
   
-      // Fetch followee's user ID by email
+      // Fetch followee's email using the search query
       const followeeResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/by-email`, {
         method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: searchQuery }), // Ensure this is sending the correct email
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: searchQuery }),
       });
   
       if (!followeeResponse.ok) {
-        console.error("Failed to fetch followee ID");
+        console.error("Failed to fetch followee email");
         return;
       }
   
       const followeeData = await followeeResponse.json();
-      const followeeId = followeeData._id; // Retrieve followee's user ID
+      const followeeEmail = followeeData.email; // Ensure the API returns the followee email
   
-      // Send follow request with user IDs
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/follow`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
+      // Send follow request with emails
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          followerId: userId, // Logged-in user's ID
-          followeeId: followeeId // Followee's ID
-        })
+          followerEmail: userEmail, // Logged-in user's email
+          followeeEmail, // Email of the user to follow
+        }),
       });
   
       if (response.ok) {
@@ -74,7 +68,6 @@ const Sidebar = () => {
       console.error("Error in makeFriend:", error);
     }
   };
-  
   
   useEffect(() => {
     const fetchProfileImage = async () => {
