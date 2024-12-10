@@ -221,33 +221,38 @@ router.get("/friends/:userId", async (req, res) => {
 });
 
 router.put("/follow", async (req, res) => {
-  const { followerEmail, followeeEmail } = req.body;
+  const { followerId, followeeId } = req.body;
 
-  if (followerEmail === followeeEmail) {
+  if (!followerId || !followeeId) {
+    return res.status(400).json("Follower ID and Followee ID are required");
+  }
+
+  if (followerId === followeeId) {
     return res.status(403).json("You cannot follow yourself");
   }
 
   try {
-    // Convert emails to user IDs
-    const follower = await User.findOne({ email: followerEmail });
-    const followee = await User.findOne({ email: followeeEmail });
+    // Retrieve follower and followee users
+    const follower = await User.findById(followerId);
+    const followee = await User.findById(followeeId);
 
     if (!follower || !followee) {
       return res.status(404).json("User not found");
     }
 
-    const followerId = follower._id;
-    const followeeId = followee._id;
-
     // Check if already following
     if (!followee.followers.includes(followerId)) {
-      // Add follower ID to followee's followers list
-      await followee.updateOne({ $addToSet: { followers: followerId } });
+      // Add follower to followee's `followers` list
+      followee.followers.push(followerId);
 
-      // Add followee email to follower's followList
-      await follower.updateOne({ $addToSet: { followList: followeeEmail } });
+      // Add followee to follower's `followList`
+      follower.followList.push(followeeId);
 
-      return res.status(200).json("User has been followed");
+      // Save both updated users
+      await followee.save();
+      await follower.save();
+
+      return res.status(200).json("Successfully followed the user");
     } else {
       return res.status(409).json("You already follow this user");
     }
@@ -256,6 +261,7 @@ router.put("/follow", async (req, res) => {
     res.status(500).json("An error occurred while trying to follow the user");
   }
 });
+
 
 
 router.put("/:id/unfollow", async (req, res) => {

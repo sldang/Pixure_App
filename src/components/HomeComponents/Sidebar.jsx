@@ -27,13 +27,19 @@ const Sidebar = () => {
 
   const makeFriend = async (e) => {
     e.preventDefault();
+  
     try {
-      if (!userEmail) {
-        console.error("User email not found in localStorage");
+      const userData = JSON.parse(localStorage.getItem("user"));
+      const followerId = userData?.user?.id; // Get the logged-in user's ID from local storage
+  
+      if (!followerId) {
+        console.error("User ID not found in localStorage");
         return;
       }
   
-      // Fetch followee's email using the search query
+      console.log("Follower ID:", followerId);
+  
+      // Fetch followee's ID using their email from the search query
       const followeeResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/by-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -41,28 +47,31 @@ const Sidebar = () => {
       });
   
       if (!followeeResponse.ok) {
-        console.error("Failed to fetch followee email");
+        console.error("Failed to fetch followee ID");
+        const errorMessage = await followeeResponse.text();
+        console.error("Error message:", errorMessage);
         return;
       }
   
-      const followeeData = await followeeResponse.json();
-      const followeeEmail = followeeData.email; // Ensure the API returns the followee email
+      const { _id: followeeId } = await followeeResponse.json();
+      console.log("Followee ID:", followeeId);
   
-      // Send follow request with emails
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
+      // Send follow request with IDs
+      const followResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          followerEmail: userEmail, // Logged-in user's email
-          followeeEmail, // Email of the user to follow
+          followerId, // Logged-in user's ID
+          followeeId, // ID of the user to follow
         }),
       });
   
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Followed successfully:", data);
+      if (followResponse.ok) {
+        console.log("Followed successfully");
       } else {
-        console.error("Failed to follow:", response.statusText);
+        console.error("Failed to follow:", followResponse.statusText);
+        const errorMessage = await followResponse.text();
+        console.error("Error message:", errorMessage);
       }
     } catch (error) {
       console.error("Error in makeFriend:", error);
@@ -154,30 +163,25 @@ const Sidebar = () => {
             />
             {isSearchVisible && (
               <div>
-                {/* <input
-                  placeholder="Search for friends"
-                  className="chatMenuInput"
-                  value={chatMenuInput}
-                  onChange={(e) => setChatMenuInput(e.target.value)}
-                /> */}
                 <input
-                  type="text"
-                  className="w-full mt-2 px-4 py-2 border rounded-md"
-                  placeholder="Search users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button
-                  className="text-blue-500 text-sm font-semibold"
-                  onClick={(e) => makeFriend(e)}
-                >
-                  Follow
-                </button>
-                <div className="mt-2">
-                  {filteredUsers.map((user, index) => (
-                    <div key={index} className="py-1">{user}</div>
-                  ))}
-                </div>
+                type="text"
+  className="w-full mt-2 px-4 py-2 border rounded-md"
+  placeholder="Search users..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+/>
+<button
+  className="text-blue-500 text-sm font-semibold mt-2"
+  onClick={makeFriend}
+>
+  Follow
+</button>
+<div className="mt-2">
+  {filteredUsers.map((user, index) => (
+    <div key={index} className="py-1">{user}</div>
+  ))}
+</div>
+
               </div>
             )}
             <SidebarItem
