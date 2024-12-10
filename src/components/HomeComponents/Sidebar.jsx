@@ -29,39 +29,29 @@ const Sidebar = () => {
     e.preventDefault();
   
     try {
-      const parsedData = JSON.parse(localStorage.getItem("user"));
-      const followerId = parsedData?.user?.id; // Get the logged-in user's ID
-      const token = parsedData?.token;
-  
-      if (!followerId || !searchQuery) {
-        console.error("Follower ID or search query missing");
+      if (!userEmail) {
+        console.error("User email not found in localStorage");
         return;
       }
   
-      // Fetch the followee ID using the email
-      const followeeResponse = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/api/users/by-email`,
-        { email: searchQuery },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      // Send follow request with emails
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          followerEmail: userEmail, // Logged-in user's email
+          followeeEmail: searchQuery, // Email of the user being followed
+        }),
+      });
   
-      const followeeId = followeeResponse.data._id;
-  
-      if (!followeeId) {
-        console.error("Followee ID not found");
-        return;
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Followed successfully:", data);
+      } else {
+        console.error("Failed to follow:", await response.text());
       }
-  
-      // Make the follow request
-      const response = await axios.put(
-        `${process.env.REACT_APP_SERVER_URL}/api/users/follow`,
-        { followerId, followeeId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-  
-      console.log("Followed successfully:", response.data);
     } catch (error) {
-      console.error("Error in makeFriend:", error.response?.data || error.message);
+      console.error("Error in makeFriend:", error);
     }
   };
   

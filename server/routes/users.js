@@ -221,38 +221,38 @@ router.get("/friends/:userId", async (req, res) => {
 });
 
 router.put("/follow", async (req, res) => {
-  const { followerId, followeeId } = req.body;
+  const { followerEmail, followeeEmail } = req.body; // Expect emails in the request body
 
-  if (!followerId || !followeeId) {
-    return res.status(400).json({ error: "Both followerId and followeeId are required" });
+  if (!followerEmail || !followeeEmail) {
+    return res.status(400).json("Follower email and followee email are required");
   }
 
-  if (followerId === followeeId) {
-    return res.status(403).json({ error: "You cannot follow yourself" });
+  if (followerEmail === followeeEmail) {
+    return res.status(403).json("You cannot follow yourself");
   }
 
   try {
-    const follower = await User.findById(followerId);
-    const followee = await User.findById(followeeId);
+    // Find users by email
+    const follower = await User.findOne({ email: followerEmail });
+    const followee = await User.findOne({ email: followeeEmail });
 
     if (!follower || !followee) {
-      return res.status(404).json({ error: "Follower or followee not found" });
+      return res.status(404).json("User not found");
     }
 
-    if (!followee.followers.includes(followerId)) {
-      followee.followers.push(followerId);
-      follower.followList.push(followeeId);
-
-      await followee.save();
+    // Check if already following
+    if (!follower.followList.includes(followeeEmail)) {
+      // Add followee email to follower's followList
+      follower.followList.push(followeeEmail);
       await follower.save();
 
-      return res.status(200).json({ message: "Successfully followed the user" });
+      return res.status(200).json("Successfully followed the user");
     } else {
-      return res.status(409).json({ error: "You already follow this user" });
+      return res.status(409).json("You already follow this user");
     }
   } catch (err) {
     console.error("Error following user:", err.message);
-    res.status(500).json({ error: "An error occurred while trying to follow the user" });
+    res.status(500).json("An error occurred while trying to follow the user");
   }
 });
 
