@@ -446,13 +446,13 @@ app.get('/api/myCommunities', async (req, res) => {
     //const { nickname } = req.query;
 
     try {
-        if (!nickname) {
-            return res.status(400).json({ error: "Nickname is required" });
-        }
+        // if (!nickname) {
+        //     return res.status(400).json({ error: "Nickname is required" });
+        // }
 
         const communities = await Community.find({ communityMembers: "test" });
         if (communities.length === 0) {
-            return res.status(404).json({ message: "No communities found for this member" });
+            return res.status(500).json({ message: "No communities found for this member" });
         }
 
         res.status(200).json(communities);
