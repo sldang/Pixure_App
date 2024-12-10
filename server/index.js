@@ -450,7 +450,6 @@ app.get('/api/myCommunities', async (req, res) => {
         res.status(500).json({ message: 'Error fetching communities', error });
     }
 });
-
 app.post('/api/joinCommunity', async (req, res) => {
     console.log("Join community request received");
 
