@@ -224,23 +224,21 @@ router.put("/follow", async (req, res) => {
   const { followerId, followeeId } = req.body;
 
   if (!followerId || !followeeId) {
-    return res.status(400).json("Follower ID and Followee ID are required");
+    return res.status(400).json({ error: "Both followerId and followeeId are required" });
   }
 
   if (followerId === followeeId) {
-    return res.status(403).json("You cannot follow yourself");
+    return res.status(403).json({ error: "You cannot follow yourself" });
   }
 
   try {
-    // Retrieve users
     const follower = await User.findById(followerId);
     const followee = await User.findById(followeeId);
 
     if (!follower || !followee) {
-      return res.status(404).json("User not found");
+      return res.status(404).json({ error: "Follower or followee not found" });
     }
 
-    // Check if already following
     if (!followee.followers.includes(followerId)) {
       followee.followers.push(followerId);
       follower.followList.push(followeeId);
@@ -248,13 +246,13 @@ router.put("/follow", async (req, res) => {
       await followee.save();
       await follower.save();
 
-      return res.status(200).json("Successfully followed the user");
+      return res.status(200).json({ message: "Successfully followed the user" });
     } else {
-      return res.status(409).json("You already follow this user");
+      return res.status(409).json({ error: "You already follow this user" });
     }
   } catch (err) {
-    console.error("Error following user:", err);
-    res.status(500).json("An error occurred while trying to follow the user");
+    console.error("Error following user:", err.message);
+    res.status(500).json({ error: "An error occurred while trying to follow the user" });
   }
 });
 

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/useLogout';
 import socket from '../../socket';
 
-
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 const Sidebar = () => {
   const navigate = useNavigate();
   const { logout } = useLogout();
@@ -29,58 +29,42 @@ const Sidebar = () => {
     e.preventDefault();
   
     try {
-      const userData = JSON.parse(localStorage.getItem("user"));
-      const followerId = userData?.user?.id; // Get the logged-in user's ID
-      const token = userData?.token;
+      const parsedData = JSON.parse(localStorage.getItem("user"));
+      const followerId = parsedData?.user?.id; // Get the logged-in user's ID
+      const token = parsedData?.token;
   
-      if (!followerId) {
-        console.error("User ID not found in localStorage");
+      if (!followerId || !searchQuery) {
+        console.error("Follower ID or search query missing");
         return;
       }
   
-      // Fetch followee's ID using their email
-      const followeeResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/by-email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ email: searchQuery }),
-      });
+      // Fetch the followee ID using the email
+      const followeeResponse = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/api/users/by-email`,
+        { email: searchQuery },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
   
-      if (!followeeResponse.ok) {
-        console.error("Failed to fetch followee ID");
-        const errorMessage = await followeeResponse.text();
-        console.error("Error message:", errorMessage);
+      const followeeId = followeeResponse.data._id;
+  
+      if (!followeeId) {
+        console.error("Followee ID not found");
         return;
       }
   
-      const { _id: followeeId } = await followeeResponse.json();
+      // Make the follow request
+      const response = await axios.put(
+        `${process.env.REACT_APP_SERVER_URL}/api/users/follow`,
+        { followerId, followeeId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
   
-      // Send follow request
-      const followResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          followerId, // Logged-in user's ID
-          followeeId, // Followee's ID
-        }),
-      });
-  
-      if (followResponse.ok) {
-        console.log("Followed successfully");
-      } else {
-        console.error("Failed to follow:", followResponse.statusText);
-        const errorMessage = await followResponse.text();
-        console.error("Error message:", errorMessage);
-      }
+      console.log("Followed successfully:", response.data);
     } catch (error) {
-      console.error("Error in makeFriend:", error);
+      console.error("Error in makeFriend:", error.response?.data || error.message);
     }
   };
+  
   
   useEffect(() => {
     const fetchProfileImage = async () => {
