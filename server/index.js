@@ -20,7 +20,6 @@ const User = require('./models/User');
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
-
 const postRoute = require('./routes/posts');
 app.use('/api/posts', postRoute);
 // Serve static files from the uploads directory
@@ -437,20 +436,32 @@ app.get('/api/communities', async (req, res) => {
     }
 });
 
+app.get('/api/myCommunities', async (req, res) => {
+    const { nickname } = req.query;
+
+    try {
+        if (!nickname) {
+            return res.status(400).json({ error: "Nickname is required" });
+        }
+
+        const communities = await Community.find({ communityMembers: nickname });
+        if (communities.length === 0) {
+            return res.status(404).json({ message: "No communities found for this member" });
+        }
+
+        res.status(200).json(communities);
+    } catch (error) {
+        console.error("Error fetching communities:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 // Catch-all route for undefined endpoints
 app.get("*", (req, res) => {
     res.sendStatus(404);
 });
 
-app.get('/api/myCommunities', async (req, res) => {
-    try {
-        const communities = await Community.find(); // Fetch all communities
-        res.status(200).json(communities); // Send raw data to the frontend
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching communities', error });
-    }
-});
+
 
 app.post('/api/joinCommunity', async (req, res) => {
     console.log("Join community request received");
