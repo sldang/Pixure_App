@@ -442,8 +442,8 @@ app.get("*", (req, res) => {
     res.sendStatus(404);
 });
 
-app.get('/api/communities/nickname', async (req, res) => {
-    const { nickname } = req.body;
+app.get('/api/communities', async (req, res) => {
+    const { nickname } = req.query;
 
     try {
         if (!nickname) {
