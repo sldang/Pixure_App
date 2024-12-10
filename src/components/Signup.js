@@ -58,7 +58,7 @@ export default function Signup() {
                     parentAccountID: 0, // default parent account id
                     childAccount: 0, // default child account
                     childAccountID: 0, // default child account id
-                    bio: "", // default profile description/bio
+                    bio: "Everyone has a story to tell. I'm gonna tell you mine.", // default profile description/bio
                 }),
             });
 
