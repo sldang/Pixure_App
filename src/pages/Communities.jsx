@@ -3,8 +3,8 @@ import { useCommunityContext } from '../contexts/CommunityContext';
 import CommunityModal from './CommunityModal';
 
 const Communities = () => {
-  const { state } = useCommunityContext(); // Access state from the context
-  const { joinedCommunities } = state; // Destructure joined communities
+  const { state, dispatch } = useCommunityContext(); // Access state from the context
+  const [joinedCommunities, setJoinedCommunities] = useState([]);// Destructure joined communities
   const parsedData = JSON.parse(localStorage.getItem('user'));
   const nickname = parsedData && parsedData.user ? parsedData.user.nickname : null;
 
@@ -12,36 +12,20 @@ const Communities = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
   useEffect(() => {
-    if (!nickname) {
-      console.error("Nickname is required to fetch communities.");
-      return;
-    }
-
     fetch(`${process.env.REACT_APP_SERVER_URL}/api/communities/nickname?nickname=${nickname}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to fetch communities: ${response.statusText}`);
-        }
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
-        // Ensure the response is an array
-        if (!Array.isArray(data)) {
-          throw new Error("Unexpected data format from the API.");
-        }
-
         // Map the fetched data to match the expected structure
         const formattedData = data.map((community) => ({
           name: community.name,
           description: community.description,
           imageUrl: community.imageUrl || 'https://via.placeholder.com/100x100',
-          members: community.communityMembers ? community.communityMembers.length : 0,
+          members: community.communityMembers.length || 0,
         }));
-
-        joinedCommunities = formattedData; // Update state with joined communities
+        setJoinedCommunities(formattedData); // Update state
       })
       .catch((error) => console.error('Error fetching communities:', error));
-  }, [nickname]);
+  }, []);
 
   // Open the modal for a specific community
   const openCommunityModal = (community) => {
