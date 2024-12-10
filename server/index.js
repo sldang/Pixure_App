@@ -442,8 +442,8 @@ app.get("*", (req, res) => {
     res.sendStatus(404);
 });
 
-app.get('/api/communities/:nickname', async (req, res) => {
-    const { nickname } = req.params.nickname;
+app.get('/api/communities/nickname', async (req, res) => {
+    const { nickname } = req.query;
 
     try {
         const user = await User.findById(nickname);
