@@ -4,7 +4,7 @@ import CommunityModal from './CommunityModal';
 
 const Communities = () => {
   const { state } = useCommunityContext(); // Access state from the context
-  const [joinedCommunities, setJoinedCommunities] = state; // Destructure joined communities
+  const { joinedCommunities } = state; // Destructure joined communities
   const parsedData = JSON.parse(localStorage.getItem('user'));
   const nickname = parsedData && parsedData.user ? parsedData.user.nickname : null;
 
@@ -38,7 +38,7 @@ const Communities = () => {
           members: community.communityMembers ? community.communityMembers.length : 0,
         }));
 
-        setJoinedCommunities(formattedData); // Update state with joined communities
+        joinedCommunities = formattedData; // Update state with joined communities
       })
       .catch((error) => console.error('Error fetching communities:', error));
   }, [nickname]);
