@@ -13,7 +13,7 @@ const Communities = () => {
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_SERVER_URL}/api/myCommunities`)
-      .then((response) => response.json())
+      .then((response) => response.json())  
       .then((data) => {
         // Map the fetched data to match the expected structure
         const formattedData = data.map((community) => ({
