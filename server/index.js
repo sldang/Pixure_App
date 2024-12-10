@@ -442,7 +442,7 @@ app.get("*", (req, res) => {
     res.sendStatus(404);
 });
 
-app.get('/api/communities', async (req, res) => {
+app.get('/api/myCommunities', async (req, res) => {
     const { nickname } = req.query;
 
     try {
