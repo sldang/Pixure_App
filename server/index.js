@@ -443,22 +443,11 @@ app.get("*", (req, res) => {
 });
 
 app.get('/api/myCommunities', async (req, res) => {
-    //const { nickname } = req.query;
-
     try {
-        // if (!nickname) {
-        //     return res.status(400).json({ error: "Nickname is required" });
-        // }
-
-        const communities = await Community.find({ communityMembers: "test" });
-        if (communities.length === 0) {
-            return res.status(500).json({ message: "No communities found for this member" });
-        }
-
-        res.status(200).json(communities);
+        const communities = await Community.find(); // Fetch all communities
+        res.status(200).json(communities); // Send raw data to the frontend
     } catch (error) {
-        console.error("Error fetching communities:", error);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ message: 'Error fetching communities', error });
     }
 });
 
