@@ -446,7 +446,7 @@ app.get('/api/communities/nickname', async (req, res) => {
     const { nickname } = req.query;
 
     try {
-        const user = await User.findById(nickname);
+        const user = await User.findOne(nickname);
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
