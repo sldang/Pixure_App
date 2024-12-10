@@ -220,7 +220,7 @@ router.get("/friends/:userId", async (req, res) => {
   }
 });
 
-rrouter.put("/follow", async (req, res) => {
+router.put("/follow", async (req, res) => {
   const { followerEmail, followeeEmail } = req.body;
 
   if (followerEmail === followeeEmail) {
