@@ -40,13 +40,14 @@ const Sidebar = () => {
       }
   
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/follow`, {
-        method: "PUT", // Correct HTTP method
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          followerEmail: userEmail.toLowerCase(), // Logged-in user's email
-          followeeEmail: searchQuery.toLowerCase(), // Email of the user being followed
+          followerEmail: userEmail.toLowerCase(),
+          followeeEmail: searchQuery.toLowerCase(),
         }),
       });
+      console.log("Requesting:", `${process.env.REACT_APP_SERVER_URL}/api/follow`);
   
       if (response.ok) {
         const data = await response.json();
