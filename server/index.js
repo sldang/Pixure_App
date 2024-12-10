@@ -457,7 +457,7 @@ app.get('/api/myCommunities', async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        const communities = await Community.find({ communityMembers: nickname });
+        const communities = await Community.communityMembers.includes({ communityMembers: nickname });
         res.status(200).json(communities);
     } catch (error) {
         console.error('Error:', error);
