@@ -48,8 +48,8 @@ export default function Signup() {
                     followerList: [], // initialize empty follower list
                     followList: [], // initialize empty follow list
                     karma: 0, // default karma value
-                    communityIDs: 0, // default community ids
-                    posts: 0, // default number of posts
+                    communityIDs: [], // default community ids
+                    posts: [], // default number of posts
                     age: 0, // default age
                     searchTags: 0, // default search tags
                     postAndFlagsTags: 0, // default post and flag tags
@@ -73,7 +73,7 @@ export default function Signup() {
             setErrorMessage("An error occurred during account creation. Please try again."); // catch network errors
             console.error("Account creation error:", error); // log error for debugging
         }
-    };
+    }   ;
 
     return (
         <div className="signup-card">
