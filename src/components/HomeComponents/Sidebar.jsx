@@ -36,7 +36,7 @@ const Sidebar = () => {
   
       // Send follow request with emails
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
-        method: "PUT",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           followerEmail: userEmail, // Logged-in user's email
