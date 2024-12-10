@@ -443,7 +443,7 @@ app.get("*", (req, res) => {
 });
 
 app.get('/api/communities/nickname', async (req, res) => {
-    const { nickname } = req.query;
+    const { nickname } = req.body;
 
     try {
         if (!nickname) {
