@@ -39,7 +39,7 @@ const Sidebar = () => {
         return;
       }
   
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/follow`, {
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -47,7 +47,7 @@ const Sidebar = () => {
           followeeEmail: searchQuery.toLowerCase(),
         }),
       });
-      console.log("Requesting:", `${process.env.REACT_APP_SERVER_URL}/api/follow`);
+      console.log("Requesting:", `${process.env.REACT_APP_SERVER_URL}/api/users/follow`);
   
       if (response.ok) {
         const data = await response.json();
