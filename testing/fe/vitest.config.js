@@ -8,4 +8,8 @@ export default defineConfig({
     globals: true,
     setupFiles: './setupTests.js',
   },
+  esbuild: {
+    loader: 'jsx', // Treat .js files as JSX
+    include: /.*\.(js|jsx)$/,
+  },
 });
