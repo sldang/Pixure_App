@@ -427,7 +427,7 @@ app.post("/api/createCommunity", async (req, res) => {
     }
 });
 
-get('/api/communities/exclude', async (req, res) => {
+app.get('/api/communities/exclude', async (req, res) => {
     const { nickname } = req.query;
 
     try {
