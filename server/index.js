@@ -427,12 +427,26 @@ app.post("/api/createCommunity", async (req, res) => {
     }
 });
 
-app.get('/api/communities', async (req, res) => {
+get('/api/communities/exclude', async (req, res) => {
+    const { nickname } = req.query;
+
     try {
-        const communities = await Community.find(); // Fetch all communities
-        res.status(200).json(communities); // Send raw data to the frontend
+        if (!nickname) {
+            return res.status(400).json({ error: "Nickname is required" });
+        }
+
+        const communities = await Community.find({
+            communityMembers: { $nin: [nickname] },
+        });
+
+        if (communities.length === 0) {
+            return res.status(404).json({ message: "No communities found without this member" });
+        }
+
+        res.status(200).json(communities);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching communities', error });
+        console.error("Error fetching communities:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 

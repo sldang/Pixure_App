@@ -10,10 +10,11 @@ const Explore = () => {
   const [communities, setCommunities] = useState([]); // Corrected state variable
   const parsedData = JSON.parse(localStorage.getItem('user'));
   const userid = parsedData && parsedData.user ? parsedData.user.id : null;
+  const nickname = parsedData && parsedData.user ? parsedData.user.nickname : null;
 
   // Fetch communities from the backend
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_SERVER_URL}/api/communities`)
+    fetch(`${process.env.REACT_APP_SERVER_URL}/api/communities?nickname=${nickname}`)
       .then((response) => response.json())
       .then((data) => {
         // Map the fetched data to match the expected structure
