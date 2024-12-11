@@ -14,7 +14,7 @@ const Explore = () => {
 
   // Fetch communities from the backend
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_SERVER_URL}/api/communities?nickname=${nickname}`)
+    fetch(`${process.env.REACT_APP_SERVER_URL}/api/communities/exclude?nickname=${nickname}`)
       .then((response) => response.json())
       .then((data) => {
         // Map the fetched data to match the expected structure
