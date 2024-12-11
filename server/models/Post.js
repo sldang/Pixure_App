@@ -14,7 +14,10 @@ const postSchema = new mongoose.Schema({
   img: String,
   imageData: String,
   likes: { type: Array, default: [] },
+  community: String,
+
   comments: [commentSchema], // Nested comments schema
 }, { timestamps: true });
+
 
 module.exports = mongoose.model("Post", postSchema, 'Post');

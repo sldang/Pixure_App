@@ -16,9 +16,7 @@ const UserProfileDisplay = ({
   const [isFollowersModalOpen, setFollowersModalOpen] = useState(false);
   const [isFollowingModalOpen, setFollowingModalOpen] = useState(false);
   const [isEditingBio, setIsEditingBio] = useState(false);
-  const [bio, setBio] = useState(
-    "Everyone has a story to tell. I'm gonna tell you mine."
-  );
+  const [bio, setBio] = useState([]);
   const [tempBio, setTempBio] = useState(bio);
   const [profilePicture, setProfilePicture] = useState("/api/placeholder/96/96");
 

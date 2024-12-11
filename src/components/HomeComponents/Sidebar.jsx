@@ -4,8 +4,8 @@ import { FaHome, FaSearch, FaCompass, FaEnvelope, FaBell, FaUser, FaUsers, FaSig
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/useLogout';
 import socket from '../../socket';
-
-
+import axios from 'axios';
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 const Sidebar = () => {
   const navigate = useNavigate();
   const { logout } = useLogout();
@@ -26,52 +26,41 @@ const Sidebar = () => {
   ]);
 
   const makeFriend = async (e) => {
-    console.log("makefriend");
     e.preventDefault();
   
+    if (!searchQuery.trim()) {
+      alert("Please enter a valid email to follow.");
+      return;
+    }
+  
     try {
-      // Get the logged-in user's ID from localStorage (nested structure)
-      const userData = JSON.parse(localStorage.getItem("user"));
-      const userId = userData?.user?.id; // Ensure we access the nested user ID safely
-  
-      if (!userId) {
-        console.error("User ID not found in localStorage");
+      if (!userEmail) {
+        console.error("User email not found in localStorage");
         return;
       }
   
-      // Fetch followee's user ID by email
-      const followeeResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/by-email`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: searchQuery }), // Ensure this is sending the correct email
-      });
-  
-      if (!followeeResponse.ok) {
-        console.error("Failed to fetch followee ID");
-        return;
-      }
-  
-      const followeeData = await followeeResponse.json();
-      const followeeId = followeeData._id; // Retrieve followee's user ID
-  
-      // Send follow request with user IDs
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/follow`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          followerId: userId, // Logged-in user's ID
-          followeeId: followeeId // Followee's ID
-        })
+          followerEmail: userEmail.toLowerCase(),
+          followeeEmail: searchQuery.toLowerCase(),
+        }),
       });
+      console.log("Requesting:", `${process.env.REACT_APP_SERVER_URL}/api/users/follow`);
   
       if (response.ok) {
         const data = await response.json();
         console.log("Followed successfully:", data);
+        alert(data);
       } else {
-        console.error("Failed to follow:", response.statusText);
+        const errorMessage = await response.text();
+        console.error("Failed to follow:", errorMessage);
+        alert(`Failed to follow: ${errorMessage}`);
       }
     } catch (error) {
       console.error("Error in makeFriend:", error);
+      alert("An error occurred. Please try again.");
     }
   };
   
@@ -161,30 +150,25 @@ const Sidebar = () => {
             />
             {isSearchVisible && (
               <div>
-                {/* <input
-                  placeholder="Search for friends"
-                  className="chatMenuInput"
-                  value={chatMenuInput}
-                  onChange={(e) => setChatMenuInput(e.target.value)}
-                /> */}
                 <input
-                  type="text"
-                  className="w-full mt-2 px-4 py-2 border rounded-md"
-                  placeholder="Search users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <button
-                  className="text-blue-500 text-sm font-semibold"
-                  onClick={(e) => makeFriend(e)}
-                >
-                  Follow
-                </button>
-                <div className="mt-2">
-                  {filteredUsers.map((user, index) => (
-                    <div key={index} className="py-1">{user}</div>
-                  ))}
-                </div>
+                type="text"
+  className="w-full mt-2 px-4 py-2 border rounded-md"
+  placeholder="Search users..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+/>
+<button
+  className="text-blue-500 text-sm font-semibold mt-2"
+  onClick={makeFriend}
+>
+  Follow
+</button>
+<div className="mt-2">
+  {filteredUsers.map((user, index) => (
+    <div key={index} className="py-1">{user}</div>
+  ))}
+</div>
+
               </div>
             )}
             <SidebarItem

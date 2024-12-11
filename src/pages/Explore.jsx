@@ -1,57 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCommunityContext } from '../contexts/CommunityContext';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Placeholder communities list
-const initialCommunities = [
-  {
-    name: 'Photography Enthusiasts',
-    description: 'A vibrant community for sharing tips, tricks, and stunning photos.',
-    imageUrl: 'https://via.placeholder.com/100x100',
-    members: 134,
-  },
-  {
-    name: 'Travel Lovers',
-    description: 'Inspire and be inspired by incredible travel stories and destinations!',
-    imageUrl: 'https://via.placeholder.com/100x100',
-    members: 72,
-  },
-  {
-    name: 'Book Club',
-    description: 'Dive into exciting discussions about the latest and greatest books.',
-    imageUrl: 'https://via.placeholder.com/100x100',
-    members: 200,
-  },
-  {
-    name: 'Fitness',
-    description: 'Let’s achieve our fitness goals together and share the journey.',
-    imageUrl: 'https://via.placeholder.com/100x100',
-    members: 310,
-  },
-];
-
 const Explore = () => {
   const { state, dispatch } = useCommunityContext(); // Access context state and dispatch
   const navigate = useNavigate();
-  const [communities] = useState(initialCommunities);
+  const [communities, setCommunities] = useState([]); // Corrected state variable
+  const parsedData = JSON.parse(localStorage.getItem('user'));
+  const userid = parsedData && parsedData.user ? parsedData.user.id : null;
+  const nickname = parsedData && parsedData.user ? parsedData.user.nickname : null;
+
+  // Fetch communities from the backend
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/api/communities/exclude?nickname=${nickname}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Map the fetched data to match the expected structure
+        const formattedData = data.map((community) => ({
+          name: community.name,
+          description: community.description,
+          imageUrl: community.imageUrl || 'https://via.placeholder.com/100x100',
+          members: community.communityMembers.length || 0,
+        }));
+        setCommunities(formattedData); // Update state
+      })
+      .catch((error) => console.error('Error fetching communities:', error));
+  }, []);
 
   // Function to handle joining a community
-  const joinCommunity = (community) => {
-    const isAlreadyJoined = state.joinedCommunities.some(
-      (joinedCommunity) => joinedCommunity.name === community.name
-    );
+  const joinCommunity = async (community) => {
+    try {
+        console.log('Joining community:', community.name);
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/joinCommunity`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                userId: userid, 
+                communityName: community.name,
+            }),
+        });
 
-    if (isAlreadyJoined) {
-      toast.error(`You already joined "${community.name}".`, { autoClose: 2000 });
-      return;
+        if (!response.ok) {
+            throw new Error('Failed to join the community.');
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            dispatch({ type: 'JOIN_COMMUNITY', payload: community });
+            toast.success(`Welcome to "${community.name}"!`, { autoClose: 2000 });
+            setTimeout(() => navigate('/communities'), 2000);
+        } else {
+            toast.error(data.message || 'Failed to join community.', { autoClose: 2000 });
+        }
+    } catch (error) {
+        console.error('Error joining community:', error);
+        toast.error(error.message || 'Something went wrong.', { autoClose: 2000 });
     }
+};
 
-    dispatch({ type: 'JOIN_COMMUNITY', payload: community });
-    toast.success(`Welcome to "${community.name}"!`, { autoClose: 2000 });
-    setTimeout(() => navigate('/communities'), 2000); // Redirect to Communities page
-  };
 
   // Navigate to the Create Community page
   const navigateToCreateCommunity = () => {
@@ -73,7 +82,7 @@ const Explore = () => {
 
       {/* Grid layout for displaying communities */}
       <div style={styles.communityGrid}>
-        {[...communities, ...state.allCommunities].map((community, index) => (
+        {communities.map((community, index) => (
           <div
             key={index}
             style={styles.communityCard}
