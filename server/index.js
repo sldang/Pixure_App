@@ -427,52 +427,64 @@ app.post("/api/createCommunity", async (req, res) => {
     }
 });
 
-app.get('/api/communities', async (req, res) => {
+app.get('/api/communities/exclude', async (req, res) => {
+    const { nickname } = req.query;
+
     try {
-        const communities = await Community.find(); // Fetch all communities
-        res.status(200).json(communities); // Send raw data to the frontend
+        if (!nickname) {
+            return res.status(400).json({ error: "Nickname is required" });
+        }
+
+        const communities = await Community.find({
+            communityMembers: { $nin: [nickname] },
+        });
+
+        if (communities.length === 0) {
+            return res.status(404).json({ message: "No communities found without this member" });
+        }
+
+        res.status(200).json(communities);
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching communities', error });
+        console.error("Error fetching communities:", error);
+        res.status(500).json({ error: "Internal server error" });
     }
 });
 
+app.get('/api/myCommunities', async (req, res) => {
+    const { nickname } = req.query;
+
+    try {
+        if (!nickname) {
+            return res.status(400).json({ error: "Nickname is required" });
+        }
+
+        const communities = await Community.find({ communityMembers: nickname });
+        if (communities.length === 0) {
+            return res.status(404).json({ message: "No communities found for this member" });
+        }
+
+        res.status(200).json(communities);
+    } catch (error) {
+        console.error("Error fetching communities:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 // Catch-all route for undefined endpoints
 app.get("*", (req, res) => {
     res.sendStatus(404);
 });
 
-app.get('/api/communities', async (req, res) => {
-    const { nickname } = req.query;
 
-    try {
-        if (!nickname) {
-            return res.status(400).json({ error: 'Nickname is required' });
-        }
 
-        console.log('Received nickname:', nickname); // Debugging log
-
-        const user = await User.findOne({ nickname });
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        const communities = await Community.find({ communityMembers: nickname });
-        res.status(200).json(communities);
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-app.post('/api/joinCommunity', async (req, res) =>{
+app.post('/api/joinCommunity', async (req, res) => {
     console.log("Join community request received");
 
-    try{
-        const {userId, communityName } = req.body;
+    try {
+        const { userId, communityName } = req.body;
         console.log("id", userId);
         console.log(communityName);
-        
+
         const user = await User.findOne({ _id: userId });
         const community = await Community.findOne({ name: communityName });
 
@@ -487,21 +499,21 @@ app.post('/api/joinCommunity', async (req, res) =>{
             return res.status(404).json({ message: "community to follow not found" });
         }
 
-        if(!user.communityIDs.includes(community._id)){
+        if (!user.communityIDs.includes(community._id)) {
             user.communityIDs.push(community._id);
             community.communityMembers.push(user.nickname);
             await user.save();
             await community.save();
             console.log("Successfully joined");
-            return res.status(200).json({ message: "Joined community"});
-        }else{
+            return res.status(200).json({ message: "Joined community" });
+        } else {
             console.log("Already in the community");
-            return res.status(400).json({message:"Already in the community" });
+            return res.status(400).json({ message: "Already in the community" });
 
         }
-    }catch(error){
+    } catch (error) {
         console.log("Error joining community", error)
-        return res.status(500).json({ message: "Internal server error"});
+        return res.status(500).json({ message: "Internal server error" });
     }
 })
 

@@ -130,6 +130,18 @@ router.get('/profile/:userId', async (req, res) => {
   }
 });
 
+router.get('/profile/:community', async (req, res) => {
+  try {
+    const posts = await Post.find({ userId: req.params.userId })
+      .populate('userId', 'nickname')  // Populate nickname for post userId
+      .populate('comments.userId', 'nickname'); // Populate nickname for comments
+    res.status(200).json(posts);
+  } catch (err) {
+    console.error('Error fetching user posts:', err);
+    res.status(500).json(err);
+  }
+});
+
 // Get timeline posts
 router.get('/timeline/:userId', async (req, res) => {
   try {
