@@ -1,126 +1,144 @@
-import React, { useState } from "react";
+//import React, { useState } from "react";
 import { FaThumbsUp, FaThumbsDown, FaComment, FaPaperPlane } from "react-icons/fa";
 import { MdOutlineReportProblem } from "react-icons/md";
-import Post from "../components/HomeComponents/Post";
-import axios from "axios";
+import React, { useState, useEffect, useContext } from "react";
 import Sidebar from "../components/HomeComponents/Sidebar";
 import Rightbar from "../components/HomeComponents/Rightbar";
+import Post from "../components/HomeComponents/Post";
+import axios from "axios";
+import { AuthContext } from "../contexts/AuthContext";
 
 
 
 
 const CommunityModal = ({ community, onClose }) => {
-  const [posts, setPosts] = useState([]);
+
+  const { user } = useContext(AuthContext); // Access user from AuthContext
+  const [posts, setPosts] = useState([]); // Define state for posts
+
   useEffect(() => {
-    if (community) {
-      axios
-        .get(`${process.env.REACT_APP_SERVER_URL}/api/posts/community/${community}`)
-        .then((response) => {
-          const data = response.data;
-
-          // Map the fetched data to match the expected structure
-          const formattedData = data.map((community) => ({
-            name: community.name,
-            description: community.description,
-            imageUrl: community.imageUrl || "https://via.placeholder.com/100x100",
-            members: community.communityMembers.length || 0,
-          }));
-
-          console.log("updating posts");
-          setPosts(formattedData); // Update state
-        })
-        .catch((error) => {
-          console.error("Error fetching communities:", error);
-        });
-    }
-  }, [community]);
-
-  if (!community) return null;
-
-
-  const handleLike = async (postId) => {
-    try {
-      await axios.put(
-        `/api/posts/${postId}/like`,
-        { userId: user.user.id },
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-        }
-      );
+  fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/community/${community}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Map the fetched data to match the expected structure
+        const formattedData = data.map((community) => ({
+          name: community.name,
+          description: community.description,
+          imageUrl: community.imageUrl || 'https://via.placeholder.com/100x100',
+          members: community.communityMembers.length || 0,
+        }));
+        console.log("updating p")
+        setPosts(formattedData); // Update state
+      })
+      .catch((error) => console.error('Error fetching communities:', error));
+    });
   
-      // Update the local state to reflect the like
-      setFollowerPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                likes: post.likes.includes(user.user.id)
-                  ? post.likes.filter((id) => id !== user.user.id) // Unlike
-                  : [...post.likes, user.user.id], // Like
-              }
-            : post
-        )
-      );
-    } catch (error) {
-      console.error("Error liking post:", error);
-    }
-  };
-  
-  // Define handleComment function
-  const handleComment = async (postId, commentContent) => {
-    try {
-      const response = await axios.post(
-        `/api/posts/${postId}/comments`,
-        {
-          userId: user.user.id,
-          content: commentContent,
-        },
-        {
-          headers: { Authorization: `Bearer ${user.token}` },
-        }
-      );
-  
-      // Update the local state to reflect the new comment
-      setFollowerPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId
-            ? { ...post, comments: [...post.comments, response.data] }
-            : post
-        )
-      );
-    } catch (error) {
-      console.error("Error adding comment:", error);
-    }
-  };
-  
-    return (
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 flex flex-col items-center pt-10">
-          <div className="w-full max-w-[600px] mx-4">
-            {followerPosts.length === 0 ? (
-              <p>No posts from followed users to display.</p>
-            ) : (
-              followerPosts.map((post, index) => (
-                <Post
-                  key={index}
-                  user={post.userId?.nickname || "Unknown User"}
-                  content={post.desc}
-                  time={post.createdAt}
-                  img={post.imageData || null}
-                  likes={post.likes}
-                  comments={post.comments || []}
-                  onLike={() => handleLike(post._id)} 
-                  onComment={(commentContent) => handleComment(post._id, commentContent)}
-                />
-              ))
-            )}
-          </div>
-        </div>
-        <Rightbar />
-      </div>
+
+ //Define handleLike function
+ const handleLike = async (postId) => {
+  try {
+    await axios.put(
+      `/api/posts/${postId}/like`,
+      { userId: user.user.id },
+      {
+        headers: { Authorization: `Bearer ${user.token}` },
+      }
     );
-  };
+
+    // Update the local state to reflect the like
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              likes: post.likes.includes(user.user.id)
+                ? post.likes.filter((id) => id !== user.user.id) // Unlike
+                : [...post.likes, user.user.id], // Like
+            }
+          : post
+      )
+    );
+  } catch (error) {
+    console.error("Error liking post:", error);
+  }
+};
+
+// Define handleComment function
+const handleComment = async (postId, commentContent) => {
+  try {
+    const response = await axios.post(
+      `/api/posts/${postId}/comments`,
+      {
+        userId: user.user.id,
+        content: commentContent,
+      },
+      {
+        headers: { Authorization: `Bearer ${user.token}` },
+      }
+    );
+
+    // Update the local state to reflect the new comment
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? { ...post, comments: [...post.comments, response.data] }
+          : post
+      )
+    );
+  } catch (error) {
+    console.error("Error adding comment:", error);
+  }
+};
+
+  return (
+    <div className="flex">
+      <Sidebar />
+      <div className="flex-1 flex flex-col items-center pt-10">
+        <div className="w-full max-w-[600px] mx-4">
+          {Posts.length === 0 ? (
+            <p>No posts from followed users to display.</p>
+          ) : (
+            posts.map((post, index) => (
+              <Post
+                key={index}
+                user={post.userId?.nickname || "Unknown User"}
+                content={post.desc}
+                time={post.createdAt}
+                img={post.imageData || null}
+                likes={post.likes}
+                comments={post.comments || []}
+                onLike={() => handleLike(post._id)} 
+                onComment={(commentContent) => handleComment(post._id, commentContent)}
+              />
+            ))
+          )}
+        </div>
+      </div>
+      <Rightbar />
+    </div>
+  );
+};
+  // const { user } = useContext(AuthContext);
+  // const [posts, setPosts] = useState([]);
+  // fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/community/${community}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       // Map the fetched data to match the expected structure
+  //       const formattedData = data.map((community) => ({
+  //         name: community.name,
+  //         description: community.description,
+  //         imageUrl: community.imageUrl || 'https://via.placeholder.com/100x100',
+  //         members: community.communityMembers.length || 0,
+  //       }));
+  //       console.log("updating p")
+  //       setPosts(formattedData); // Update state
+  //     })
+  //     .catch((error) => console.error('Error fetching communities:', error));
+
+
+//   if (!community) return null;
+
+
 //   return (
 //     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex items-center justify-center z-50">
 //       <div className="bg-white w-4/5 h-5/6 rounded-md shadow-lg overflow-y-auto relative">
