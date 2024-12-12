@@ -15,21 +15,32 @@ const CommunityModal = ({ community, onClose }) => {
   const { user } = useContext(AuthContext); // Access user from AuthContext
   const [posts, setPosts] = useState([]); // Define state for posts
 
-  fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/community/${community}`)
-      .then((response) => response.json())
-      .then((data) => {
-        // Map the fetched data to match the expected structure
-        const formattedData = data.map((community) => ({
-          name: community.name,
-          description: community.description,
-          imageUrl: community.imageUrl || 'https://via.placeholder.com/100x100',
-          members: community.communityMembers.length || 0,
-        }));
-        console.log("updating p")
-        setPosts(formattedData); // Update state
-      })
-      .catch((error) => console.error('Error fetching communities:', error));
+  useEffect(() => {
+    if (!community) return;
 
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/api/posts/community/${community}`
+        );
+        const data = response.data;
+
+        // Map the fetched data to match the expected structure
+        const formattedData = data.map((communityPost) => ({
+          name: communityPost.name,
+          description: communityPost.description,
+          imageUrl: communityPost.imageUrl || 'https://via.placeholder.com/100x100',
+          members: communityPost.communityMembers?.length || 0,
+        }));
+
+        setPosts(formattedData); // Update state
+      } catch (error) {
+        console.error("Error fetching communities:", error);
+      }
+    };
+
+    fetchPosts();
+  }, [community]);
 
   if (!community) return null;
 
