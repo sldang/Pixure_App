@@ -5,7 +5,7 @@ import { MdOutlineReportProblem } from "react-icons/md";
 
 
 const CommunityModal = ({ community, onClose }) => {
-  const [posts, setPosts] = useState();
+  const [posts, setPosts] = useState([]);
   fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/community/${community}`)
       .then((response) => response.json())
       .then((data) => {
@@ -19,57 +19,7 @@ const CommunityModal = ({ community, onClose }) => {
         setPosts(formattedData); // Update state
       })
       .catch((error) => console.error('Error fetching communities:', error));
-  // const placeholderPosts = [
-  //   {
-  //     id: 1,
-  //     user: "User1",
-  //     content: "This is a placeholder post. Feel free to share your thoughts here!",
-  //     timestamp: "2 hours ago",
-  //     likes: 14,
-  //     dislikes: 3,
-  //     comments: [
-  //       {
-  //         user: "Commenter1",
-  //         text: "Thanks for starting this discussion!",
-  //         timestamp: "1 hour ago",
-  //         likes: 2,
-  //         dislikes: 0,
-  //         replies: [],
-  //       },
-  //       {
-  //         user: "Commenter2",
-  //         text: "Interesting point!",
-  //         timestamp: "30 minutes ago",
-  //         likes: 1,
-  //         dislikes: 1,
-  //         replies: [],
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     formattedData
-  //   },
-  //   {
-  //     id: 3,
-  //     user: "User3",
-  //     content: "Does anyone have resources or tips to share? Let's help each other grow!",
-  //     timestamp: "1 day ago",
-  //     likes: 22,
-  //     dislikes: 5,
-  //     comments: [
-  //       {
-  //         user: "Commenter3",
-  //         text: "Here's a helpful article I found!",
-  //         timestamp: "20 hours ago",
-  //         likes: 4,
-  //         dislikes: 1,
-  //         replies: [],
-  //       },
-  //     ],
-  //   },
-  //];
 
-  //const [posts, setPosts] = useState(community?.posts || placeholderPosts);
 
   if (!community) return null;
 
