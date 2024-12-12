@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { FaThumbsUp, FaThumbsDown, FaComment, FaPaperPlane } from "react-icons/fa";
 import { MdOutlineReportProblem } from "react-icons/md";
 
+import Sidebar from "../components/HomeComponents/Sidebar";
+import Rightbar from "../components/HomeComponents/Rightbar";
+import Post from "../components/HomeComponents/Post";
+import axios from "axios";
+
 
 
 const CommunityModal = ({ community, onClose }) => {
