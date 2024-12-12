@@ -10,7 +10,6 @@ import useConversations from "../hooks/useConversations";
 import useMessages from "../hooks/useMessages";
 import axios from "axios";
 import socket from "../socket";
-import socket from "../socket";
 
 axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
 
