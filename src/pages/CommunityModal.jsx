@@ -5,7 +5,7 @@ import { MdOutlineReportProblem } from "react-icons/md";
 
 
 const CommunityModal = ({ community, onClose }) => {
-  const [communityPosts, setCommunityPosts] = useState();
+  const [posts, setPosts] = useState();
   fetch(`${process.env.REACT_APP_SERVER_URL}/api/posts/community/${community}`)
       .then((response) => response.json())
       .then((data) => {
@@ -16,7 +16,7 @@ const CommunityModal = ({ community, onClose }) => {
           imageUrl: community.imageUrl || 'https://via.placeholder.com/100x100',
           members: community.communityMembers.length || 0,
         }));
-        setCommunityPosts(formattedData); // Update state
+        setPosts(formattedData); // Update state
       })
       .catch((error) => console.error('Error fetching communities:', error));
   // const placeholderPosts = [
@@ -72,7 +72,7 @@ const CommunityModal = ({ community, onClose }) => {
   //const [posts, setPosts] = useState(community?.posts || placeholderPosts);
 
   if (!community) return null;
-  if (communityPosts.length === 0) return null;
+  if (posts.length === 0) return null;
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex items-center justify-center z-50">

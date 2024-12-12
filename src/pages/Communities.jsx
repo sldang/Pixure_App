@@ -26,7 +26,7 @@ const Communities = () => {
       })
       .catch((error) => console.error('Error fetching communities:', error));
   }, []);
-  if(joinedCommunity.length != 0)
+  if(joinedCommunities.length != 0)
     console.log("This has a length");
 
   // Open the modal for a specific community
