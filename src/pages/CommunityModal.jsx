@@ -3,7 +3,7 @@ import { FaThumbsUp, FaThumbsDown, FaComment, FaPaperPlane } from "react-icons/f
 import { MdOutlineReportProblem } from "react-icons/md";
 import React, { useState, useEffect, useContext } from "react";
 
-import Post from "../components/HomeComponents/Post";
+//import Post from "../components/HomeComponents/Post";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
 
