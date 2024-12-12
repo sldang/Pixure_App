@@ -95,7 +95,7 @@ const handleComment = async (postId, commentContent) => {
       <Sidebar />
       <div className="flex-1 flex flex-col items-center pt-10">
         <div className="w-full max-w-[600px] mx-4">
-          {Posts.length === 0 ? (
+          {posts.length === 0 ? (
             <p>No posts from followed users to display.</p>
           ) : (
             posts.map((post, index) => (
