@@ -22,7 +22,7 @@ const CommunityModal = ({ community, onClose }) => {
       .catch((error) => console.error('Error fetching communities:', error));
 
 
-  if (!community) return null;
+  //if (!community) return null;
 
 
   return (
