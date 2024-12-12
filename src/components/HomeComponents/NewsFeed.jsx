@@ -40,7 +40,7 @@ const NewsFeed = () => {
 
     const formData = new FormData();
     formData.append('userId', userId);
-    formData.append('desc', postContent);
+    formData.append('desc', postContent);s
     if (image) {
       formData.append('img', image);
     }
