@@ -2,8 +2,7 @@
 import { FaThumbsUp, FaThumbsDown, FaComment, FaPaperPlane } from "react-icons/fa";
 import { MdOutlineReportProblem } from "react-icons/md";
 import React, { useState, useEffect, useContext } from "react";
-import Sidebar from "../components/HomeComponents/Sidebar";
-import Rightbar from "../components/HomeComponents/Rightbar";
+
 import Post from "../components/HomeComponents/Post";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
@@ -92,7 +91,6 @@ const handleComment = async (postId, commentContent) => {
 
   return (
     <div className="flex">
-      <Sidebar />
       <div className="flex-1 flex flex-col items-center pt-10">
         <div className="w-full max-w-[600px] mx-4">
           {posts.length === 0 ? (
@@ -114,7 +112,7 @@ const handleComment = async (postId, commentContent) => {
           )}
         </div>
       </div>
-      <Rightbar />
+
     </div>
   );
 };
@@ -289,6 +287,7 @@ const handleComment = async (postId, commentContent) => {
 //     <div className="bg-white p-2 rounded-md">
 //       <div className="flex justify-between items-center">
 //         <div>
+//           <strong className="text-sm text-gray-800">{comment.user}</strong>
 //           <strong className="text-sm text-gray-800">{comment.user}</strong>
 //           <span className="text-xs text-gray-500 ml-2">{comment.timestamp}</span>
 //         </div>

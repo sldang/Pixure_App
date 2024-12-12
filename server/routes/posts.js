@@ -101,21 +101,21 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Like/dislike posts
-router.put('/:id/like', async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post.likes.includes(req.body.userId)) {
-      await post.updateOne({ $push: { likes: req.body.userId } });
-      res.status(200).json("Post liked!");
-    } else {
-      await post.updateOne({ $pull: { likes: req.body.userId } });
-      res.status(200).json("Post disliked!");
+  router.put('/:id/like', async (req, res) => {
+    try {
+      const post = await Post.findById(req.params.id);
+      if (!post.likes.includes(req.body.userId)) {
+        await post.updateOne({ $push: { likes: req.body.userId } });
+        res.status(200).json("Post liked!");
+      } else {
+        await post.updateOne({ $pull: { likes: req.body.userId } });
+        res.status(200).json("Post disliked!");
+      }
+    } catch (err) {
+      console.error('Error liking/disliking post: ', err);
+      res.status(500).json(err);
     }
-  } catch (err) {
-    console.error('Error liking/disliking post: ', err);
-    res.status(500).json(err);
-  }
-});
+  });
 
 // Get all posts of user with userId
 router.get('/profile/:userId', async (req, res) => {
