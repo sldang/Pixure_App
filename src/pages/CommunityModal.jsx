@@ -22,7 +22,7 @@ const CommunityModal = ({ community, onClose }) => {
       .catch((error) => console.error('Error fetching communities:', error));
 
 
-  //if (!community) return null;
+  if (!community) return null;
 
 
   return (
@@ -171,55 +171,139 @@ const Comment = ({ comment, comments, setComments, commentIndex }) => {
     }
   };
 
+//   return (
+//     <div className="bg-white p-2 rounded-md">
+//       <div className="flex justify-between items-center">
+//         <div>
+//           <strong className="text-sm text-gray-800">{comment.user}</strong>
+//           <span className="text-xs text-gray-500 ml-2">{comment.timestamp}</span>
+//         </div>
+//       </div>
+//       <p className="text-sm text-gray-700 mt-2">{comment.text}</p>
+//       <button
+//         className="text-sm text-blue-500 mt-2"
+//         onClick={() => setShowReplyBox(!showReplyBox)}
+//       >
+//         Reply
+//       </button>
+
+//       {showReplyBox && (
+//         <form
+//           onSubmit={handleAddReply}
+//           className="mt-2 flex items-center space-x-2"
+//         >
+//           <input
+//             type="text"
+//             value={newReply}
+//             onChange={(e) => setNewReply(e.target.value)}
+//             placeholder="Write a reply..."
+//             className="flex-1 px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+//           />
+//           <button
+//             type="submit"
+//             className="p-1 text-blue-500 hover:text-blue-600"
+//           >
+//             <FaPaperPlane />
+//           </button>
+//         </form>
+//       )}
+
+//       {comment.replies?.length > 0 && (
+//         <div className="mt-2 space-y-2">
+//           {comment.replies.map((reply, i) => (
+//             <div key={i} className="ml-4 bg-gray-50 p-2 rounded-md">
+//               <strong className="text-sm">{reply.user}</strong>
+//               <p className="text-xs text-gray-600 mt-1">{reply.text}</p>
+//             </div>
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+const handleLike = async (postId) => {
+  try {
+    await axios.put(
+      `/api/posts/${postId}/like`,
+      { userId: user.user.id },
+      {
+        headers: { Authorization: `Bearer ${user.token}` },
+      }
+    );
+
+    // Update the local state to reflect the like
+    setFollowerPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? {
+              ...post,
+              likes: post.likes.includes(user.user.id)
+                ? post.likes.filter((id) => id !== user.user.id) // Unlike
+                : [...post.likes, user.user.id], // Like
+            }
+          : post
+      )
+    );
+  } catch (error) {
+    console.error("Error liking post:", error);
+  }
+};
+
+// Define handleComment function
+const handleComment = async (postId, commentContent) => {
+  try {
+    const response = await axios.post(
+      `/api/posts/${postId}/comments`,
+      {
+        userId: user.user.id,
+        content: commentContent,
+      },
+      {
+        headers: { Authorization: `Bearer ${user.token}` },
+      }
+    );
+
+    // Update the local state to reflect the new comment
+    setFollowerPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === postId
+          ? { ...post, comments: [...post.comments, response.data] }
+          : post
+      )
+    );
+  } catch (error) {
+    console.error("Error adding comment:", error);
+  }
+};
+
   return (
-    <div className="bg-white p-2 rounded-md">
-      <div className="flex justify-between items-center">
-        <div>
-          <strong className="text-sm text-gray-800">{comment.user}</strong>
-          <span className="text-xs text-gray-500 ml-2">{comment.timestamp}</span>
+    <div className="flex">
+      <Sidebar />
+      <div className="flex-1 flex flex-col items-center pt-10">
+        <div className="w-full max-w-[600px] mx-4">
+          {followerPosts.length === 0 ? (
+            <p>No posts from followed users to display.</p>
+          ) : (
+            followerPosts.map((post, index) => (
+              <Post
+                key={index}
+                user={post.userId?.nickname || "Unknown User"}
+                content={post.desc}
+                time={post.createdAt}
+                img={post.imageData || null}
+                likes={post.likes}
+                comments={post.comments || []}
+                onLike={() => handleLike(post._id)} 
+                onComment={(commentContent) => handleComment(post._id, commentContent)}
+              />
+            ))
+          )}
         </div>
       </div>
-      <p className="text-sm text-gray-700 mt-2">{comment.text}</p>
-      <button
-        className="text-sm text-blue-500 mt-2"
-        onClick={() => setShowReplyBox(!showReplyBox)}
-      >
-        Reply
-      </button>
-
-      {showReplyBox && (
-        <form
-          onSubmit={handleAddReply}
-          className="mt-2 flex items-center space-x-2"
-        >
-          <input
-            type="text"
-            value={newReply}
-            onChange={(e) => setNewReply(e.target.value)}
-            placeholder="Write a reply..."
-            className="flex-1 px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="submit"
-            className="p-1 text-blue-500 hover:text-blue-600"
-          >
-            <FaPaperPlane />
-          </button>
-        </form>
-      )}
-
-      {comment.replies?.length > 0 && (
-        <div className="mt-2 space-y-2">
-          {comment.replies.map((reply, i) => (
-            <div key={i} className="ml-4 bg-gray-50 p-2 rounded-md">
-              <strong className="text-sm">{reply.user}</strong>
-              <p className="text-xs text-gray-600 mt-1">{reply.text}</p>
-            </div>
-          ))}
-        </div>
-      )}
+      <Rightbar />
     </div>
   );
 };
+
 
 export default CommunityModal;
