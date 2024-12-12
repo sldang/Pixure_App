@@ -72,7 +72,7 @@ const CommunityModal = ({ community, onClose }) => {
   //const [posts, setPosts] = useState(community?.posts || placeholderPosts);
 
   if (!community) return null;
-  if (posts.length === 0) return null;
+
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex items-center justify-center z-50">
