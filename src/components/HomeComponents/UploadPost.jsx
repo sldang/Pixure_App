@@ -13,7 +13,7 @@ const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
     const [joinedCommunities, setJoinedCommunities] = useState([]); // State for joined communities
 
     // Fetch joined communities on component mount
-    useEffect(([]) => {
+    useEffect(() => {
         const fetchCommunities = async () => {
             try {
                 const response = await axios.get(`/api/myCommunities?nickname=${nickname}`, {
