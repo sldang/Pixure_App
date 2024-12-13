@@ -188,6 +188,7 @@ const CommunityModal = ({ community, onClose }) => {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         setCommunityPosts(postsResponse.data);
+        console.log(communityResponse.name);
       } catch (error) {
         console.error("Error fetching community data:", error);
       }
