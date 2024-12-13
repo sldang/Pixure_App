@@ -3,10 +3,10 @@ import { FaRegImage } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import axios from 'axios';
-import { AuthContext } from "../../contexts/AuthContext"; // Assuming AuthContext provides user info
 
 const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
-    const { user } = useContext(AuthContext); // Access user from AuthContext
+    const parsedData = JSON.parse(localStorage.getItem('user'));
+    const nickname = parsedData && parsedData.user ? parsedData.user.nickname : null;
     const [image, setImage] = useState(null);
     const [category, setCategory] = useState(''); // State for selected community
     const [imagePreview, setImagePreview] = useState(null);

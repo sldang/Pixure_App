@@ -30,9 +30,8 @@ const NewsFeed = () => {
     fetchUserPosts();
   }, [user]);
 
-  const handleUpload = async (postContent, image) => {
+  const handleUpload = async (postContent, image, community) => {
     const userId = user ? user.user.id : null;
-
     if (!userId) {
       console.error('User ID is missing.');
       return;
@@ -41,6 +40,7 @@ const NewsFeed = () => {
     const formData = new FormData();
     formData.append('userId', userId);
     formData.append('desc', postContent);
+    formData.append('community', community);
     if (image) {
       formData.append('img', image);
     }
