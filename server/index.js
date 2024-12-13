@@ -450,7 +450,7 @@ app.get('/api/communities/exclude', async (req, res) => {
     }
 });
 
-app.get('/api/communites/', async (req,res) =>{
+app.get('/api/communities', async (req,res) =>{
     const { community } = req.query;
     try{
         if (!community) {
