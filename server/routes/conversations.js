@@ -10,7 +10,7 @@ router.post("/", async (req, res) => {
     console.log("User Email:", userEmail);
     console.log("Other Email:", otherEmail);
     const user = await User.findOne({ email: userEmail })
-    const recipient = await User.findOne({ nickname: otherEmail })
+    const recipient = await User.findOne({ email: otherEmail })
     console.log("User Email:", user.email);
     console.log("Other Email:", recipient.email);
     if (!user || !recipient) {
