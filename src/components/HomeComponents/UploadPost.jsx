@@ -3,7 +3,7 @@ import { FaRegImage } from "react-icons/fa6";
 import { IoSend } from "react-icons/io5";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import axios from 'axios';
-import { AuthContext } from "../contexts/AuthContext"; // Assuming AuthContext provides user info
+import { AuthContext } from "../AuthContext"; // Assuming AuthContext provides user info
 
 const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
     const { user } = useContext(AuthContext); // Access user from AuthContext
@@ -16,7 +16,7 @@ const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
     useEffect(() => {
         const fetchCommunities = async () => {
             try {
-                const response = await axios.get("/api/myCommunities", {
+                const response = await axios.get(`/api/myCommunities?nickname=${user.nickname}`, {
                 });
                 setJoinedCommunities(response.data); // Assume response contains an array of communities
             } catch (error) {
