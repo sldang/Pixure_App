@@ -7,3 +7,5 @@ npx vitest tests/srcApp.test.jsx
 
 to run all files
 npm test
+
+//note: make the index.js files for the /server
