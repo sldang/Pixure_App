@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import Signup from '../../../src/components/Signup';  // Adjust the import path as necessary
-import { signupFields } from '../../../src/constants/formFields';  // Adjust the import path as necessary
+import Signup from '../../../src/components/Signup';  
+import { signupFields } from '../../../src/constants/formFields';  
 
 vi.mock('../../../src/constants/formFields', () => ({
   signupFields: [

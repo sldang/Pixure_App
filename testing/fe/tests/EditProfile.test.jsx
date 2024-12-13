@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import EditProfile from '../../../src/components/EditProfile'; // adjust path as needed
+import EditProfile from '../../../src/components/EditProfile'; 
 import { ToastContainer } from 'react-toastify';
 
 // Mocking react-router-dom's useNavigate

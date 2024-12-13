@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
-import FormAction from './FormAction'; // Adjust the path as needed
+import FormAction from '../../../src/components/FormAction'; 
 
 describe('FormAction Component', () => {
   it('should render a button with the correct text', () => {
