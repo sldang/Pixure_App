@@ -11,7 +11,7 @@ import { AuthContext } from "../contexts/AuthContext";
 
 
 const CommunityModal = ({ community, onClose }) => {
-  const { user } = useContext(AuthContext);
+  //const { user } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const CommunityModal = ({ community, onClose }) => {
           comments: post.comments || [],
           timestamp: new Date(post.createdAt).toLocaleString(),
         }));
-
+        console.log(formattedPosts);
         setPosts(formattedPosts);
       } catch (error) {
         console.error("Error fetching posts:", error);
