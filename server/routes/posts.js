@@ -45,7 +45,7 @@ router.post('/', upload.single('img'), async (req, res) => {
       desc: req.body.desc || '',
       imageData: imageData,
       likes: req.body.likes || [],
-    });
+      community: req.body.community,    });
 
     // Save the post to the database
     const savedPost = await newPost.save();
@@ -101,21 +101,21 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Like/dislike posts
-router.put('/:id/like', async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.id);
-    if (!post.likes.includes(req.body.userId)) {
-      await post.updateOne({ $push: { likes: req.body.userId } });
-      res.status(200).json("Post liked!");
-    } else {
-      await post.updateOne({ $pull: { likes: req.body.userId } });
-      res.status(200).json("Post disliked!");
+  router.put('/:id/like', async (req, res) => {
+    try {
+      const post = await Post.findById(req.params.id);
+      if (!post.likes.includes(req.body.userId)) {
+        await post.updateOne({ $push: { likes: req.body.userId } });
+        res.status(200).json("Post liked!");
+      } else {
+        await post.updateOne({ $pull: { likes: req.body.userId } });
+        res.status(200).json("Post disliked!");
+      }
+    } catch (err) {
+      console.error('Error liking/disliking post: ', err);
+      res.status(500).json(err);
     }
-  } catch (err) {
-    console.error('Error liking/disliking post: ', err);
-    res.status(500).json(err);
-  }
-});
+  });
 
 // Get all posts of user with userId
 router.get('/profile/:userId', async (req, res) => {
@@ -130,9 +130,9 @@ router.get('/profile/:userId', async (req, res) => {
   }
 });
 
-router.get('/profile/:community', async (req, res) => {
+router.get('/community/:community', async (req, res) => {
   try {
-    const posts = await Post.find({ userId: req.params.userId })
+    const posts = await Post.find({ community: req.params.community })
       .populate('userId', 'nickname')  // Populate nickname for post userId
       .populate('comments.userId', 'nickname'); // Populate nickname for comments
     res.status(200).json(posts);
