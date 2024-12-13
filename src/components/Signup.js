@@ -17,7 +17,26 @@ export default function Signup() {
     
 
     // handle input changes
-    const handleChange = (e) => setSignupState({ ...signupState, [e.target.id]: e.target.value });
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setSignupState((prevState) => {
+            const updatedState = { ...prevState, [id]: value };
+    
+            // Check for password mismatch
+            if (id === 'confirm-password' || id === 'password') {
+                if (updatedState['confirm-password'] && updatedState['password']) {
+                    if (updatedState['confirm-password'] !== updatedState['password']) {
+                        setErrorMessage("Passwords do not match!");
+                    } else {
+                        setErrorMessage(""); // Clear error if they match
+                    }
+                }
+            }
+    
+            return updatedState;
+        });
+    };
+    
 
     // handle form submission
     const handleSubmit = async (e) => {
@@ -25,6 +44,12 @@ export default function Signup() {
         setErrorMessage(''); // clear any previous errors
         setSuccessMessage(''); // clear any previous success messages
         setLoading(true); // show loading spinner during the process
+
+        if (signupState['confirm-password'] !== signupState['password']) {
+            setErrorMessage("Passwords do not match!");
+            setLoading(false);
+            return; // exit early
+        }
 
         try {
             await createAccount(); // attempt to create account
@@ -39,9 +64,6 @@ export default function Signup() {
     // function to create a new account
     const createAccount = async () => {
         try {
-            if(signupState['confirm-password'] != signupState['password']){
-                throw new Error("Passwords do not match!");
-            }
             const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/User`, {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
