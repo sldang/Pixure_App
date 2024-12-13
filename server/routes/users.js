@@ -65,34 +65,36 @@ const upload = multer({
   }
  });
  router.put("/follow", async (req, res) => {
-  const { followerUsername, followeeUsername } = req.body;
+  const { followerNickname, followeeNickname } = req.body;
 
-  if (!followerUsername || !followeeUsername) {
-    return res.status(400).json("Follower username and followee username are required");
+  // Verify that both nicknames are provided
+  if (!followerNickname || !followeeNickname) {
+    return res.status(400).json("Both follower and followee nicknames are required");
   }
 
-  if (followerUsername.toLowerCase() === followeeUsername.toLowerCase()) {
+  // Ensure the user is not trying to follow themselves
+  if (followerNickname.toLowerCase() === followeeNickname.toLowerCase()) {
     return res.status(403).json("You cannot follow yourself");
   }
 
   try {
-    // Find users by username
-    const follower = await User.findOne({ nickname: followerUsername.toLowerCase() });
-    const followee = await User.findOne({ nickname: followeeUsername.toLowerCase() });
+    // Fetch the follower and followee from the database
+    const follower = await User.findOne({ nickname: followerNickname.toLowerCase() });
+    const followee = await User.findOne({ nickname: followeeNickname.toLowerCase() });
 
     if (!follower || !followee) {
       return res.status(404).json("User not found");
     }
 
-    // Add followeeUsername to follower's followList
-    if (!follower.followList.includes(followeeUsername.toLowerCase())) {
-      follower.followList.push(followeeUsername.toLowerCase());
+    // Add followeeNickname to the follower's follow list
+    if (!follower.followList.includes(followeeNickname.toLowerCase())) {
+      follower.followList.push(followeeNickname.toLowerCase());
       await follower.save();
     }
 
-    // Add followerUsername to followee's followerList
-    if (!followee.followerList.includes(followerUsername.toLowerCase())) {
-      followee.followerList.push(followerUsername.toLowerCase());
+    // Add followerNickname to the followee's follower list
+    if (!followee.followerList.includes(followerNickname.toLowerCase())) {
+      followee.followerList.push(followerNickname.toLowerCase());
       await followee.save();
     }
 
@@ -103,6 +105,23 @@ const upload = multer({
   }
 });
 
+
+router.get('/search', async (req, res) => {
+  const { query } = req.query;
+
+  if (!query) {
+    return res.status(400).json({ error: 'Query is required' });
+  }
+
+  try {
+    // Use a case-insensitive regex to search for matching nicknames
+    const users = await User.find({ nickname: { $regex: query, $options: 'i' } }).select('nickname');
+    res.status(200).json(users); // Returns an array of matching users with their nicknames
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 router.post("/by-email", async (req, res) => {
   const { email } = req.body;

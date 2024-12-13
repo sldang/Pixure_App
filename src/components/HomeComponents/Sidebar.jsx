@@ -24,18 +24,20 @@ const Sidebar = () => {
     { user: 'Jane Smith', content: 'commented: "Nice post!"', time: '2d ago' },
     { user: 'John Doe', content: 'followed you', time: '3d ago' },
   ]);
-
   const makeFriend = async (e) => {
     e.preventDefault();
   
     if (!searchQuery.trim()) {
-      alert("Please enter a valid username to follow.");
+      alert("Please enter a valid nickname to follow.");
       return;
     }
   
     try {
-      if (!userNickname) {
-        console.error("User nickname not found in localStorage");
+      const parsedData = JSON.parse(localStorage.getItem('user'));
+      const followerNickname = parsedData?.user?.nickname; // Logged-in user's nickname
+  
+      if (!followerNickname) {
+        console.error("Logged-in user's nickname not found in localStorage");
         return;
       }
   
@@ -43,11 +45,10 @@ const Sidebar = () => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          followerUsername: userNickname.toLowerCase(), // Logged-in user's username
-          followeeUsername: searchQuery.toLowerCase(), // Username of the user being followed
+          followerNickname: followerNickname.toLowerCase(),
+          followeeNickname: searchQuery.toLowerCase(), // Nickname of the user being followed
         }),
       });
-      console.log("Requesting:", `${process.env.REACT_APP_SERVER_URL}/api/users/follow`);
   
       if (response.ok) {
         const data = await response.json();
@@ -63,8 +64,6 @@ const Sidebar = () => {
       alert("An error occurred. Please try again.");
     }
   };
-  
-  
   
   useEffect(() => {
     const fetchProfileImage = async () => {
@@ -88,14 +87,29 @@ const Sidebar = () => {
   const users = ['John Doe', 'Jane Smith', 'Emily Stone'];
 
   useEffect(() => {
-    if (searchQuery) {
-      const filtered = users.filter(user => user.toLowerCase().includes(searchQuery.toLowerCase()));
-      setFilteredUsers(filtered);
-    } else {
-      setFilteredUsers([]);
-    }
+    const fetchFilteredUsers = async () => {
+      if (searchQuery.trim() === '') {
+        setFilteredUsers([]);
+        return;
+      }
+  
+      try {
+        const response = await axios.get(`/api/users/search?query=${searchQuery}`);
+        if (response.status === 200) {
+          setFilteredUsers(response.data.map(user => user.nickname));
+        } else {
+          console.error('Failed to fetch users');
+          setFilteredUsers([]);
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        setFilteredUsers([]);
+      }
+    };
+  
+    fetchFilteredUsers();
   }, [searchQuery]);
-
+  
   useEffect(() => {
     socket.connect();
     socket.on('connect', () => {
@@ -149,38 +163,42 @@ const Sidebar = () => {
               label="Search"
               onClick={() => setIsSearchVisible(!isSearchVisible)}
             />
-            {isSearchVisible && (
+          {isSearchVisible && (
   <div>
     <input
       type="text"
       className="w-full mt-2 px-4 py-2 border rounded-md"
-      placeholder="Search users by username..."
+      placeholder="Search users by nickname..."
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
     />
     <div className="mt-2">
-      {filteredUsers.map((user, index) => (
-        <div key={index} className="py-1 flex items-center justify-between">
-          <span>{user}</span>
-          <div className="flex">
-            <button
-              className="text-blue-500 text-sm font-semibold"
-              onClick={(e) => {
-                setSearchQuery(user); // Set the selected username in the search bar
-                makeFriend(e); // Trigger the follow function
-              }}
-            >
-              Follow
-            </button>
-            <button
-              className="text-green-500 text-sm font-semibold ml-4"
-              onClick={() => navigate(`/profile/${user}`)}
-            >
-              View Profile
-            </button>
+      {filteredUsers.length > 0 ? (
+        filteredUsers.map((nickname, index) => (
+          <div key={index} className="py-1 flex items-center justify-between">
+            <span>{nickname}</span>
+            <div className="flex">
+              <button
+                className="text-blue-500 text-sm font-semibold"
+                onClick={(e) => {
+                  setSearchQuery(nickname); // Set the selected nickname in the search bar
+                  makeFriend(e); // Trigger the follow function
+                }}
+              >
+                Follow
+              </button>
+              <button
+                className="text-green-500 text-sm font-semibold ml-4"
+                onClick={() => navigate(`/profile/${nickname}`)}
+              >
+                View Profile
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <p className="text-gray-500 text-sm">No users found.</p>
+      )}
     </div>
   </div>
 )}
