@@ -28,7 +28,7 @@ export default function Signup() {
 
         try {
             await createAccount(); // attempt to create account
-            navigate('/login');
+            
         } catch (error) {
             setErrorMessage("an unexpected error occurred."); // catch generic errors
         } finally {
@@ -70,6 +70,8 @@ export default function Signup() {
             if (response.ok) {
                 setSuccessMessage("Account created successfully!"); // show success message
                 setSignupState(fieldsState); // reset form fields
+                setLoading(false);
+                setTimeout(() => navigate("/login"), 2000);
             } else {
                 const errorData = await response.json(); // parse server error
                 setErrorMessage(errorData.error || "Account creation failed. Please try again."); // set error message
