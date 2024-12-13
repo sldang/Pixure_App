@@ -56,8 +56,8 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get('/api/communities', async (req, res) => {
-    const { community } = req.query;
+router.get('/communities/:community', async (req, res) => {
+    const { community } = req.body.community;
     try {
         if (!community) {
             return res.status(400).json({ error: "Nickname is required" });
