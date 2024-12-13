@@ -12,7 +12,7 @@ const Communities = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_SERVER_URL}/api/myCommunities/${nickname}`)
+    fetch(`${process.env.REACT_APP_SERVER_URL}/api/community/myCommunities/${nickname}`)
       .then((response) => response.json())
       .then((data) => {
         // Map the fetched data to match the expected structure
