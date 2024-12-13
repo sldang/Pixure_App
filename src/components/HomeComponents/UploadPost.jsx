@@ -29,6 +29,7 @@ const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
     }, );
 
     const handleImageChange = (e) => {
+        e.preventDefault();
         const file = e.target.files[0];
         if (file) {
             setImage(file);
@@ -43,6 +44,7 @@ const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
     };
 
     const handleCategoryChange = (e) => {
+        e.preventDefault();
         setCategory(e.target.value); // Update category with the selected community
     };
 
