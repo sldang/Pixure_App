@@ -49,7 +49,7 @@ app.use("/api/users", require("./routes/users"));
 app.use("/api/posts", require("./routes/posts"));
 app.use("/api/messages", require("./routes/messages"));
 app.use("/api/conversations", require("./routes/conversations"));
-app.use("",require("./routes/communities"));
+app.use("/api/community",require("./routes/communities"));
 
 // Start the server
 app.listen(PORT, () => {
