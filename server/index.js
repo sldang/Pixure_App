@@ -21,7 +21,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
 const postRoute = require('./routes/posts');
+const communityRoute = require('.routes/communities');
 app.use('/api/posts', postRoute);
+app.use('', communityRoute)
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Connect to the database
@@ -48,6 +50,7 @@ app.use("/api/users", require("./routes/users"));
 app.use("/api/posts", require("./routes/posts"));
 app.use("/api/messages", require("./routes/messages"));
 app.use("/api/conversations", require("./routes/conversations"));
+app.use("",require("./routes/communities"));
 
 // Start the server
 app.listen(PORT, () => {
