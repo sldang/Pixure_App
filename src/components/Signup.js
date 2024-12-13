@@ -71,7 +71,7 @@ export default function Signup() {
                 setSuccessMessage("Account created successfully!"); // show success message
                 setSignupState(fieldsState); // reset form fields
                 setLoading(false);
-                setTimeout(() => navigate("/login"), 2000);
+                setTimeout(() => navigate("/login"), 1000);
             } else {
                 const errorData = await response.json(); // parse server error
                 setErrorMessage(errorData.error || "Account creation failed. Please try again."); // set error message
