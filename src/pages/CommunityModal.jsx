@@ -179,7 +179,6 @@ const CommunityModal = ({ community, onClose }) => {
       try {
         // Fetch community details
         const communityResponse = await axios.get(`/api/communities?community=${community}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
         });
         console.log(communityResponse);
         setCommunityDetails(communityResponse.data);
