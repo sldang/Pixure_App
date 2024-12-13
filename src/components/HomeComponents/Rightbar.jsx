@@ -59,14 +59,7 @@ const Rightbar = () => {
         <p>Following:</p>
         <p>{followingCount}</p>
       </div>
-      <div className="flex items-center mt-4">
-        <img
-          src={profilePicture || defaultProfilePicture}
-          alt="Profile"
-          className="w-16 h-16 rounded-full object-cover"
-        />
-        <p className="ml-4 font-medium">{nickname}</p>
-      </div>
+      
     </div>
   );
 };
