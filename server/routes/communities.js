@@ -20,7 +20,7 @@ router.use(
     })
 );
 
-router.post("/api/createCommunity", async (req, res) => {
+router.post("/createCommunity", async (req, res) => {
     console.log("Create community request recieved");
     try {
         const { name, communityPosts, communityMembers, description, restriction, image } = req.body;
@@ -46,7 +46,7 @@ router.post("/api/createCommunity", async (req, res) => {
 });
 
 // API endpoint to get all communities
-router.get("/api/Community", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const data = await Community.find({});
         res.json(data);
@@ -72,7 +72,7 @@ router.get('/api/communities', async (req, res) => {
     }
 })
 
-router.get('/api/myCommunities', async (req, res) => {
+router.get('/myCommunities', async (req, res) => {
     const { nickname } = req.query;
 
     try {
@@ -92,7 +92,7 @@ router.get('/api/myCommunities', async (req, res) => {
     }
 });
 
-router.get('/api/communities/exclude', async (req, res) => {
+router.get('/exclude', async (req, res) => {
     const { nickname } = req.query;
 
     try {
@@ -115,7 +115,7 @@ router.get('/api/communities/exclude', async (req, res) => {
     }
 });
 
-router.post('/api/joinCommunity', async (req, res) => {
+router.post('/joinCommunity', async (req, res) => {
     console.log("Join community request received");
 
     try {

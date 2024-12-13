@@ -14,7 +14,7 @@ const Explore = () => {
 
   // Fetch communities from the backend
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_SERVER_URL}/api/communities/exclude?nickname=${nickname}`)
+    fetch(`${process.env.REACT_APP_SERVER_URL}/api/community/exclude?nickname=${nickname}`)
       .then((response) => response.json())
       .then((data) => {
         // Map the fetched data to match the expected structure
@@ -34,7 +34,7 @@ const Explore = () => {
   const joinCommunity = async (community) => {
     try {
         console.log('Joining community:', community.name);
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/joinCommunity`, {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/community/joinCommunity`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
