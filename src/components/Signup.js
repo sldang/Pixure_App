@@ -106,7 +106,7 @@ export default function Signup() {
                 {loading ? (
                     <div className="loading-spinner">Creating account...</div>
                 ) : (
-                    <FormAction handleSubmit={handleSubmit} text="signup" />
+                    <FormAction handleSubmit={handleSubmit} text="Sign Up" />
                 )}
             </form>
         </div>
