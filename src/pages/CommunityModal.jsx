@@ -180,6 +180,7 @@ const CommunityModal = ({ community, onClose }) => {
         // Fetch community details
         const communityResponse = await axios.get(`/api/communities?community=${community.name}`, {
         });
+        console.log(communityResponse);
         setCommunityDetails(communityResponse.data);
 
         // Fetch posts for the community
@@ -187,6 +188,7 @@ const CommunityModal = ({ community, onClose }) => {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         setCommunityPosts(postsResponse.data);
+        console.log(communityDetails.name);
       } catch (error) {
         console.error("Error fetching community data:", error);
       }
@@ -258,10 +260,10 @@ const CommunityModal = ({ community, onClose }) => {
         >
           &times;
         </button>
-        {communityDetails ? (
+        {community ? (
           <div>
-            <h2 className="text-2xl font-bold mb-4">{communityDetails.name}</h2>
-            <p className="text-gray-700 mb-6">{communityDetails.description}</p>
+            <h2 className="text-2xl font-bold mb-4">{community.name}</h2>
+            <p className="text-gray-700 mb-6">{community.description}</p>
           </div>
         ) : (
           <p>Loading community details...</p>
