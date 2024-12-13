@@ -34,7 +34,7 @@ const Explore = () => {
   const joinCommunity = async (community) => {
     try {
         console.log('Joining community:', community.name);
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/community/joinCommunity/${community.name}`, {
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/community/joinCommunity/${community._id}`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
