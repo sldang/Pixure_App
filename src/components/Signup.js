@@ -28,13 +28,12 @@ export default function Signup() {
 
         try {
             await createAccount(); // attempt to create account
+            navigate('/login');
         } catch (error) {
             setErrorMessage("an unexpected error occurred."); // catch generic errors
         } finally {
             setLoading(false);
-            navigate('/login');
              // stop loading spinner
-            
         }
     };
 
