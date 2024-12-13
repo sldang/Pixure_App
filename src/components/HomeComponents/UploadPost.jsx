@@ -16,6 +16,7 @@ const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
     useEffect(() => {
         const fetchCommunities = async () => {
             try {
+                console.log(user.nickname);
                 const response = await axios.get(`/api/myCommunities?nickname=${user.nickname}`, {
                 });
                 setJoinedCommunities(response.data); // Assume response contains an array of communities
