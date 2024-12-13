@@ -57,10 +57,10 @@ router.get("/", async (req, res) => {
 });
 
 router.get('/communities/:community', async (req, res) => {
-    const { community } = req.body.community;
+    const { community } = req.params;
     try {
         if (!community) {
-            return res.status(400).json({ error: "Nickname is required" });
+            return res.status(400).json({ error: "Community name is required" });
         }
         const communities = await Community.find({
             name: community
@@ -72,8 +72,8 @@ router.get('/communities/:community', async (req, res) => {
     }
 })
 
-router.get('/myCommunities', async (req, res) => {
-    const { nickname } = req.query;
+router.get('/myCommunities/:nickname', async (req, res) => {
+    const { nickname } = req.params;
 
     try {
         if (!nickname) {
@@ -92,8 +92,8 @@ router.get('/myCommunities', async (req, res) => {
     }
 });
 
-router.get('/exclude', async (req, res) => {
-    const { nickname } = req.query;
+router.get('/exclude/:nickname', async (req, res) => {
+    const { nickname } = req.params;
 
     try {
         if (!nickname) {
@@ -115,11 +115,11 @@ router.get('/exclude', async (req, res) => {
     }
 });
 
-router.post('/joinCommunity', async (req, res) => {
+router.post('/joinCommunity/:communityName', async (req, res) => {
     console.log("Join community request received");
 
     try {
-        const { userId, communityName } = req.body;
+        const { userId, communityName } = req.params;
         console.log("id", userId);
         console.log(communityName);
 

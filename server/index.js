@@ -59,120 +59,13 @@ app.listen(PORT, () => {
 
 
 
-// API endpoint to get all community reports
-app.get("/api/CommunityReport", async (req, res) => {
-    try {
-        const data = await CommunityReport.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching community reports:", error);
-        res.status(500).json({ error: "An error occurred while fetching community reports" });
-    }
-});
-
-// API endpoint to get all flags profiles
-app.get("/api/FlagsProfile", async (req, res) => {
-    try {
-        const data = await FlagsProfile.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching flags profiles:", error);
-        res.status(500).json({ error: "An error occurred while fetching flags profiles" });
-    }
-});
-
-// API endpoint to get all community post comments
-app.get("/api/CommunityPostComment", async (req, res) => {
-    try {
-        const data = await CommunityPostComment.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching community post comments:", error);
-        res.status(500).json({ error: "An error occurred while fetching community post comments" });
-    }
-});
-
-// API endpoint to get all community posts
-app.get("/api/CommunityPost", async (req, res) => {
-    try {
-        const data = await CommunityPost.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching community posts:", error);
-        res.status(500).json({ error: "An error occurred while fetching community posts" });
-    }
-});
-
-// API endpoint to get all local community accounts
-app.get("/api/LocalCommunityAccount", async (req, res) => {
-    try {
-        const data = await LocalCommunityAccount.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching local community accounts:", error);
-        res.status(500).json({ error: "An error occurred while fetching local community accounts" });
-    }
-});
-
 app.options('*', cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// API endpoint to get all post comments
-app.get("/api/PostComment", async (req, res) => {
-    try {
-        const data = await PostComment.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching post comments:", error);
-        res.status(500).json({ error: "An error occurred while fetching post comments" });
-    }
-});
 
-// API endpoint to get all post reports
-app.get("/api/PostReport", async (req, res) => {
-    try {
-        const data = await PostReport.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching post reports:", error);
-        res.status(500).json({ error: "An error occurred while fetching post reports" });
-    }
-});
-
-app.get("/api/Post", async (req, res) => {
-    try {
-        const data = await Post.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching community reports:", error);
-        res.status(500).json({ error: "An error occurred while fetching community reports" });
-    }
-})
-
-// API endpoint to get all search tags and flags
-app.get("/api/SearchTagsAndFlags", async (req, res) => {
-    try {
-        const data = await SearchTagsAndFlags.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching search tags and flags:", error);
-        res.status(500).json({ error: "An error occurred while fetching search tags and flags" });
-    }
-});
-
-// API endpoint to get all tags profiles
-app.get("/api/TagsProfile", async (req, res) => {
-    try {
-        const data = await TagsProfile.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching tags profiles:", error);
-        res.status(500).json({ error: "An error occurred while fetching tags profiles" });
-    }
-});
 
 // API endpoint to get all users
 app.get("/api/User", async (req, res) => {
@@ -236,9 +129,6 @@ app.post("/api/User", async (req, res) => {
     }
 });
 
-app.get("/api/login", async (req, res) => {
-    res.json("test")
-})
 
 
 
@@ -346,12 +236,12 @@ app.post("/api/follow", async (req, res) => {
 });
 
 // In your user routes file
-app.get('/api/getUserByEmail', async (req, res) => {
-    const email = req.query.email;
+app.get('/api/getUserNickname', async (req, res) => {
+    const nickname = req.query.nickname;
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ nickname });
         if (!user) return res.status(404).json({ message: 'User not found' });
-        res.status(200).json({ username: user.nickname });
+        res.status(200).json({ email: user.email });
     } catch (err) {
         res.status(500).json(err);
     }
