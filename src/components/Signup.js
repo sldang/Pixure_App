@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { signupFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import Input from "./Input";
+import { useNavigate } from 'react-router-dom';
 
 const fields = signupFields; // define signup form fields
 let fieldsState = {};
@@ -12,6 +13,8 @@ export default function Signup() {
     const [errorMessage, setErrorMessage] = useState(''); // state for error messages
     const [successMessage, setSuccessMessage] = useState(''); // state for success messages
     const [loading, setLoading] = useState(false); // state for loading spinner
+    const navigate = useNavigate();
+    
 
     // handle input changes
     const handleChange = (e) => setSignupState({ ...signupState, [e.target.id]: e.target.value });
@@ -28,7 +31,10 @@ export default function Signup() {
         } catch (error) {
             setErrorMessage("an unexpected error occurred."); // catch generic errors
         } finally {
-            setLoading(false); // stop loading spinner
+            setLoading(false);
+            navigate('/login');
+             // stop loading spinner
+            
         }
     };
 
