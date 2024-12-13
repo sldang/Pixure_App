@@ -1,35 +1,36 @@
-import './ChatOnline.css'
+import './ChatOnline.css';
 
-export default function ChatOnline() {
+export default function ChatOnline({ onlineUsers, setCurrentChat }) {
+  if (!onlineUsers || onlineUsers.length === 0) {
+    return (
+      <div className="chatOnline">
+        <p className="noOnlineUsers">No users are online</p>
+      </div>
+    );
+  }
+
   return (
     <div className="chatOnline">
-        <div className="chatOnlineFriend">
-            <div className="chatOnlineImgContainer">
-                <img className="chatOnlineImg" 
-                src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
-                />
-                <div className='chatOnlineBadge'></div>
-            </div>
-            <span className="chatOnlineName">John Doe</span>
+      {onlineUsers.map((user) => (
+        <div
+          key={user.id} // Ensure `user.id` is unique
+          className="chatOnlineFriend"
+          onClick={() => setCurrentChat(user)} // Handles setting the active chat
+        >
+          <div className="chatOnlineImgContainer">
+            <img
+              className="chatOnlineImg"
+              src={
+                user.profilePicture ||
+                'https://via.placeholder.com/50' // Fallback for users without profile pictures
+              }
+              alt={`${user.name}'s profile`}
+            />
+            <div className="chatOnlineBadge"></div>
+          </div>
+          <span className="chatOnlineName">{user.name}</span>
         </div>
-        <div className="chatOnlineFriend">
-            <div className="chatOnlineImgContainer">
-                <img className="chatOnlineImg" 
-                src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
-                />
-                <div className='chatOnlineBadge'></div>
-            </div>
-            <span className="chatOnlineName">John Doe</span>
-        </div>
-        <div className="chatOnlineFriend">
-            <div className="chatOnlineImgContainer">
-                <img className="chatOnlineImg" 
-                src="https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
-                />
-                <div className='chatOnlineBadge'></div>
-            </div>
-            <span className="chatOnlineName">John Doe</span>
-        </div>
+      ))}
     </div>
-  )
+  );
 }
