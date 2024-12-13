@@ -135,22 +135,6 @@ export default function Login() {
                     {errorMessage && <p className="error-message">{errorMessage}</p>}
                     {successMessage && <p className="success-message">{successMessage}</p>}
 
-                    {/* form options */}
-                    <div className="form-options">
-                        <label>
-                            <input
-                                type="checkbox"
-                                checked={useFakeLogin}
-                                onChange={(e) => setUseFakeLogin(e.target.checked)}
-                            />
-                            <span>Use fake login</span>
-                        </label>
-                        <label>
-                            <input type="checkbox" />
-                            <span>Remember me</span>
-                        </label>
-                    </div>
-
                     {/* loading spinner or submit button */}
                     {loading ? (
                         <div className="loading-spinner">Loading...</div>

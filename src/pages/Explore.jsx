@@ -24,6 +24,7 @@ const Explore = () => {
           imageUrl: community.imageUrl || 'https://via.placeholder.com/100x100',
           members: community.communityMembers.length || 0,
         }));
+        console.log("updating communities")
         setCommunities(formattedData); // Update state
       })
       .catch((error) => console.error('Error fetching communities:', error));
