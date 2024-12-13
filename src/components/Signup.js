@@ -28,7 +28,6 @@ export default function Signup() {
 
         try {
             await createAccount(); // attempt to create account
-            
         } catch (error) {
             setErrorMessage("an unexpected error occurred."); // catch generic errors
         } finally {
@@ -66,6 +65,7 @@ export default function Signup() {
                     bio: "Everyone has a story to tell. I'm gonna tell you mine.", // default profile description/bio
                 }),
             });
+
 
             if (response.ok) {
                 setSuccessMessage("Account created successfully!"); // show success message
