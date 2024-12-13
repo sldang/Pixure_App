@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const cors = require("cors");
-const Community = require('./models/Community');
+const Community = require('../models/Community');
 
 //add messages
 router.use(
