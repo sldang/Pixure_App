@@ -450,6 +450,22 @@ app.get('/api/communities/exclude', async (req, res) => {
     }
 });
 
+app.get('/api/communites/', async (req,res) =>{
+    const { community } = req.query;
+    try{
+        if (!community) {
+            return res.status(400).json({ error: "Nickname is required" });
+        }
+        const communities = await Community.find({
+            name: community
+        })
+        res.status(200).json(communities);
+    } catch (error) {
+        console.error("Error fetching communities:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+})
+
 app.get('/api/myCommunities', async (req, res) => {
     const { nickname } = req.query;
 
