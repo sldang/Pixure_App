@@ -78,7 +78,7 @@ const upload = multer({
   try {
     // Find users by email
     const follower = await User.findOne({ email: followerEmail.toLowerCase() });
-    const followee = await User.findOne({ nickname: followeeEmail });
+    const followee = await User.findOne({ email: followeeEmail.toLowerCase() });
 
     if (!follower || !followee) {
       return res.status(404).json("User not found");
@@ -86,7 +86,7 @@ const upload = multer({
 
     // Add followeeEmail to follower's followList
     if (!follower.followList.includes(followeeEmail.toLowerCase())) {
-      follower.followList.push(followee);
+      follower.followList.push(followeeEmail.toLowerCase());
       await follower.save();
     }
 
