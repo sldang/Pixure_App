@@ -33,7 +33,7 @@ const CommunityModal = ({ community, onClose }) => {
           comments: post.comments || [],
           timestamp: new Date(post.createdAt).toLocaleString(),
         }));
-        console.log(formattedPosts);
+        console.log(community);
         setPosts(formattedPosts);
       } catch (error) {
         console.error("Error fetching posts:", error);
