@@ -67,12 +67,12 @@ const upload = multer({
  router.put("/follow", async (req, res) => {
   const { followerNickname, followeeNickname } = req.body;
 
-  console.log("Received follow request:", { followerNickname, followeeNickname });
-
+  // Verify that both nicknames are provided
   if (!followerNickname || !followeeNickname) {
     return res.status(400).json("Both follower and followee nicknames are required");
   }
 
+  // Ensure the user is not trying to follow themselves
   if (followerNickname.toLowerCase() === followeeNickname.toLowerCase()) {
     return res.status(403).json("You cannot follow yourself");
   }
@@ -82,14 +82,21 @@ const upload = multer({
     const follower = await User.findOne({ nickname: followerNickname.toLowerCase() });
     const followee = await User.findOne({ nickname: followeeNickname.toLowerCase() });
 
-    console.log("Follower found:", follower);
-    console.log("Followee found:", followee);
-
     if (!follower || !followee) {
       return res.status(404).json("User not found");
     }
 
-    // Add follow logic here...
+    // Add followeeNickname to the follower's follow list
+    if (!follower.followList.includes(followeeNickname.toLowerCase())) {
+      follower.followList.push(followeeNickname.toLowerCase());
+      await follower.save();
+    }
+
+    // Add followerNickname to the followee's follower list
+    if (!followee.followerList.includes(followerNickname.toLowerCase())) {
+      followee.followerList.push(followerNickname.toLowerCase());
+      await followee.save();
+    }
 
     return res.status(200).json("Successfully followed the user");
   } catch (err) {

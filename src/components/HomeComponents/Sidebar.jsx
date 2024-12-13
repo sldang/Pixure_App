@@ -27,24 +27,26 @@ const Sidebar = () => {
   const makeFriend = async (e) => {
     e.preventDefault();
   
-    const parsedData = JSON.parse(localStorage.getItem('user'));
-    const followerNickname = parsedData?.user?.nickname; // Logged-in user's nickname
-  
-    console.log("Follower Nickname (logged-in):", followerNickname);
-    console.log("Followee Nickname (search query):", searchQuery);
-  
-    if (!followerNickname || !searchQuery.trim()) {
-      alert("Follower or followee nickname is missing");
+    if (!searchQuery.trim()) {
+      alert("Please enter a valid nickname to follow.");
       return;
     }
   
     try {
+      const parsedData = JSON.parse(localStorage.getItem('user'));
+      const followerNickname = parsedData?.user?.nickname; // Logged-in user's nickname
+  
+      if (!followerNickname) {
+        console.error("Logged-in user's nickname not found in localStorage");
+        return;
+      }
+  
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/follow`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           followerNickname: followerNickname.toLowerCase(),
-          followeeNickname: searchQuery.toLowerCase(),
+          followeeNickname: searchQuery.toLowerCase(), // Nickname of the user being followed
         }),
       });
   
@@ -54,7 +56,7 @@ const Sidebar = () => {
         alert(data);
       } else {
         const errorMessage = await response.text();
-        console.error("Follow failed:", errorMessage);
+        console.error("Failed to follow:", errorMessage);
         alert(`Failed to follow: ${errorMessage}`);
       }
     } catch (error) {
