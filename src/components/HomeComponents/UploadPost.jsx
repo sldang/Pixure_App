@@ -16,8 +16,7 @@ const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
     useEffect(() => {
         const fetchCommunities = async () => {
             try {
-                console.log(user.nickname);
-                const response = await axios.get(`/api/myCommunities?nickname=${user.nickname}`, {
+                const response = await axios.get(`/api/myCommunities?nickname=${nickname}`, {
                 });
                 setJoinedCommunities(response.data); // Assume response contains an array of communities
                 console.log(response);
@@ -27,7 +26,7 @@ const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
         };
 
         fetchCommunities();
-    }, [user.token]);
+    }, );
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
