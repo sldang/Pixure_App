@@ -24,14 +24,17 @@ const Sidebar = () => {
     { user: 'Jane Smith', content: 'commented: "Nice post!"', time: '2d ago' },
     { user: 'John Doe', content: 'followed you', time: '3d ago' },
   ]);
-  const makeFriend = async (e, followeeNickname) => {
+  const makeFriend = async (e) => {
     e.preventDefault();
   
     const parsedData = JSON.parse(localStorage.getItem('user'));
     const followerNickname = parsedData?.user?.nickname; // Logged-in user's nickname
   
-    if (!followerNickname || !followeeNickname) {
-      alert("Both the logged-in user and the user to follow are required.");
+    console.log("Follower Nickname (logged-in):", followerNickname);
+    console.log("Followee Nickname (search query):", searchQuery);
+  
+    if (!followerNickname || !searchQuery.trim()) {
+      alert("Follower or followee nickname is missing");
       return;
     }
   
@@ -41,7 +44,7 @@ const Sidebar = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           followerNickname: followerNickname.toLowerCase(),
-          followeeNickname: followeeNickname.toLowerCase(), // Pass the full nickname explicitly
+          followeeNickname: searchQuery.toLowerCase(),
         }),
       });
   
@@ -51,7 +54,7 @@ const Sidebar = () => {
         alert(data);
       } else {
         const errorMessage = await response.text();
-        console.error("Failed to follow:", errorMessage);
+        console.error("Follow failed:", errorMessage);
         alert(`Failed to follow: ${errorMessage}`);
       }
     } catch (error) {
@@ -167,35 +170,34 @@ const Sidebar = () => {
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
     />
-   <div className="mt-2">
-  {filteredUsers.length > 0 ? (
-    filteredUsers.map((nickname, index) => (
-      <div key={index} className="py-1 flex items-center justify-between">
-        <span>{nickname}</span>
-        <div className="flex">
-          <button
-            className="text-blue-500 text-sm font-semibold"
-            onClick={(e) => {
-              // Use the displayed nickname for the follow action
-              makeFriend(e, nickname); 
-            }}
-          >
-            Follow
-          </button>
-          <button
-            className="text-green-500 text-sm font-semibold ml-4"
-            onClick={() => navigate(`/profile/${nickname}`)}
-          >
-            View Profile
-          </button>
-        </div>
-      </div>
-    ))
-  ) : (
-    <p className="text-gray-500 text-sm">No users found.</p>
-  )}
-</div>
-
+    <div className="mt-2">
+      {filteredUsers.length > 0 ? (
+        filteredUsers.map((nickname, index) => (
+          <div key={index} className="py-1 flex items-center justify-between">
+            <span>{nickname}</span>
+            <div className="flex">
+              <button
+                className="text-blue-500 text-sm font-semibold"
+                onClick={(e) => {
+                  setSearchQuery(nickname); // Set the selected nickname in the search bar
+                  makeFriend(e); // Trigger the follow function
+                }}
+              >
+                Follow
+              </button>
+              <button
+                className="text-green-500 text-sm font-semibold ml-4"
+                onClick={() => navigate(`/profile/${nickname}`)}
+              >
+                View Profile
+              </button>
+            </div>
+          </div>
+        ))
+      ) : (
+        <p className="text-gray-500 text-sm">No users found.</p>
+      )}
+    </div>
   </div>
 )}
 
