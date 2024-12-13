@@ -39,6 +39,9 @@ export default function Signup() {
     // function to create a new account
     const createAccount = async () => {
         try {
+            if(signupState['confirm-password'] != signupState['password']){
+                throw new Error("Passwords do not match!");
+            }
             const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/User`, {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -65,7 +68,6 @@ export default function Signup() {
                     bio: "Everyone has a story to tell. I'm gonna tell you mine.", // default profile description/bio
                 }),
             });
-
 
             if (response.ok) {
                 setSuccessMessage("Account created successfully!"); // show success message
