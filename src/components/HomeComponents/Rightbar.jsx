@@ -46,7 +46,7 @@ const Rightbar = () => {
     fetchUserProfile();
   }, [user]);
 
-  const defaultProfilePicture = "https://via.placeholder.com/150"; // Placeholder image
+
 
   return (
     <div className="max-w-md mx-auto p-4">
