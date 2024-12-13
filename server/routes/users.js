@@ -65,34 +65,34 @@ const upload = multer({
   }
  });
  router.put("/follow", async (req, res) => {
-  const { followerEmail, followeeEmail } = req.body;
+  const { followerUsername, followeeUsername } = req.body;
 
-  if (!followerEmail || !followeeEmail) {
-    return res.status(400).json("Follower email and followee email are required");
+  if (!followerUsername || !followeeUsername) {
+    return res.status(400).json("Follower username and followee username are required");
   }
 
-  if (followerEmail.toLowerCase() === followeeEmail.toLowerCase()) {
+  if (followerUsername.toLowerCase() === followeeUsername.toLowerCase()) {
     return res.status(403).json("You cannot follow yourself");
   }
 
   try {
-    // Find users by email
-    const follower = await User.findOne({ email: followerEmail.toLowerCase() });
-    const followee = await User.findOne({ email: followeeEmail.toLowerCase() });
+    // Find users by username
+    const follower = await User.findOne({ nickname: followerUsername.toLowerCase() });
+    const followee = await User.findOne({ nickname: followeeUsername.toLowerCase() });
 
     if (!follower || !followee) {
       return res.status(404).json("User not found");
     }
 
-    // Add followeeEmail to follower's followList
-    if (!follower.followList.includes(followeeEmail.toLowerCase())) {
-      follower.followList.push(followeeEmail.toLowerCase());
+    // Add followeeUsername to follower's followList
+    if (!follower.followList.includes(followeeUsername.toLowerCase())) {
+      follower.followList.push(followeeUsername.toLowerCase());
       await follower.save();
     }
 
-    // Add followerEmail to followee's followerList
-    if (!followee.followerList.includes(followerEmail.toLowerCase())) {
-      followee.followerList.push(followerEmail.toLowerCase());
+    // Add followerUsername to followee's followerList
+    if (!followee.followerList.includes(followerUsername.toLowerCase())) {
+      followee.followerList.push(followerUsername.toLowerCase());
       await followee.save();
     }
 
@@ -102,6 +102,7 @@ const upload = multer({
     res.status(500).json("An error occurred while trying to follow the user");
   }
 });
+
 
 router.post("/by-email", async (req, res) => {
   const { email } = req.body;
@@ -305,6 +306,28 @@ router.post("/login", async (req, res) => {
       name: responseName // Use nickname or full name based on your display preferences
     });
   } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+router.post("/by-username", async (req, res) => {
+  const { username } = req.body;
+
+  try {
+    const user = await User.findOne({ nickname: username });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({
+      _id: user._id,
+      nickname: user.nickname,
+      email: user.email,
+      followersCount: user.followerList.length,
+      followingCount: user.followList.length,
+    });
+  } catch (err) {
+    console.error("Error fetching user by username:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 });

@@ -20,6 +20,7 @@ const User = require('./models/User');
 const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
+import OtherProfiles from './components/OtherProfiles';
 const postRoute = require('./routes/posts');
 app.use('/api/posts', postRoute);
 // Serve static files from the uploads directory
@@ -42,7 +43,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
     res.json("Hello, server is running!");
 });
-
+<Route path="/profile/:username" element={<OtherProfiles/>} />
 // API routes
 app.use("/api/users", require("./routes/users"));
 app.use("/api/posts", require("./routes/posts"));

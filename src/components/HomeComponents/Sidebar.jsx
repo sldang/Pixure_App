@@ -29,13 +29,13 @@ const Sidebar = () => {
     e.preventDefault();
   
     if (!searchQuery.trim()) {
-      alert("Please enter a valid email to follow.");
+      alert("Please enter a valid username to follow.");
       return;
     }
   
     try {
-      if (!userEmail) {
-        console.error("User email not found in localStorage");
+      if (!userNickname) {
+        console.error("User nickname not found in localStorage");
         return;
       }
   
@@ -43,8 +43,8 @@ const Sidebar = () => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          followerEmail: userEmail.toLowerCase(),
-          followeeEmail: searchQuery.toLowerCase(),
+          followerUsername: userNickname.toLowerCase(), // Logged-in user's username
+          followeeUsername: searchQuery.toLowerCase(), // Username of the user being followed
         }),
       });
       console.log("Requesting:", `${process.env.REACT_APP_SERVER_URL}/api/users/follow`);
@@ -63,6 +63,7 @@ const Sidebar = () => {
       alert("An error occurred. Please try again.");
     }
   };
+  
   
   
   useEffect(() => {
@@ -149,28 +150,41 @@ const Sidebar = () => {
               onClick={() => setIsSearchVisible(!isSearchVisible)}
             />
             {isSearchVisible && (
-              <div>
-                <input
-                type="text"
-  className="w-full mt-2 px-4 py-2 border rounded-md"
-  placeholder="Search users..."
-  value={searchQuery}
-  onChange={(e) => setSearchQuery(e.target.value)}
-/>
-<button
-  className="text-blue-500 text-sm font-semibold mt-2"
-  onClick={makeFriend}
->
-  Follow
-</button>
-<div className="mt-2">
-  {filteredUsers.map((user, index) => (
-    <div key={index} className="py-1">{user}</div>
-  ))}
-</div>
+  <div>
+    <input
+      type="text"
+      className="w-full mt-2 px-4 py-2 border rounded-md"
+      placeholder="Search users by username..."
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+    />
+    <div className="mt-2">
+      {filteredUsers.map((user, index) => (
+        <div key={index} className="py-1 flex items-center justify-between">
+          <span>{user}</span>
+          <div className="flex">
+            <button
+              className="text-blue-500 text-sm font-semibold"
+              onClick={(e) => {
+                setSearchQuery(user); // Set the selected username in the search bar
+                makeFriend(e); // Trigger the follow function
+              }}
+            >
+              Follow
+            </button>
+            <button
+              className="text-green-500 text-sm font-semibold ml-4"
+              onClick={() => navigate(`/profile/${user}`)}
+            >
+              View Profile
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
-              </div>
-            )}
             <SidebarItem
               icon={<FaCompass />}
               label="Explore"
