@@ -106,7 +106,7 @@ router.get('/exclude/:nickname', async (req, res) => {
     }
 });
 
-router.post('/joinCommunity/:communityName', async (req, res) => {
+router.post('/joinCommunity/:communityName/:userId', async (req, res) => {
     console.log("Join community request received");
 
     try {
