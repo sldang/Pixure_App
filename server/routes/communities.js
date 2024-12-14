@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const cors = require("cors");
 const Community = require('../models/Community');
-const User = require("../models/User");
 
 //add messages
 router.use(cors({
@@ -113,7 +112,7 @@ router.post('/joinCommunity/:communityID', async (req, res) => {
     try {
         const { userId, communityID } = req.params;
         console.log("id", userId);
-        console.log(communityID);
+        console.log(communityName);
 
         const user = await User.findOne({ _id: userId });
         const community = await Community.findOne({ _id: communityID });
