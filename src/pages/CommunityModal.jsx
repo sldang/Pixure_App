@@ -16,7 +16,7 @@ const CommunityModal = ({ community, onClose }) => {
     const fetchCommunityData = async () => {
       try {
         console.log(community.name);
-        console.log(community._id.valueOf());
+        console.log(community._id.str);
         // Fetch community details
         const communityResponse = await axios.get(`/api/communities/${community._id}`, {
         });
