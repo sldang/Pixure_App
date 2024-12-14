@@ -5,7 +5,6 @@ const communitySchema = new Schema({
     name: {
         type: String,
         required: false,
-        unique: true,
     },
     communityPosts: {
         type: Array,

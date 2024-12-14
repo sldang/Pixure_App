@@ -16,13 +16,13 @@ const CommunityModal = ({ community, onClose }) => {
     const fetchCommunityData = async () => {
       try {
         // Fetch community details
-        const communityResponse = await axios.get(`/api/communities/${community._id}`, {
+        const communityResponse = await axios.get(`/api/communities/${community.name}`, {
         });
         console.log(communityResponse);
         setCommunityDetails(communityResponse.data);
 
         // Fetch posts for the community
-        const postsResponse = await axios.get(`/api/posts/community/${community._id}`, {
+        const postsResponse = await axios.get(`/api/posts/community/${community.name}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         setCommunityPosts(postsResponse.data);
