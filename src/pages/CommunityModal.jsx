@@ -15,7 +15,7 @@ const CommunityModal = ({ community, onClose }) => {
   useEffect(() => {
     const fetchCommunityData = async () => {
       try {
-        console.log(community._id);
+        console.log(community.name);
         // Fetch community details
         const communityResponse = await axios.get(`/api/communities/${community._id}`, {
         });
