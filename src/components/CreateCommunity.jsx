@@ -51,7 +51,7 @@ const CreateCommunity = () => {
 
       // Make API request to create community
       const response = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}/api/community/createCommunity`,
+        `${process.env.REACT_APP_SERVER_URL}/api/createCommunity`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
