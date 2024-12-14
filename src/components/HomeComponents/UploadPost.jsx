@@ -111,7 +111,7 @@ const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
                         >
                             <option value="">Select a Community</option>
                             {joinedCommunities.map((community) => (
-                                <option key={community._id} value={community._id}>
+                                <option key={community.community._id} value={community.community._id}>
                                     {community.name}
                                 </option>
                             ))}
