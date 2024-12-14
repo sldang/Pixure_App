@@ -129,21 +129,6 @@ const CreateCommunity = () => {
             />
           </div>
 
-          {/* Upload Image */}
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="imageUpload">
-              Upload Community Image
-            </label>
-            <input
-              type="file"
-              id="imageUpload"
-              name="imageUpload"
-              accept="image/*"
-              onChange={handleFileChange}
-              style={styles.fileInput}
-            />
-          </div>
-
           {/* Community Type Dropdown */}
           <div style={styles.formGroup}>
             <label style={styles.label} htmlFor="communityType">
