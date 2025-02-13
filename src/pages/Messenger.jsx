@@ -114,7 +114,7 @@ export default function Messenger() {
           <div className="chatMenuWrapper">
             <form onSubmit={makeChat}>
               <input
-                placeholder="Converse with a friend"
+                placeholder="Converse using email"
                 className="chatMenuInput"
                 value={chatMenuInput}
                 onChange={(e) => setChatMenuInput(e.target.value)}

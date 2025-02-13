@@ -22,6 +22,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 const postRoute = require('./routes/posts');
 app.use('/api/posts', postRoute);
+
 // Serve static files from the uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Connect to the database
@@ -48,6 +49,7 @@ app.use("/api/users", require("./routes/users"));
 app.use("/api/posts", require("./routes/posts"));
 app.use("/api/messages", require("./routes/messages"));
 app.use("/api/conversations", require("./routes/conversations"));
+app.use("/api/community",require("./routes/communities"));
 
 // Start the server
 app.listen(PORT, () => {
@@ -55,71 +57,7 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-// API endpoint to get all communities
-app.get("/api/Community", async (req, res) => {
-    try {
-        const data = await Community.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching communities:", error);
-        res.status(500).json({ error: "An error occurred while fetching communities" });
-    }
-});
 
-// API endpoint to get all community reports
-app.get("/api/CommunityReport", async (req, res) => {
-    try {
-        const data = await CommunityReport.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching community reports:", error);
-        res.status(500).json({ error: "An error occurred while fetching community reports" });
-    }
-});
-
-// API endpoint to get all flags profiles
-app.get("/api/FlagsProfile", async (req, res) => {
-    try {
-        const data = await FlagsProfile.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching flags profiles:", error);
-        res.status(500).json({ error: "An error occurred while fetching flags profiles" });
-    }
-});
-
-// API endpoint to get all community post comments
-app.get("/api/CommunityPostComment", async (req, res) => {
-    try {
-        const data = await CommunityPostComment.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching community post comments:", error);
-        res.status(500).json({ error: "An error occurred while fetching community post comments" });
-    }
-});
-
-// API endpoint to get all community posts
-app.get("/api/CommunityPost", async (req, res) => {
-    try {
-        const data = await CommunityPost.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching community posts:", error);
-        res.status(500).json({ error: "An error occurred while fetching community posts" });
-    }
-});
-
-// API endpoint to get all local community accounts
-app.get("/api/LocalCommunityAccount", async (req, res) => {
-    try {
-        const data = await LocalCommunityAccount.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching local community accounts:", error);
-        res.status(500).json({ error: "An error occurred while fetching local community accounts" });
-    }
-});
 
 app.options('*', cors({
     origin: process.env.FRONTEND_URL,
@@ -127,59 +65,7 @@ app.options('*', cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// API endpoint to get all post comments
-app.get("/api/PostComment", async (req, res) => {
-    try {
-        const data = await PostComment.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching post comments:", error);
-        res.status(500).json({ error: "An error occurred while fetching post comments" });
-    }
-});
 
-// API endpoint to get all post reports
-app.get("/api/PostReport", async (req, res) => {
-    try {
-        const data = await PostReport.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching post reports:", error);
-        res.status(500).json({ error: "An error occurred while fetching post reports" });
-    }
-});
-
-app.get("/api/Post", async (req, res) => {
-    try {
-        const data = await Post.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching community reports:", error);
-        res.status(500).json({ error: "An error occurred while fetching community reports" });
-    }
-})
-
-// API endpoint to get all search tags and flags
-app.get("/api/SearchTagsAndFlags", async (req, res) => {
-    try {
-        const data = await SearchTagsAndFlags.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching search tags and flags:", error);
-        res.status(500).json({ error: "An error occurred while fetching search tags and flags" });
-    }
-});
-
-// API endpoint to get all tags profiles
-app.get("/api/TagsProfile", async (req, res) => {
-    try {
-        const data = await TagsProfile.find({});
-        res.json(data);
-    } catch (error) {
-        console.error("Error fetching tags profiles:", error);
-        res.status(500).json({ error: "An error occurred while fetching tags profiles" });
-    }
-});
 
 // API endpoint to get all users
 app.get("/api/User", async (req, res) => {
@@ -243,9 +129,6 @@ app.post("/api/User", async (req, res) => {
     }
 });
 
-app.get("/api/login", async (req, res) => {
-    res.json("test")
-})
 
 
 
@@ -353,12 +236,12 @@ app.post("/api/follow", async (req, res) => {
 });
 
 // In your user routes file
-app.get('/api/getUserByEmail', async (req, res) => {
-    const email = req.query.email;
+app.get('/api/getUserNickname', async (req, res) => {
+    const nickname = req.query.nickname;
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ nickname });
         if (!user) return res.status(404).json({ message: 'User not found' });
-        res.status(200).json({ username: user.nickname });
+        res.status(200).json({ email: user.email });
     } catch (err) {
         res.status(500).json(err);
     }
@@ -402,89 +285,13 @@ app.get('/api/user/:userEmail/follow-stats', async (req, res) => {
     }
 });
 
-app.post("/api/createCommunity", async (req, res) => {
-    console.log("Create community request recieved");
-    try {
-        const { name, communityPosts, communityMembers, description, restriction, image } = req.body;
-        if (!name) {
-            return res.status(400).json({ error: "name is required" });
-        }
-        const newCommunity = new Community({
-            name,
-            communityPosts,
-            communityMembers,
-            description,
-            restriction,
-            image,
 
-        });
 
-        await newCommunity.save();
-        res.status(201).json({ message: "Community created successfully" });
-    } catch (error) {
-        console.error("error creating community:", error);
-        res.status(500).json({ error: "an error occured while creating community" })
-    }
-});
 
-app.get('/api/communities/exclude', async (req, res) => {
-    const { nickname } = req.query;
 
-    try {
-        if (!nickname) {
-            return res.status(400).json({ error: "Nickname is required" });
-        }
 
-        const communities = await Community.find({
-            communityMembers: { $nin: [nickname] },
-        });
 
-        if (communities.length === 0) {
-            return res.status(404).json({ message: "No communities found without this member" });
-        }
 
-        res.status(200).json(communities);
-    } catch (error) {
-        console.error("Error fetching communities:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
-
-app.get('/api/communities', async (req,res) =>{
-    const { community } = req.query;
-    try{
-        if (!community) {
-            return res.status(400).json({ error: "Nickname is required" });
-        }
-        const communities = await Community.find({
-            name: community
-        })
-        res.status(200).json(communities);
-    } catch (error) {
-        console.error("Error fetching communities:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-})
-
-app.get('/api/myCommunities', async (req, res) => {
-    const { nickname } = req.query;
-
-    try {
-        if (!nickname) {
-            return res.status(400).json({ error: "Nickname is required" });
-        }
-
-        const communities = await Community.find({ communityMembers: nickname });
-        if (communities.length === 0) {
-            return res.status(404).json({ message: "No communities found for this member" });
-        }
-
-        res.status(200).json(communities);
-    } catch (error) {
-        console.error("Error fetching communities:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
 
 // Catch-all route for undefined endpoints
 app.get("*", (req, res) => {
@@ -493,45 +300,7 @@ app.get("*", (req, res) => {
 
 
 
-app.post('/api/joinCommunity', async (req, res) => {
-    console.log("Join community request received");
 
-    try {
-        const { userId, communityName } = req.body;
-        console.log("id", userId);
-        console.log(communityName);
-
-        const user = await User.findOne({ _id: userId });
-        const community = await Community.findOne({ name: communityName });
-
-        if (!user) {
-            console.log("user not found");
-            return res.status(404).json({ message: "user not found" });
-        }
-
-        // Check if the user to be followed exists
-        if (!community) {
-            console.log("community to follow not found");
-            return res.status(404).json({ message: "community to follow not found" });
-        }
-
-        if (!user.communityIDs.includes(community._id)) {
-            user.communityIDs.push(community._id);
-            community.communityMembers.push(user.nickname);
-            await user.save();
-            await community.save();
-            console.log("Successfully joined");
-            return res.status(200).json({ message: "Joined community" });
-        } else {
-            console.log("Already in the community");
-            return res.status(400).json({ message: "Already in the community" });
-
-        }
-    } catch (error) {
-        console.log("Error joining community", error)
-        return res.status(500).json({ message: "Internal server error" });
-    }
-})
 
 require('dotenv').config();
 const http = require('http'); // Import HTTP module

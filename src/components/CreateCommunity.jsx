@@ -51,7 +51,7 @@ const CreateCommunity = () => {
 
       // Make API request to create community
       const response = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}/api/createCommunity`,
+        `${process.env.REACT_APP_SERVER_URL}/api/community/createCommunity`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -126,21 +126,6 @@ const CreateCommunity = () => {
               style={styles.textarea}
               placeholder="Briefly describe your community"
               required
-            />
-          </div>
-
-          {/* Upload Image */}
-          <div style={styles.formGroup}>
-            <label style={styles.label} htmlFor="imageUpload">
-              Upload Community Image
-            </label>
-            <input
-              type="file"
-              id="imageUpload"
-              name="imageUpload"
-              accept="image/*"
-              onChange={handleFileChange}
-              style={styles.fileInput}
             />
           </div>
 

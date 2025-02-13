@@ -28,3 +28,10 @@
     top: 2px;
     right: 2px;
 }
+
+.noOnlineUsers {
+  text-align: center;
+  color: gray;
+  font-size: 14px;
+  margin-top: 20px;
+}
