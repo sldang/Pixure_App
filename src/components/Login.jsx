@@ -139,7 +139,7 @@ export default function Login() {
                     {loading ? (
                         <div className="loading-spinner">Loading...</div>
                     ) : (
-                        <FormAction handleSubmit={handleSubmit} text="log in" />
+                        <FormAction handleSubmit={handleSubmit} text="Log In" />
                     )}
                 </form>
 

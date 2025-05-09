@@ -16,7 +16,7 @@ const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
     useEffect(() => {
         const fetchCommunities = async () => {
             try {
-                const response = await axios.get(`/api/myCommunities?nickname=${nickname}`, {
+                const response = await axios.get(`/api/community/myCommunities/${nickname}`, {
                 });
                 setJoinedCommunities(response.data); // Assume response contains an array of communities
                 console.log(response);
@@ -111,7 +111,7 @@ const UploadPost = ({ postContent = '', setPostContent, handleUpload }) => {
                         >
                             <option value="">Select a Community</option>
                             {joinedCommunities.map((community) => (
-                                <option key={community.name} value={community.name}>
+                                <option key={community.community._id} value={community.community._id}>
                                     {community.name}
                                 </option>
                             ))}
