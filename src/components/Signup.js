@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { signupFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import Input from "./Input";
+import { useNavigate } from 'react-router-dom';
 
 const fields = signupFields; // define signup form fields
 let fieldsState = {};
@@ -12,9 +13,30 @@ export default function Signup() {
     const [errorMessage, setErrorMessage] = useState(''); // state for error messages
     const [successMessage, setSuccessMessage] = useState(''); // state for success messages
     const [loading, setLoading] = useState(false); // state for loading spinner
+    const navigate = useNavigate();
+    
 
     // handle input changes
-    const handleChange = (e) => setSignupState({ ...signupState, [e.target.id]: e.target.value });
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setSignupState((prevState) => {
+            const updatedState = { ...prevState, [id]: value };
+    
+            // Check for password mismatch
+            if (id === 'confirm-password' || id === 'password') {
+                if (updatedState['confirm-password'] && updatedState['password']) {
+                    if (updatedState['confirm-password'] !== updatedState['password']) {
+                        setErrorMessage("Passwords do not match!");
+                    } else {
+                        setErrorMessage(""); // Clear error if they match
+                    }
+                }
+            }
+    
+            return updatedState;
+        });
+    };
+    
 
     // handle form submission
     const handleSubmit = async (e) => {
@@ -23,12 +45,19 @@ export default function Signup() {
         setSuccessMessage(''); // clear any previous success messages
         setLoading(true); // show loading spinner during the process
 
+        if (signupState['confirm-password'] !== signupState['password']) {
+            setErrorMessage("Passwords do not match!");
+            setLoading(false);
+            return; // exit early
+        }
+
         try {
             await createAccount(); // attempt to create account
         } catch (error) {
             setErrorMessage("an unexpected error occurred."); // catch generic errors
         } finally {
-            setLoading(false); // stop loading spinner
+            setLoading(false);
+             // stop loading spinner
         }
     };
 
@@ -65,6 +94,8 @@ export default function Signup() {
             if (response.ok) {
                 setSuccessMessage("Account created successfully!"); // show success message
                 setSignupState(fieldsState); // reset form fields
+                setLoading(false);
+                setTimeout(() => navigate("/login"), 1000);
             } else {
                 const errorData = await response.json(); // parse server error
                 setErrorMessage(errorData.error || "Account creation failed. Please try again."); // set error message
